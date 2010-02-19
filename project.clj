@@ -6,5 +6,4 @@
                                  [org.clojure/clojure-contrib "1.1.0"]
                                  [org.yaml/snakeyaml "1.5"]]
               :repositories     [["snakeyaml" "http://snakeyamlrepo.appspot.com/repository"]]
-              :dev-dependencies [[lein-clojars "0.5.0-SNAPSHOT"]
-                                 [clj-unit "0.1.0-SNAPSHOT"]])
+              :dev-dependencies [[lein-clojars "0.5.0-SNAPSHOT"]])
