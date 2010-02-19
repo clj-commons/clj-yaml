@@ -1,6 +1,6 @@
 (ns clj-yaml-test
   (:require clj-yaml)
-  (:use (clj-unit core)))
+  (:use clojure.test)) 
 
 (def nested-hash-yaml "root:\n  childa: a\n  childb: \n    grandchild: \n      greatgrandchild: bar\n")
 (def list-yaml "--- # Favorite Movies\n- Casablanca\n- North by Northwest\n- The Man Who Wasn't There")
@@ -33,56 +33,55 @@ items:
   age: 27
 ")
 
-(def hashes-of-lists "
+(def hashes-of-lists-yaml "
 men: [John Smith, Bill Jones]
 women:
   - Mary Smith
   - Susan Williams
 ")
 
-(deftest "parse hash"
+(deftest parse-hash
   (let [parsed (clj-yaml/parse-string "foo: bar")]
-    (assert= "bar" (parsed "foo"))))
+    (is (= "bar" (parsed "foo")))))
 
-(deftest "parse nested hash"
+(deftest parse-nested-hash
   (let [parsed (clj-yaml/parse-string nested-hash-yaml)]
-    (assert= "a"     ((parsed "root") "childa"))
-    (assert= "bar" ((((parsed "root") "childb") "grandchild") "greatgrandchild"))))
+    (is (= "a"     ((parsed "root") "childa")))
+    (is (= "bar" ((((parsed "root") "childb") "grandchild") "greatgrandchild")))))
 
-(deftest "parse list"
+(deftest parse-list
   (let [parsed (clj-yaml/parse-string list-yaml)]
-    (assert= "Casablanca"               (first parsed))
-    (assert= "North by Northwest"       (nth parsed 1))
-    (assert= "The Man Who Wasn't There" (nth parsed 2))))
+    (is (= "Casablanca"               (first parsed)))
+    (is (= "North by Northwest"       (nth parsed 1)))
+    (is (= "The Man Who Wasn't There" (nth parsed 2)))))
 
-(deftest "parse nested hash and list"
+(deftest parse-nested-hash-and-list
   (let [parsed (clj-yaml/parse-string hashes-lists-yaml)]
-    (assert= "A4786"  ((first (parsed "items")) "part_no"))
-    (assert= "Dorthy" (first ((nth (parsed "items") 1) "owners")))))
+    (is (= "A4786"  ((first (parsed "items")) "part_no")))
+    (is (= "Dorthy" (first ((nth (parsed "items") 1) "owners"))))))
 
-(deftest "parse inline list"
+(deftest parse-inline-list
   (let [parsed (clj-yaml/parse-string inline-list-yaml)]
-    (assert= "milk"        (first parsed))
-    (assert= "pumpkin pie" (nth parsed 1))
-    (assert= "eggs"        (nth parsed 2))
-    (assert= "juice"       (last parsed ))))
+    (is (= "milk"        (first parsed)))
+    (is (= "pumpkin pie" (nth parsed 1)))
+    (is (= "eggs"        (nth parsed 2)))
+    (is (= "juice"       (last parsed)))))
 
-(deftest "parse inline hash"
+(deftest parse-inline-hash
   (let [parsed (clj-yaml/parse-string inline-hash-yaml)]
-    (assert= "John Smith" (parsed "name"))
-    (assert= 33 (parsed "age"))))
+    (is (= "John Smith" (parsed "name")))
+    (is (= 33 (parsed "age")))))
 
-(deftest "parse list of hashes"
+(deftest parse-list-of-hashes
   (let [parsed (clj-yaml/parse-string list-of-hashes-yaml)]
-    (assert= "John Smith" ((first parsed) "name"))
-    (assert= 33           ((first parsed) "age"))
-    (assert= "Mary Smith" ((nth parsed 1) "name"))
-    (assert= 27           ((nth parsed 1) "age"))))
+    (is (= "John Smith" ((first parsed) "name")))
+    (is (= 33           ((first parsed) "age")))
+    (is (= "Mary Smith" ((nth parsed 1) "name")))
+    (is (= 27           ((nth parsed 1) "age")))))
 
-(deftest "hashes of lists"
-  (let [parsed (clj-yaml/parse-string hashes-of-lists)]
-    (assert= "John Smith"     (first (parsed "men")))
-    (assert= "Bill Jones"     (last (parsed "men")))
-    (assert= "Mary Smith"     (first (parsed "women")))
-    (assert= "Susan Williams" (last (parsed "women")))))
-
+(deftest hashes-of-lists
+  (let [parsed (clj-yaml/parse-string hashes-of-lists-yaml)]
+    (is (= "John Smith"     (first (parsed "men"))))
+    (is (= "Bill Jones"     (last (parsed "men"))))
+    (is (= "Mary Smith"     (first (parsed "women"))))
+    (is (= "Susan Williams" (last (parsed "women"))))))
