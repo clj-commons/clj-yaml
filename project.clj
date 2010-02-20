@@ -1,4 +1,4 @@
-(defproject clj-yaml "0.1.0-SNAPSHOT"
+(defproject clj-yaml "0.2.0-SNAPSHOT"
               :description      "YAML encoding(eventually) and decoding for Clojure using SnakeYAML"
               :url              "http://github.com/lancepantz/clj-yaml"
               :source-path      "src"

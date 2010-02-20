@@ -1,6 +1,6 @@
 (ns clj-yaml
   (:import (org.yaml.snakeyaml Yaml))
-  (:use (clojure.contrib [def :only (defvar-)])))
+  (:use    (clojure.contrib [def :only (defvar-)])))
 
 (defvar- yaml (Yaml.))
 
@@ -8,7 +8,7 @@
 
 (defmethod to-seq java.util.LinkedHashMap [data] 
   (into {} (for [[k v] data]
-                 [k (to-seq v)])))
+                 [(keyword k) (to-seq v)])))
 
 (defmethod to-seq java.util.ArrayList [data] 
   (map #(to-seq %) data))

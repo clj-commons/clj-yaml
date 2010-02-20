@@ -42,12 +42,12 @@ women:
 
 (deftest parse-hash
   (let [parsed (clj-yaml/parse-string "foo: bar")]
-    (is (= "bar" (parsed "foo")))))
+    (is (= "bar" (parsed :foo)))))
 
 (deftest parse-nested-hash
   (let [parsed (clj-yaml/parse-string nested-hash-yaml)]
-    (is (= "a"     ((parsed "root") "childa")))
-    (is (= "bar" ((((parsed "root") "childb") "grandchild") "greatgrandchild")))))
+    (is (= "a"     ((parsed :root) :childa)))
+    (is (= "bar" ((((parsed :root) :childb) :grandchild) :greatgrandchild)))))
 
 (deftest parse-list
   (let [parsed (clj-yaml/parse-string list-yaml)]
@@ -57,31 +57,31 @@ women:
 
 (deftest parse-nested-hash-and-list
   (let [parsed (clj-yaml/parse-string hashes-lists-yaml)]
-    (is (= "A4786"  ((first (parsed "items")) "part_no")))
-    (is (= "Dorthy" (first ((nth (parsed "items") 1) "owners"))))))
+    (is (= "A4786"  ((first (parsed :items)) :part_no)))
+    (is (= "Dorthy" (first ((nth (parsed :items) 1) :owners))))))
 
 (deftest parse-inline-list
   (let [parsed (clj-yaml/parse-string inline-list-yaml)]
     (is (= "milk"        (first parsed)))
-    (is (= "pumpkin pie" (nth parsed 1)))
-    (is (= "eggs"        (nth parsed 2)))
-    (is (= "juice"       (last parsed)))))
+    (is (= "pumpkin pie" (nth   parsed 1)))
+    (is (= "eggs"        (nth   parsed 2)))
+    (is (= "juice"       (last  parsed)))))
 
 (deftest parse-inline-hash
   (let [parsed (clj-yaml/parse-string inline-hash-yaml)]
-    (is (= "John Smith" (parsed "name")))
-    (is (= 33 (parsed "age")))))
+    (is (= "John Smith" (parsed :name)))
+    (is (= 33           (parsed :age)))))
 
 (deftest parse-list-of-hashes
   (let [parsed (clj-yaml/parse-string list-of-hashes-yaml)]
-    (is (= "John Smith" ((first parsed) "name")))
-    (is (= 33           ((first parsed) "age")))
-    (is (= "Mary Smith" ((nth parsed 1) "name")))
-    (is (= 27           ((nth parsed 1) "age")))))
+    (is (= "John Smith" ((first parsed) :name)))
+    (is (= 33           ((first parsed) :age)))
+    (is (= "Mary Smith" ((nth parsed 1) :name)))
+    (is (= 27           ((nth parsed 1) :age)))))
 
 (deftest hashes-of-lists
   (let [parsed (clj-yaml/parse-string hashes-of-lists-yaml)]
-    (is (= "John Smith"     (first (parsed "men"))))
-    (is (= "Bill Jones"     (last (parsed "men"))))
-    (is (= "Mary Smith"     (first (parsed "women"))))
-    (is (= "Susan Williams" (last (parsed "women"))))))
+    (is (= "John Smith"     (first (parsed :men))))
+    (is (= "Bill Jones"     (last  (parsed :men))))
+    (is (= "Mary Smith"     (first (parsed :women))))
+    (is (= "Susan Williams" (last  (parsed :women))))))
