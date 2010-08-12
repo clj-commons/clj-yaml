@@ -1,19 +1,19 @@
-(ns clj-yaml
+(ns clj-yaml.core
   (:import (org.yaml.snakeyaml Yaml))
-  (:use    (clojure.contrib [def :only (defvar-)])))
+  (:use (clojure.contrib [def :only (defvar-)])))
 
 (defvar- yaml (Yaml.))
 
 (defmulti to-seq class)
 
-(defmethod to-seq java.util.LinkedHashMap [data] 
+(defmethod to-seq java.util.LinkedHashMap [data]
   (into {} (for [[k v] data]
                  [(keyword k) (to-seq v)])))
 
-(defmethod to-seq java.util.ArrayList [data] 
+(defmethod to-seq java.util.ArrayList [data]
   (map #(to-seq %) data))
 
-(defmethod to-seq :default [data] 
+(defmethod to-seq :default [data]
   data)
 
 (defn parse-string [string]
