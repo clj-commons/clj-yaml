@@ -4,6 +4,20 @@
 
 (defvar- yaml (Yaml.))
 
+(defn- stringify [data]
+  (cond
+    (map? data)
+      (into {} (for [[k v] data] [(stringify k) (stringify v)]))
+    (coll? data)
+      (map stringify data)
+    (keyword? data)
+      (name data)
+    :else
+      data))
+
+(defn generate-string [data]
+  (.dump yaml (stringify data)))
+
 (defmulti to-seq class)
 
 (defmethod to-seq java.util.LinkedHashMap [data]

@@ -4,6 +4,11 @@
 
     (require '[clj-yaml.core :as yaml])
     
+    (yaml/generate-string
+      [{:name "John Smith", :age 33}
+       {:name "Mary Smith", :age 27}])
+    "- {name: John Smith, age: 33}\n- {name: Mary Smith, age: 27}\n"
+
     (yaml/parse-string "
     - {name: John Smith, age: 33}
     - name: Mary Smith
