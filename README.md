@@ -1,13 +1,16 @@
-clj-yaml is a clojure wrapper around SnakeYAML that utilizes clojure collections.
-
-NOTE: Currently only supports deserialization
+`clj-yaml` provides [YAML](http://yaml.org) encoding and decoding for Clojure via the [SnakeYAML](http://code.google.com/p/snakeyaml/) Java library.
 
 ## Installation
 
-$ git clone git://github.com/lancepantz/clj-yaml.git
+`clj-yaml` is available as a Maven artifact from [Clojars](http://clojars.org/clj-yaml):
 
-$ lein deps
+    :dependencies
+      [["clj-yaml" "0.3.0-SNAPSHOT"]
+       ...]
 
-$ lein test
+## Development
 
-$ lein install
+    $ git clone git://github.com/lancepantz/clj-yaml.git
+    $ lein deps
+    $ lein test
+    $ lein install
