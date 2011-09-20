@@ -3,5 +3,4 @@
   :url "http://github.com/lancepantz/clj-yaml"
   :dependencies
     [[org.clojure/clojure "1.2.0-RC3"]
-     [org.clojure/clojure-contrib "1.2.0-RC3"]
      [org.yaml/snakeyaml "1.5"]])

@@ -1,8 +1,7 @@
 (ns clj-yaml.core
-  (:import (org.yaml.snakeyaml Yaml))
-  (:use (clojure.contrib [def :only (defvar-)])))
+  (:import (org.yaml.snakeyaml Yaml)))
 
-(defvar- yaml (Yaml.))
+(def ^{:private true} yaml (Yaml.))
 
 (defn- stringify [data]
   (cond
