@@ -19,12 +19,12 @@
   (encode [data]
     (map encode data))
 
-  java.lang.Object
-  (encode [data] data)
-
   clojure.lang.Keyword
   (encode [data]
     (name data))
+
+  java.lang.Object
+  (encode [data] data)
 
   java.util.LinkedHashMap
   (decode [data]
