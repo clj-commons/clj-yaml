@@ -3,31 +3,44 @@
 
 (def ^{:private true} yaml (Yaml.))
 
-(defn- stringify [data]
-  (cond
-    (map? data)
-      (into {} (for [[k v] data] [(stringify k) (stringify v)]))
-    (coll? data)
-      (map stringify data)
-    (keyword? data)
-      (name data)
-    :else
-      data))
+(defprotocol YAMLCodec
+  (encode [data])
+  (decode [data]))
+
+(extend-protocol YAMLCodec
+
+  clojure.lang.IPersistentMap
+  (encode [data]
+    (into {}
+          (for [[k v] data]
+            [(encode k) (encode v)])))
+
+  clojure.lang.IPersistentCollection
+  (encode [data]
+    (map encode data))
+
+  java.lang.Object
+  (encode [data] data)
+
+  clojure.lang.Keyword
+  (encode [data]
+    (name data))
+
+  java.util.LinkedHashMap
+  (decode [data]
+    (into {}
+          (for [[k v] data]
+            [(keyword k) (decode v)])))
+
+  java.util.ArrayList
+  (decode [data]
+    (map decode data))
+
+  java.lang.Object
+  (decode [data] data))
 
 (defn generate-string [data]
-  (.dump yaml (stringify data)))
-
-(defmulti to-seq class)
-
-(defmethod to-seq java.util.LinkedHashMap [data]
-  (into {} (for [[k v] data]
-                 [(keyword k) (to-seq v)])))
-
-(defmethod to-seq java.util.ArrayList [data]
-  (map #(to-seq %) data))
-
-(defmethod to-seq :default [data]
-  data)
+  (.dump yaml (encode data)))
 
 (defn parse-string [string]
-  (to-seq (.load yaml string)))
+  (decode (.load yaml string)))
