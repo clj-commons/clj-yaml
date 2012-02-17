@@ -23,20 +23,26 @@
   (encode [data]
     (name data))
 
-  java.lang.Object
-  (encode [data] data)
-
   java.util.LinkedHashMap
   (decode [data]
     (into {}
           (for [[k v] data]
             [(keyword k) (decode v)])))
 
+  java.util.LinkedHashSet
+  (decode [data]
+    (into #{} data))
+
   java.util.ArrayList
   (decode [data]
     (map decode data))
 
-  java.lang.Object
+  Object
+  (encode [data] data)
+  (decode [data] data)
+
+  nil
+  (encode [data] data)
   (decode [data] data))
 
 (defn generate-string [data]

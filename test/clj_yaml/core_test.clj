@@ -45,13 +45,22 @@ women:
   - Susan Williams
 ")
 
+(def typed-data-yaml "
+the-bin: !!binary 0101")
+
+(def set-yaml "
+--- !!set
+? Mark McGwire
+? Sammy Sosa
+? Ken Griff")
+
 (deftest parse-hash
   (let [parsed (parse-string "foo: bar")]
     (is (= "bar" (parsed :foo)))))
 
 (deftest parse-nested-hash
   (let [parsed (parse-string nested-hash-yaml)]
-    (is (= "a"     ((parsed :root) :childa)))
+    (is (= "a"   ((parsed :root) :childa)))
     (is (= "bar" ((((parsed :root) :childb) :grandchild) :greatgrandchild)))))
 
 (deftest parse-list
@@ -90,3 +99,11 @@ women:
     (is (= "Bill Jones"     (last  (parsed :men))))
     (is (= "Mary Smith"     (first (parsed :women))))
     (is (= "Susan Williams" (last  (parsed :women))))))
+
+(deftest hash-set
+  (is (= #{"Mark McGwire" "Ken Griff" "Sammy Sosa"}
+         (parse-string set-yaml))))
+
+(deftest typed-data
+  (let [parsed (parse-string typed-data-yaml)]
+    (is (= (Class/forName "[B") (type (:the-bin parsed))))))
