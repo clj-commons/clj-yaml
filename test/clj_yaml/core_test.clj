@@ -100,10 +100,14 @@ the-bin: !!binary 0101")
     (is (= "Mary Smith"     (first (parsed :women))))
     (is (= "Susan Williams" (last  (parsed :women))))))
 
-(deftest hash-set
+(deftest h-set
   (is (= #{"Mark McGwire" "Ken Griff" "Sammy Sosa"}
          (parse-string set-yaml))))
 
 (deftest typed-data
   (let [parsed (parse-string typed-data-yaml)]
     (is (= (Class/forName "[B") (type (:the-bin parsed))))))
+
+(deftest keywordized
+  (binding [keywordize false]
+    (is  (= "items" (-> hashes-lists-yaml parse-string ffirst)))))

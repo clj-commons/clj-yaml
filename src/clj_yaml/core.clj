@@ -3,9 +3,15 @@
 
 (def ^{:private true} yaml (Yaml.))
 
+(def ^{:dynamic true} keywordize true)
+
+
 (defprotocol YAMLCodec
   (encode [data])
   (decode [data]))
+
+(defn decode-key [k]
+  (if keywordize (keyword k) k))
 
 (extend-protocol YAMLCodec
 
@@ -27,7 +33,7 @@
   (decode [data]
     (into {}
           (for [[k v] data]
-            [(keyword k) (decode v)])))
+            [(decode-key k) (decode v)])))
 
   java.util.LinkedHashSet
   (decode [data]
