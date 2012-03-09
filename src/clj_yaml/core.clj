@@ -3,15 +3,14 @@
 
 (def ^{:private true} yaml (Yaml.))
 
-(def ^{:dynamic true} keywordize true)
-
+(def ^{:dynamic true} *keywordize* true)
 
 (defprotocol YAMLCodec
   (encode [data])
   (decode [data]))
 
 (defn decode-key [k]
-  (if keywordize (keyword k) k))
+  (if *keywordize* (keyword k) k))
 
 (extend-protocol YAMLCodec
 
@@ -54,5 +53,9 @@
 (defn generate-string [data]
   (.dump yaml (encode data)))
 
-(defn parse-string [string]
-  (decode (.load yaml string)))
+(defn parse-string
+  ([string keywordize]
+     (binding [*keywordize* keywordize]
+       (decode (.load yaml string))))
+  ([string]
+     (decode (.load yaml string))))
