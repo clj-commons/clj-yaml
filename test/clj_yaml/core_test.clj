@@ -111,4 +111,11 @@ the-bin: !!binary 0101")
 (deftest keywordized
   (binding [*keywordize* false]
     (is  (= "items" (-> hashes-lists-yaml parse-string ffirst))))
-    (is  (= "items" (-> hashes-lists-yaml (parse-string false) ffirst))))
+  (is  (= "items" (-> hashes-lists-yaml (parse-string false) ffirst))))
+
+(deftest dump-opts
+  (let [data [{:name "jon" :age 33} {:name "boo" :age 44}]]
+    (is (= "- age: 33\n  name: jon\n- age: 44\n  name: boo\n"
+           (generate-string data :dumper-options {:flow-style :block})))
+    (is (= "[{age: 33, name: jon}, {age: 44, name: boo}]\n"
+           (generate-string data :dumper-options {:flow-style :flow})))))
