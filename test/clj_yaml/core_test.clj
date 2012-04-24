@@ -114,7 +114,7 @@ the-bin: !!binary 0101")
   (is  (= "items" (-> hashes-lists-yaml (parse-string false) ffirst))))
 
 (deftest dump-opts
-  (let [data [{:name "jon" :age 33} {:name "boo" :age 44}]]
+  (let [data [{:age 33 :name "jon"} {:age 44 :name "boo"}]]
     (is (= "- age: 33\n  name: jon\n- age: 44\n  name: boo\n"
            (generate-string data :dumper-options {:flow-style :block})))
     (is (= "[{age: 33, name: jon}, {age: 44, name: boo}]\n"
