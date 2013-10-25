@@ -1,8 +1,11 @@
 (ns clj-yaml.core
+  (:require [flatland.ordered.map :refer (ordered-map)]
+            [flatland.ordered.set :refer (ordered-set)])
   (:import (org.yaml.snakeyaml Yaml DumperOptions DumperOptions$FlowStyle)
            (org.yaml.snakeyaml.constructor Constructor SafeConstructor)
            (org.yaml.snakeyaml.representer Representer)
-           (clj_yaml MarkedConstructor)))
+           (clj_yaml MarkedConstructor)
+           (java.util LinkedHashMap)))
 
 (def flow-styles
   {:auto DumperOptions$FlowStyle/AUTO
@@ -67,9 +70,10 @@
 
   clojure.lang.IPersistentMap
   (encode [data]
-    (into {}
-          (for [[k v] data]
-            [(encode k) (encode v)])))
+    (let [lhm (LinkedHashMap.)]
+      (doseq [[k v] data]
+        (.put lhm (encode k) (encode v)))
+      lhm))
 
   clojure.lang.IPersistentCollection
   (encode [data]
@@ -86,13 +90,13 @@
                 ;; (keyword k) is nil for numbers etc
                 (or (keyword k) k)
                 k))]
-      (into {}
+      (into (ordered-map)
             (for [[k v] data]
               [(-> k (decode keywords) decode-key) (decode v keywords)]))))
 
   java.util.LinkedHashSet
   (decode [data keywords]
-    (into #{} data))
+    (into (ordered-set) data))
 
   java.util.ArrayList
   (decode [data keywords]

@@ -5,7 +5,9 @@
             :url "http://www.eclipse.org/legal/epl-v10.html"
             :distribution :repo
             :comments "same as Clojure"}
-  :dependencies [[org.clojure/clojure "1.2.0"]
-                 [org.yaml/snakeyaml "1.13"]]
   :source-paths ["src/clojure"]
-  :java-source-paths ["src/java"])
+  :java-source-paths ["src/java"]
+  :dependencies
+  [[org.clojure/clojure "1.5.1"]
+   [org.yaml/snakeyaml "1.13"]
+   [org.flatland/ordered "1.5.2"]])
