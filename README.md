@@ -22,7 +22,7 @@
 `clj-yaml` is available as a Maven artifact from [Clojars](http://clojars.org/clj-yaml):
 
     :dependencies
-      [["clj-yaml" "0.4.0"]
+      [["clj-yaml" "0.4.1"]
        ...]
 
 ## Development

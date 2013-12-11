@@ -58,6 +58,14 @@ the-bin: !!binary 0101")
   (let [parsed (parse-string "foo: bar")]
     (is (= "bar" (parsed :foo)))))
 
+(deftest parse-hash-with-numeric-key
+  (let [parsed (parse-string "123: 456")]
+    (is (= 456 (parsed 123)))))
+
+(deftest parse-hash-with-complex-key
+  (let [parsed (parse-string "[1, 2]: 3")]
+    (is (= 3 (parsed [1, 2])))))
+
 (deftest parse-nested-hash
   (let [parsed (parse-string nested-hash-yaml)]
     (is (= "a"   ((parsed :root) :childa)))
