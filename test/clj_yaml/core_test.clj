@@ -113,6 +113,9 @@ the-bin: !!binary 0101")
     (is  (= "items" (-> hashes-lists-yaml parse-string ffirst))))
   (is  (= "items" (-> hashes-lists-yaml (parse-string false) ffirst))))
 
+(deftest not-keywordized-in-lists
+  (is (every? string? (-> "[{b: c, c: d}]" (parse-string false) first keys))))
+
 (deftest dump-opts
   (let [data [{:age 33 :name "jon"} {:age 44 :name "boo"}]]
     (is (= "- age: 33\n  name: jon\n- age: 44\n  name: boo\n"
