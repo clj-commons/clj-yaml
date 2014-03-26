@@ -3,8 +3,6 @@
            (org.yaml.snakeyaml.constructor Constructor SafeConstructor)
            (org.yaml.snakeyaml.representer Representer)))
 
-(def ^{:dynamic true} *keywordize* true)
-
 (def flow-styles
   {:auto DumperOptions$FlowStyle/AUTO
    :block DumperOptions$FlowStyle/BLOCK
@@ -25,10 +23,10 @@
 
 (defprotocol YAMLCodec
   (encode [data])
-  (decode [data]))
+  (decode [data keywordize]))
 
-(defn decode-key [k]
-  (if *keywordize* (keyword k) k))
+(defn decode-key [k keywordize]
+  (if keywordize (keyword k) k))
 
 (extend-protocol YAMLCodec
 
@@ -47,26 +45,26 @@
     (name data))
 
   java.util.LinkedHashMap
-  (decode [data]
-    (into {}
-          (for [[k v] data]
-            [(decode-key k) (decode v)])))
+  (decode [data keywordize]
+     (into {}
+           (for [[k v] data]
+             [(decode-key k keywordize) (decode v keywordize)])))
 
   java.util.LinkedHashSet
-  (decode [data]
+  (decode [data keywordize]
     (into #{} data))
 
   java.util.ArrayList
-  (decode [data]
-    (map decode data))
+  (decode [data keywordize]
+    (map #(decode % keywordize) data))
 
   Object
   (encode [data] data)
-  (decode [data] data)
+  (decode [data keywordize] data)
 
   nil
   (encode [data] data)
-  (decode [data] data))
+  (decode [data keywordize] data))
 
 (defn generate-string [data & opts]
   (.dump (apply make-yaml opts)
@@ -74,7 +72,6 @@
 
 (defn parse-string
   ([string keywordize]
-     (binding [*keywordize* keywordize]
-       (parse-string string)))
+     (decode (.load (make-yaml) string) keywordize))
   ([string]
-     (decode (.load (make-yaml) string))))
+     (parse-string string true)))

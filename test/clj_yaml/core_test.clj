@@ -109,9 +109,10 @@ the-bin: !!binary 0101")
     (is (= (Class/forName "[B") (type (:the-bin parsed))))))
 
 (deftest keywordized
-  (binding [*keywordize* false]
-    (is  (= "items" (-> hashes-lists-yaml parse-string ffirst))))
   (is  (= "items" (-> hashes-lists-yaml (parse-string false) ffirst))))
+
+(deftest not-keywordized-in-lists
+  (is (every? string? (-> "[{b: c, c: d}]" (parse-string false) first keys))))
 
 (deftest dump-opts
   (let [data [{:age 33 :name "jon"} {:age 44 :name "boo"}]]
