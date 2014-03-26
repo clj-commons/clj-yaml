@@ -48,6 +48,9 @@ women:
 (def typed-data-yaml "
 the-bin: !!binary 0101")
 
+(def io-file-typed-data-yaml "
+!!java.io.File")
+
 (def set-yaml "
 --- !!set
 ? Mark McGwire
@@ -107,6 +110,10 @@ the-bin: !!binary 0101")
 (deftest typed-data
   (let [parsed (parse-string typed-data-yaml)]
     (is (= (Class/forName "[B") (type (:the-bin parsed))))))
+
+(deftest disallow-arbitrary-typed-data
+  (is (thrown? org.yaml.snakeyaml.error.YAMLException
+               (parse-string io-file-typed-data-yaml))))
 
 (deftest keywordized
   (is  (= "items" (-> hashes-lists-yaml (parse-string false) ffirst))))
