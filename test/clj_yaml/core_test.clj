@@ -109,8 +109,6 @@ the-bin: !!binary 0101")
     (is (= (Class/forName "[B") (type (:the-bin parsed))))))
 
 (deftest keywordized
-  (binding [*keywordize* false]
-    (is  (= "items" (-> hashes-lists-yaml parse-string ffirst))))
   (is  (= "items" (-> hashes-lists-yaml (parse-string false) ffirst))))
 
 (deftest not-keywordized-in-lists
