@@ -1,4 +1,12 @@
-`clj-yaml` provides [YAML](http://yaml.org) encoding and decoding for Clojure via the [SnakeYAML](http://code.google.com/p/snakeyaml/) Java library.
+`circleci/clj-yaml` provides [YAML](http://yaml.org) encoding and
+decoding for Clojure via the [snakeyaml][] Java library.
+
+[SnakeYAML]: http://code.google.com/p/snakeyaml/
+
+(This is a maintained fork of [the original][]).
+
+[the original]: https://github.com/lancepantz/clj-yaml
+
 
 ## Usage
 
@@ -19,15 +27,17 @@
 
 ## Installation
 
-`clj-yaml` is available as a Maven artifact from [Clojars](http://clojars.org/clj-yaml):
+`circleci/clj-yaml` is available as a Maven artifact from [Clojars][]:
+
+[Clojars]: http://clojars.org/circleci/clj-yaml):
 
     :dependencies
-      [["clj-yaml" "0.4.0"]
+      [["circleci/clj-yaml" "0.4.1"]
        ...]
 
 ## Development
 
-    $ git clone git://github.com/lancepantz/clj-yaml.git
+    $ git clone git://github.com/circleci/clj-yaml.git
     $ lein deps
     $ lein test
     $ lein install
