@@ -1,5 +1,7 @@
 (ns clj-yaml.core
-  (:import (org.yaml.snakeyaml Yaml DumperOptions DumperOptions$FlowStyle)))
+  (:import (org.yaml.snakeyaml Yaml DumperOptions DumperOptions$FlowStyle)
+           (org.yaml.snakeyaml.constructor Constructor SafeConstructor)
+           (org.yaml.snakeyaml.representer Representer)))
 
 (def ^{:dynamic true} *keywordize* true)
 
@@ -14,12 +16,12 @@
     (.setDefaultFlowStyle (flow-styles flow-style))))
 
 (defn make-yaml
-  [& {:keys [dumper-options]}]
-  (if dumper-options
-    (Yaml. (apply make-dumper-options
-                  (mapcat (juxt key val)
-                          dumper-options)))
-    (Yaml.)))
+  [& {:keys [dumper-options unsafe]}]
+  (let [constructor (if unsafe (Constructor.) (SafeConstructor.))
+        dumper (if dumper-options 
+                 (make-dumper-options :flow-style (:flow-style dumper-options))
+                 (DumperOptions.))]
+    (Yaml. constructor (Representer.) dumper)))
 
 (defprotocol YAMLCodec
   (encode [data])
