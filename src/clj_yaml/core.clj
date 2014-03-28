@@ -26,7 +26,10 @@
   (decode [data keywordize]))
 
 (defn decode-key [k keywordize]
-  (if keywordize (keyword k) k))
+  (if keywordize
+    ;; (keyword k) is nil for numbers and other values.
+    (or (keyword k) k)
+    k))
 
 (extend-protocol YAMLCodec
 
