@@ -1,4 +1,4 @@
-(defproject circleci/clj-yaml "0.4.1"
+(defproject circleci/clj-yaml "0.4.2"
   :description "YAML encoding and decoding for Clojure using SnakeYAML"
   :url "https://github.com/circleci/clj-yaml"
   :dependencies
