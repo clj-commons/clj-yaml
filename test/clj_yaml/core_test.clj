@@ -124,10 +124,17 @@ the-bin: !!binary 0101")
                (parse-string io-file-typed-data-yaml))))
 
 (deftest keywordized
-  (is  (= "items" (-> hashes-lists-yaml (parse-string false) ffirst))))
+  (is (= "items"
+         (-> hashes-lists-yaml
+             (parse-string :keywordize false)
+             ffirst))))
 
 (deftest not-keywordized-in-lists
-  (is (every? string? (-> "[{b: c, c: d}]" (parse-string false) first keys))))
+  (is (every? string?
+              (-> "[{b: c, c: d}]"
+                  (parse-string :keywordize false)
+                  first
+                  keys))))
 
 (deftest dump-opts
   (let [data [{:age 33 :name "jon"} {:age 44 :name "boo"}]]

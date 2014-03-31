@@ -84,7 +84,5 @@
          (encode data)))
 
 (defn parse-string
-  ([string keywordize]
-     (decode (.load (make-yaml) string) keywordize))
-  ([string]
-     (parse-string string true)))
+  [string & {:keys [unsafe mark keywordize] :or {keywordize true}}]
+  (decode (.load (make-yaml :unsafe unsafe :mark mark) string) keywordize))
