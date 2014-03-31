@@ -27,21 +27,21 @@
 
 (defprotocol YAMLCodec
   (encode [data])
-  (decode [data keywordize]))
+  (decode [data keywords]))
 
-(defn decode-key [k keywordize]
-  (if keywordize
+(defn decode-key [k keywords]
+  (if keywords
     ;; (keyword k) is nil for numbers and other values.
     (or (keyword k) k)
     k))
 
 (extend-protocol YAMLCodec
   Marked
-  (decode [data keywordize]
+  (decode [data keywords]
     ;; Decode the marked data and rewrap it with its source position.
     (Marked. (.start data) (.end data)
              (-> data .marked
-                 (decode keywordize))))
+                 (decode keywords))))
 
   clojure.lang.IPersistentMap
   (encode [data]
@@ -58,31 +58,31 @@
     (name data))
 
   java.util.LinkedHashMap
-  (decode [data keywordize]
+  (decode [data keywords]
      (into {}
            (for [[k v] data]
-             [(decode-key k keywordize) (decode v keywordize)])))
+             [(decode-key k keywords) (decode v keywords)])))
 
   java.util.LinkedHashSet
-  (decode [data keywordize]
+  (decode [data keywords]
     (into #{} data))
 
   java.util.ArrayList
-  (decode [data keywordize]
-    (map #(decode % keywordize) data))
+  (decode [data keywords]
+    (map #(decode % keywords) data))
 
   Object
   (encode [data] data)
-  (decode [data keywordize] data)
+  (decode [data keywords] data)
 
   nil
   (encode [data] data)
-  (decode [data keywordize] data))
+  (decode [data keywords] data))
 
 (defn generate-string [data & opts]
   (.dump (apply make-yaml opts)
          (encode data)))
 
 (defn parse-string
-  [string & {:keys [unsafe mark keywordize] :or {keywordize true}}]
-  (decode (.load (make-yaml :unsafe unsafe :mark mark) string) keywordize))
+  [string & {:keys [unsafe mark keywords] :or {keywords true}}]
+  (decode (.load (make-yaml :unsafe unsafe :mark mark) string) keywords))

@@ -126,13 +126,13 @@ the-bin: !!binary 0101")
 (deftest keywordized
   (is (= "items"
          (-> hashes-lists-yaml
-             (parse-string :keywordize false)
+             (parse-string :keywords false)
              ffirst))))
 
 (deftest not-keywordized-in-lists
   (is (every? string?
               (-> "[{b: c, c: d}]"
-                  (parse-string :keywordize false)
+                  (parse-string :keywords false)
                   first
                   keys))))
 
