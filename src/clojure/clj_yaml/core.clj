@@ -2,7 +2,7 @@
   (:import (org.yaml.snakeyaml Yaml DumperOptions DumperOptions$FlowStyle)
            (org.yaml.snakeyaml.constructor Constructor SafeConstructor)
            (org.yaml.snakeyaml.representer Representer)
-           (clj_yaml Marked MarkedConstructor)))
+           (clj_yaml MarkedConstructor)))
 
 (def flow-styles
   {:auto DumperOptions$FlowStyle/AUTO
@@ -20,10 +20,24 @@
         (if unsafe (Constructor.)
             (if mark (MarkedConstructor.) (SafeConstructor.)))
         ;; TODO: unsafe marked constructor
-        dumper (if dumper-options 
+        dumper (if dumper-options
                  (make-dumper-options :flow-style (:flow-style dumper-options))
                  (DumperOptions.))]
     (Yaml. constructor (Representer.) dumper)))
+
+(defrecord Marked
+  [start end unmark])
+
+(defn mark [start end marked]
+  (Marked. start end marked))
+
+(defn marked? [m]
+  (instance? Marked m))
+
+(defn unmark [m]
+  (if (marked? m)
+    (:unmark m)
+    m))
 
 (defprotocol YAMLCodec
   (encode [data])
@@ -36,12 +50,17 @@
     k))
 
 (extend-protocol YAMLCodec
-  Marked
+  clj_yaml.Marked
   (decode [data keywords]
-    ;; Decode the marked data and rewrap it with its source position.
-    (Marked. (.start data) (.end data)
-             (-> data .marked
-                 (decode keywords))))
+    (letfn [(from-Mark [mark]
+              {:line (.getLine mark)
+               :index (.getIndex mark)
+               :column (.getColumn mark)})]
+      ;; Decode the marked data and rewrap it with its source position.
+      (mark (-> data .start from-Mark)
+            (-> data .end from-Mark)
+            (-> data .marked
+                (decode keywords)))))
 
   clojure.lang.IPersistentMap
   (encode [data]
@@ -78,6 +97,7 @@
   nil
   (encode [data] data)
   (decode [data keywords] data))
+
 
 (defn generate-string [data & opts]
   (.dump (apply make-yaml opts)

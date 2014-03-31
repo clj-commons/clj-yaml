@@ -24,8 +24,8 @@ items:
       - Wicked Witch of the East
 ")
 
-(def inline-list-yaml "
---- # Shopping list
+(def inline-list-yaml
+"--- # Shopping list
 [milk, pumpkin pie, eggs, juice]
 ")
 
@@ -135,6 +135,18 @@ the-bin: !!binary 0101")
                   (parse-string :keywords false)
                   first
                   keys))))
+
+(deftest marking-source-position-works
+  (let [parsed (parse-string inline-list-yaml :mark true)]
+    ;; The list starts at the beginning of line 1.
+    (is (= 1 (-> parsed :start :line)))
+    (is (= 0 (-> parsed :start :column)))
+    ;; The first item starts at the second character of line 1.
+    (is (= 1 (-> parsed unmark first :start :line)))
+    (is (= 1 (-> parsed unmark first :start :column)))
+    ;; The first item ends at the fifth character of line 1.
+    (is (= 1 (-> parsed unmark first :end :line)))
+    (is (= 5 (-> parsed unmark first :end :column)))))
 
 (deftest dump-opts
   (let [data [{:age 33 :name "jon"} {:age 44 :name "boo"}]]
