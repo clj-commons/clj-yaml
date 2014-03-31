@@ -15,6 +15,7 @@
     (.setDefaultFlowStyle (flow-styles flow-style))))
 
 (defn make-yaml
+  "Make a yaml encoder/decoder with some given options."
   [& {:keys [dumper-options unsafe mark]}]
   (let [constructor
         (if unsafe (Constructor.)
@@ -28,26 +29,28 @@
 (defrecord Marked
   [start end unmark])
 
-(defn mark [start end marked]
+(defn mark
+  "Mark some data with start and end positions."
+  [start end marked]
   (Marked. start end marked))
 
-(defn marked? [m]
+(defn marked?
+  "Let us know whether this piece of data is marked with source positions."
+  [m]
   (instance? Marked m))
 
-(defn unmark [m]
+(defn unmark
+  "Strip the source information from this piece of data, if it exists."
+  [m]
   (if (marked? m)
     (:unmark m)
     m))
 
 (defprotocol YAMLCodec
+  "A protocol for things that can be coerced to and from the types
+   that snakeyaml knows how to encode and decode."
   (encode [data])
   (decode [data keywords]))
-
-(defn decode-key [k keywords]
-  (if keywords
-    ;; (keyword k) is nil for numbers and other values.
-    (or (keyword k) k)
-    k))
 
 (extend-protocol YAMLCodec
   clj_yaml.MarkedConstructor$Marked
@@ -78,9 +81,14 @@
 
   java.util.LinkedHashMap
   (decode [data keywords]
-     (into {}
-           (for [[k v] data]
-             [(decode-key k keywords) (decode v keywords)])))
+    (letfn [(decode-key [k]
+              (if keywords
+                ;; (keyword k) is nil for numbers etc
+                (or (keyword k) k)
+                k))]
+      (into {}
+            (for [[k v] data]
+              [(decode-key k) (decode v keywords)]))))
 
   java.util.LinkedHashSet
   (decode [data keywords]
