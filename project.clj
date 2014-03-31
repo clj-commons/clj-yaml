@@ -7,4 +7,5 @@
             :comments "same as Clojure"}
   :dependencies [[org.clojure/clojure "1.2.0"]
                  [org.yaml/snakeyaml "1.13"]]
-  :source-paths ["src/clojure"])
+  :source-paths ["src/clojure"]
+  :java-source-paths ["src/java"])
