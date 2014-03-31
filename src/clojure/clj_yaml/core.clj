@@ -50,7 +50,7 @@
     k))
 
 (extend-protocol YAMLCodec
-  clj_yaml.Marked
+  clj_yaml.MarkedConstructor$Marked
   (decode [data keywords]
     (letfn [(from-Mark [mark]
               {:line (.getLine mark)
