@@ -88,7 +88,7 @@
                 k))]
       (into {}
             (for [[k v] data]
-              [(decode-key k) (decode v keywords)]))))
+              [(-> k (decode keywords) decode-key) (decode v keywords)]))))
 
   java.util.LinkedHashSet
   (decode [data keywords]
