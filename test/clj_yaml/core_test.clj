@@ -1,6 +1,7 @@
 (ns clj-yaml.core-test
   (:use clojure.test)
-  (:use clj-yaml.core))
+  (:use clj-yaml.core)
+  (:import [java.util Date]))
 
 (def nested-hash-yaml
   "root:\n  childa: a\n  childb: \n    grandchild: \n      greatgrandchild: bar\n")
@@ -154,3 +155,9 @@ the-bin: !!binary 0101")
            (generate-string data :dumper-options {:flow-style :block})))
     (is (= "[{age: 33, name: jon}, {age: 44, name: boo}]\n"
            (generate-string data :dumper-options {:flow-style :flow})))))
+
+(deftest parse-time
+  (testing "clj-time parses timestamps with more than millisecond precision correctly."
+    (let [timestamp "2001-11-23 15:02:31.123456 -04:00"
+          expected 1006542151123]
+      (is (= (.getTime (parse-string timestamp)) expected)))))
