@@ -5,7 +5,7 @@ decoding for Clojure via the [snakeyaml][] Java library.
 
 ![CircleCI Status][]
 
-[CircleCI Status]: https://circleci.com/gh/circleci/clj-yaml.png?circle-token=f9ef8d1375fa3bbe1edec55d3a188ab65ddb39a0
+[CircleCI Status]: https://circleci.com/gh/circleci/clj-yaml.png
 
 (This is a maintained fork of [the original][]).
 
