@@ -35,9 +35,7 @@ decoding for Clojure via the [snakeyaml][] Java library.
 
 [Clojars]: http://clojars.org/circleci/clj-yaml):
 
-    :dependencies
-      [[circleci/clj-yaml "0.5.2"]
-       ...]
+    :dependencies [[circleci/clj-yaml "0.5.3"]  ...]
 
 ## Development
 
