@@ -8,5 +8,4 @@
   :dependencies [[org.clojure/clojure "1.2.0"]
                  [org.yaml/snakeyaml "1.13"]]
   :source-paths ["src/clojure"]
-  :java-source-paths ["src/java"]
-  :javac-options ["-target" "1.7" "-source" "1.7" "-Xlint:-options"])
+  :java-source-paths ["src/java"])
