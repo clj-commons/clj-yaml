@@ -3,9 +3,7 @@ decoding for Clojure via the [snakeyaml][] Java library.
 
 [SnakeYAML]: http://code.google.com/p/snakeyaml/
 
-![CircleCI Status][]
-
-[CircleCI Status]: https://circleci.com/gh/circleci/clj-yaml.png
+[![CircleCI Status](https://circleci.com/gh/circleci/clj-yaml.png?style=badge)](https://circleci.com/gh/circleci/clj-yaml)
 
 (This is a maintained fork of [the original][]).
 
