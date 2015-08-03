@@ -27,6 +27,13 @@ decoding for Clojure via the [snakeyaml][] Java library.
     => ({:name "John Smith", :age 33}
         {:name "Mary Smith", :age 27})
 
+By default, keys are converted to clojure keywords.  To prevent this, 
+add `:keywords false` parameters to the `parse-string` function:
+
+    (yaml/parse-string "
+    - {name: John Smith}
+    " :keywords false)
+
 ## Installation
 
 `circleci/clj-yaml` is available as a Maven artifact from [Clojars][]:
