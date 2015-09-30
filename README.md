@@ -1,7 +1,7 @@
 `circleci/clj-yaml` provides [YAML](http://yaml.org) encoding and
 decoding for Clojure via the [snakeyaml][] Java library.
 
-[SnakeYAML]: http://code.google.com/p/snakeyaml/
+[SnakeYAML]: https://bitbucket.org/asomov/snakeyaml/
 
 [![CircleCI Status](https://circleci.com/gh/circleci/clj-yaml.svg?style=svg)](https://circleci.com/gh/circleci/clj-yaml)
 
