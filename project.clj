@@ -7,6 +7,7 @@
             :comments "same as Clojure"}
   :source-paths ["src/clojure"]
   :java-source-paths ["src/java"]
+  :javac-options ["-target" "1.6" "-source" "1.6" "-Xlint:-options"]
   :dependencies
   [[org.clojure/clojure "1.6.0"]
    [org.yaml/snakeyaml "1.13"]
