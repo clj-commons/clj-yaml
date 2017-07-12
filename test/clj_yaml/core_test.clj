@@ -167,3 +167,10 @@ the-bin: !!binary 0101")
         [first second] (parsed :items)]
     (= (keys first) '("part_no" "descrip" "price" "quantity"))
     (= (keys second)'("part_no" "descrip" "price" "quantity" "owners"))))
+
+
+(deftest nulls-are-fine
+  (testing "nil does not blow up"
+    (let [res (parse-string "- f:")]
+      (is (= [{:f nil}] res))
+      (is (str res)))))
