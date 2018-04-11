@@ -40,7 +40,7 @@ add `:keywords false` parameters to the `parse-string` function:
 
 [Clojars]: http://clojars.org/circleci/clj-yaml):
 
-    :dependencies [[circleci/clj-yaml "0.5.5"]  ...]
+    :dependencies [[circleci/clj-yaml "0.5.6"]  ...]
 
 ## Development
 
