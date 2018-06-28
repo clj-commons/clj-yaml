@@ -1,6 +1,5 @@
 lib
 classes
 *.jar
-.*
 pom.xml*
 /target
