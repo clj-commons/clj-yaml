@@ -6,5 +6,7 @@ jobs:
     steps:
       - checkout
       - run: lein deps
-      - run: lein check
+      - run:
+          name: Ensure No Reflection Warnings
+          command: "! lein check 2>&1 | grep 'Reflection warning'"
       - run: lein test

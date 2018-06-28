@@ -5,6 +5,8 @@
             :url "http://www.eclipse.org/legal/epl-v10.html"
             :distribution :repo
             :comments "same as Clojure"}
+  ;; Emit warnings on all reflection calls.
+  :global-vars {*warn-on-reflection* true}
   :source-paths ["src/clojure"]
   :java-source-paths ["src/java"]
   :javac-options ["-target" "1.6" "-source" "1.6" "-Xlint:-options"]
