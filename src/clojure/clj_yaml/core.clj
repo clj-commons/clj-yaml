@@ -2,8 +2,9 @@
   (:require [flatland.ordered.map :refer (ordered-map)]
             [flatland.ordered.set :refer (ordered-set)])
   (:import (org.yaml.snakeyaml Yaml DumperOptions DumperOptions$FlowStyle)
-           (org.yaml.snakeyaml.constructor Constructor SafeConstructor)
+           (org.yaml.snakeyaml.constructor Constructor SafeConstructor BaseConstructor)
            (org.yaml.snakeyaml.representer Representer)
+           (org.yaml.snakeyaml.error Mark)
            (clj_yaml MarkedConstructor)
            (java.util LinkedHashMap)))
 
@@ -12,15 +13,15 @@
    :block DumperOptions$FlowStyle/BLOCK
    :flow DumperOptions$FlowStyle/FLOW})
 
-(defn make-dumper-options
+(defn ^DumperOptions make-dumper-options
   [& {:keys [flow-style]}]
   (doto (DumperOptions.)
     (.setDefaultFlowStyle (flow-styles flow-style))))
 
-(defn make-yaml
+(defn ^Yaml make-yaml
   "Make a yaml encoder/decoder with some given options."
   [& {:keys [dumper-options unsafe mark]}]
-  (let [constructor
+  (let [^BaseConstructor constructor
         (if unsafe (Constructor.)
             (if mark (MarkedConstructor.) (SafeConstructor.)))
         ;; TODO: unsafe marked constructor
@@ -58,7 +59,7 @@
 (extend-protocol YAMLCodec
   clj_yaml.MarkedConstructor$Marked
   (decode [data keywords]
-    (letfn [(from-Mark [mark]
+    (letfn [(from-Mark [^Mark mark]
               {:line (.getLine mark)
                :index (.getIndex mark)
                :column (.getColumn mark)})]
@@ -112,9 +113,9 @@
 
 
 (defn generate-string [data & opts]
-  (.dump (apply make-yaml opts)
+  (.dump ^Yaml (apply make-yaml opts)
          (encode data)))
 
 (defn parse-string
-  [string & {:keys [unsafe mark keywords] :or {keywords true}}]
+  [^String string & {:keys [unsafe mark keywords] :or {keywords true}}]
   (decode (.load (make-yaml :unsafe unsafe :mark mark) string) keywords))
