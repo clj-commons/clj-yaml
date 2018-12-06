@@ -13,4 +13,4 @@
   :dependencies
   [[org.clojure/clojure "1.7.0"]
    [org.yaml/snakeyaml "1.21"]
-   [org.flatland/ordered "1.5.6"]])
+   [org.flatland/ordered "1.5.7"]])
