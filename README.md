@@ -36,11 +36,19 @@ add `:keywords false` parameters to the `parse-string` function:
 
 ## Installation
 
-`circleci/clj-yaml` is available as a Maven artifact from [Clojars][]:
+`circleci/clj-yaml` is available as a Maven artifact from [Clojars](http://clojars.org/circleci/clj-yaml).
 
-[Clojars]: http://clojars.org/circleci/clj-yaml):
+### Leiningen/Boot
 
-    :dependencies [[circleci/clj-yaml "0.5.6"]  ...]
+```clojure
+[circleci/clj-yaml "0.5.6"]
+```
+
+### Clojure CLI/`deps.edn`
+
+```clojure
+circleci/clj-yaml {:mvn/version "0.5.6"}
+```
 
 ## Development
 
