@@ -1,11 +1,11 @@
-`circleci/clj-yaml` provides [YAML](http://yaml.org) encoding and
+`clj-commons/clj-yaml` provides [YAML](http://yaml.org) encoding and
 decoding for Clojure via the [snakeyaml][] Java library.
 
 [SnakeYAML]: https://bitbucket.org/asomov/snakeyaml/
 
 
-[![Clojars Project](https://img.shields.io/clojars/v/circleci/clj-yaml.svg)](https://clojars.org/circleci/clj-yaml) [![cljdoc badge](https://cljdoc.org/badge/circleci/clj-yaml)](https://cljdoc.org/d/circleci/clj-yaml/CURRENT)
- [![CircleCI Status](https://circleci.com/gh/circleci/clj-yaml.svg?style=svg)](https://circleci.com/gh/circleci/clj-yaml)
+[![Clojars Project](https://img.shields.io/clojars/v/clj-commons/clj-yaml.svg)](https://clojars.org/clj-commons/clj-yaml) [![cljdoc badge](https://cljdoc.org/badge/clj-commons/clj-yaml)](https://cljdoc.org/d/clj-commons/clj-yaml/CURRENT)
+ [![CircleCI Status](https://circleci.com/gh/clj-commons/clj-yaml.svg?style=svg)](https://circleci.com/gh/clj-commons/clj-yaml)
 
 (This is a maintained fork of [the original][]).
 
@@ -38,23 +38,23 @@ add `:keywords false` parameters to the `parse-string` function:
 
 ## Installation
 
-`circleci/clj-yaml` is available as a Maven artifact from [Clojars](http://clojars.org/circleci/clj-yaml).
+`clj-commons/clj-yaml` is available as a Maven artifact from [Clojars](http://clojars.org/clj-commons/clj-yaml).
 
 ### Leiningen/Boot
 
 ```clojure
-[circleci/clj-yaml "0.6.0"]
+[clj-commons/clj-yaml "0.6.0"]
 ```
 
 ### Clojure CLI/`deps.edn`
 
 ```clojure
-circleci/clj-yaml {:mvn/version "0.6.0"}
+clj-commons/clj-yaml {:mvn/version "0.6.0"}
 ```
 
 ## Development
 
-    $ git clone git://github.com/circleci/clj-yaml.git
+    $ git clone git://github.com/clj-commons/clj-yaml.git
     $ lein deps
     $ lein test
     $ lein install
