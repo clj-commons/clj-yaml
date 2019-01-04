@@ -3,7 +3,9 @@ decoding for Clojure via the [snakeyaml][] Java library.
 
 [SnakeYAML]: https://bitbucket.org/asomov/snakeyaml/
 
-[![CircleCI Status](https://circleci.com/gh/circleci/clj-yaml.svg?style=svg)](https://circleci.com/gh/circleci/clj-yaml)
+
+[![Clojars Project](https://img.shields.io/clojars/v/circleci/clj-yaml.svg)](https://clojars.org/circleci/clj-yaml) [![cljdoc badge](https://cljdoc.org/badge/circleci/clj-yaml)](https://cljdoc.org/d/circleci/clj-yaml/CURRENT)
+ [![CircleCI Status](https://circleci.com/gh/circleci/clj-yaml.svg?style=svg)](https://circleci.com/gh/circleci/clj-yaml)
 
 (This is a maintained fork of [the original][]).
 
@@ -13,7 +15,7 @@ decoding for Clojure via the [snakeyaml][] Java library.
 ## Usage
 
     (require '[clj-yaml.core :as yaml])
-    
+
     (yaml/generate-string
       [{:name "John Smith", :age 33}
        {:name "Mary Smith", :age 27}])
@@ -27,7 +29,7 @@ decoding for Clojure via the [snakeyaml][] Java library.
     => ({:name "John Smith", :age 33}
         {:name "Mary Smith", :age 27})
 
-By default, keys are converted to clojure keywords.  To prevent this, 
+By default, keys are converted to clojure keywords.  To prevent this,
 add `:keywords false` parameters to the `parse-string` function:
 
     (yaml/parse-string "
@@ -41,13 +43,13 @@ add `:keywords false` parameters to the `parse-string` function:
 ### Leiningen/Boot
 
 ```clojure
-[circleci/clj-yaml "0.5.6"]
+[circleci/clj-yaml "0.6.0"]
 ```
 
 ### Clojure CLI/`deps.edn`
 
 ```clojure
-circleci/clj-yaml {:mvn/version "0.5.6"}
+circleci/clj-yaml {:mvn/version "0.6.0"}
 ```
 
 ## Development
