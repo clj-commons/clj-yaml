@@ -1,6 +1,6 @@
-(defproject circleci/clj-yaml "0.6.0"
+(defproject clj-commons/clj-yaml "0.6.0"
   :description "YAML encoding and decoding for Clojure using SnakeYAML"
-  :url "https://github.com/circleci/clj-yaml"
+  :url "https://github.com/clj-commons/clj-yaml"
   :license {:name "Eclipse Public License - v 1.0"
             :url "http://www.eclipse.org/legal/epl-v10.html"
             :distribution :repo
