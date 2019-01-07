@@ -149,6 +149,19 @@ the-bin: !!binary 0101")
     (is (= 1 (-> parsed unmark first :end :line)))
     (is (= 5 (-> parsed unmark first :end :column)))))
 
+(deftest text-wrapping
+  (let [data
+        {:description
+         "Big-picture diagram showing how our top-level systems and stakeholders interact"}]
+    (testing "long lines of text should not be wrapped"
+      ;; clj-yaml 0.5.6 used SnakeYAML 1.13 which by default did *not* split long lines.
+      ;; clj-yaml 0.6.0 upgraded to SnakeYAML 1.23 which by default *did* split long lines.
+      ;; This test ensures that generate-string uses the older behavior by default, for the sake
+      ;; of stability, i.e. backwards compatibility.
+      (is
+        (= "{description: Big-picture diagram showing how our top-level systems and stakeholders interact}\n"
+           (generate-string data))))))
+
 (deftest dump-opts
   (let [data [{:age 33 :name "jon"} {:age 44 :name "boo"}]]
     (is (= "- age: 33\n  name: jon\n- age: 44\n  name: boo\n"
