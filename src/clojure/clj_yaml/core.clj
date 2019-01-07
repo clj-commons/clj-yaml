@@ -13,9 +13,18 @@
    :block DumperOptions$FlowStyle/BLOCK
    :flow DumperOptions$FlowStyle/FLOW})
 
+(defn ^DumperOptions default-dumper-options
+  "clj-yaml 0.5.6 used SnakeYAML 1.13 which by default did *not* split long
+  lines. clj-yaml 0.6.0 upgraded to SnakeYAML 1.23 which by default *did* split
+  long lines. This ensures that generate-string uses the older behavior by
+  default, for the sake of stability, i.e. backwards compatibility."
+  []
+  (doto (DumperOptions.)
+    (.setSplitLines false)))
+
 (defn ^DumperOptions make-dumper-options
   [& {:keys [flow-style]}]
-  (doto (DumperOptions.)
+  (doto (default-dumper-options)
     (.setDefaultFlowStyle (flow-styles flow-style))))
 
 (defn ^Yaml make-yaml
@@ -27,7 +36,7 @@
         ;; TODO: unsafe marked constructor
         dumper (if dumper-options
                  (make-dumper-options :flow-style (:flow-style dumper-options))
-                 (DumperOptions.))]
+                 (default-dumper-options))]
     (Yaml. constructor (Representer.) dumper)))
 
 (defrecord Marked
