@@ -10,7 +10,6 @@
   :source-paths ["src/clojure"]
   :java-source-paths ["src/java"]
   :javac-options ["-target" "1.6" "-source" "1.6" "-Xlint:-options"]
-  :dependencies
-  [[org.clojure/clojure "1.7.0"]
-   [org.yaml/snakeyaml "1.23"]
-   [org.flatland/ordered "1.5.7"]])
+  :plugins [[lein-tools-deps "0.4.3"]]
+  :middleware [lein-tools-deps.plugin/resolve-dependencies-with-deps-edn]
+  :lein-tools-deps/config {:config-files [:project]})

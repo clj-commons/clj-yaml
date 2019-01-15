@@ -1,0 +1,4 @@
+{:deps
+ {org.clojure/clojure    {:mvn/version "1.7.0"}
+  org.yaml/snakeyaml     {:mvn/version "1.23"}
+  org.flatland/ordered   {:mvn/version "1.5.7"}}}
