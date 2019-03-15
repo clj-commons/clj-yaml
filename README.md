@@ -43,13 +43,13 @@ add `:keywords false` parameters to the `parse-string` function:
 ### Leiningen/Boot
 
 ```clojure
-[clj-commons/clj-yaml "0.6.0"]
+[clj-commons/clj-yaml "0.7.0"]
 ```
 
 ### Clojure CLI/`deps.edn`
 
 ```clojure
-clj-commons/clj-yaml {:mvn/version "0.6.0"}
+clj-commons/clj-yaml {:mvn/version "0.7.0"}
 ```
 
 ## Development
