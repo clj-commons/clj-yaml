@@ -188,3 +188,14 @@ the-bin: !!binary 0101")
     (let [res (parse-string "- f:")]
       (is (= [{:f nil}] res))
       (is (str res)))))
+
+(deftest emoji-can-be-parsed
+  (let [yaml "{emoji: 💣}"]
+    (is (= yaml (-> yaml
+                    (generate-string)
+                    (parse-string)
+                    (string/trim)))))
+
+  (testing "emoji in comments are OK too"
+    (let [yaml "# 💣 emoji in a comment\n42"]
+      (is (= 42 (parse-string yaml))))))
