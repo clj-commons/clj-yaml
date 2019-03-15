@@ -1,6 +1,7 @@
 (ns clj-yaml.core-test
-  (:use clojure.test)
-  (:use clj-yaml.core)
+  (:require [clojure.test :refer (deftest testing is)]
+            [clojure.string :as string]
+            [clj-yaml.core :refer :all])
   (:import [java.util Date]))
 
 (def nested-hash-yaml
@@ -173,7 +174,7 @@ the-bin: !!binary 0101")
   (testing "clj-time parses timestamps with more than millisecond precision correctly."
     (let [timestamp "2001-11-23 15:02:31.123456 -04:00"
           expected 1006542151123]
-      (is (= (.getTime (parse-string timestamp)) expected)))))
+      (is (= (.getTime ^Date (parse-string timestamp)) expected)))))
 
 (deftest maps-are-ordered
   (let [parsed (parse-string hashes-lists-yaml)
