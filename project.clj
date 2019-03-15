@@ -12,5 +12,5 @@
   :javac-options ["-target" "1.6" "-source" "1.6" "-Xlint:-options"]
   :dependencies
   [[org.clojure/clojure "1.7.0"]
-   [org.yaml/snakeyaml "1.23"]
+   [org.yaml/snakeyaml "1.24"]
    [org.flatland/ordered "1.5.7"]])

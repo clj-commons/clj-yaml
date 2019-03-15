@@ -1,6 +1,7 @@
 (ns clj-yaml.core-test
-  (:use clojure.test)
-  (:use clj-yaml.core)
+  (:require [clojure.test :refer (deftest testing is)]
+            [clojure.string :as string]
+            [clj-yaml.core :refer :all])
   (:import [java.util Date]))
 
 (def nested-hash-yaml
@@ -173,7 +174,7 @@ the-bin: !!binary 0101")
   (testing "clj-time parses timestamps with more than millisecond precision correctly."
     (let [timestamp "2001-11-23 15:02:31.123456 -04:00"
           expected 1006542151123]
-      (is (= (.getTime (parse-string timestamp)) expected)))))
+      (is (= (.getTime ^Date (parse-string timestamp)) expected)))))
 
 (deftest maps-are-ordered
   (let [parsed (parse-string hashes-lists-yaml)
@@ -187,3 +188,14 @@ the-bin: !!binary 0101")
     (let [res (parse-string "- f:")]
       (is (= [{:f nil}] res))
       (is (str res)))))
+
+(deftest emoji-can-be-parsed
+  (let [yaml "{emoji: 💣}"]
+    (is (= yaml (-> yaml
+                    (generate-string)
+                    (parse-string)
+                    (string/trim)))))
+
+  (testing "emoji in comments are OK too"
+    (let [yaml "# 💣 emoji in a comment\n42"]
+      (is (= 42 (parse-string yaml))))))
