@@ -1,7 +1,7 @@
 (ns clj-yaml.core-test
   (:require [clojure.test :refer (deftest testing is)]
             [clojure.string :as string]
-            [clj-yaml.core :refer :all])
+            [clj-yaml.core :refer [parse-string unmark generate-string]])
   (:import [java.util Date]))
 
 (def nested-hash-yaml
@@ -178,9 +178,9 @@ the-bin: !!binary 0101")
 
 (deftest maps-are-ordered
   (let [parsed (parse-string hashes-lists-yaml)
-        [first second] (parsed :items)]
-    (= (keys first) '("part_no" "descrip" "price" "quantity"))
-    (= (keys second)'("part_no" "descrip" "price" "quantity" "owners"))))
+        [first second] (:items parsed)]
+    (is (= (keys first) '(:part_no :descrip :price :quantity)))
+    (is (= (keys second)'(:part_no :descrip :price :quantity :owners)))))
 
 
 (deftest nulls-are-fine
