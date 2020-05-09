@@ -14,27 +14,38 @@ decoding for Clojure via the [snakeyaml][] Java library.
 
 ## Usage
 
-    (require '[clj-yaml.core :as yaml])
+```clojure
+(require '[clj-yaml.core :as yaml])
 
-    (yaml/generate-string
-      [{:name "John Smith", :age 33}
-       {:name "Mary Smith", :age 27}])
-    "- {name: John Smith, age: 33}\n- {name: Mary Smith, age: 27}\n"
+(yaml/generate-string
+  [{:name "John Smith", :age 33}
+   {:name "Mary Smith", :age 27}])
+"- {name: John Smith, age: 33}\n- {name: Mary Smith, age: 27}\n"
 
-    (yaml/parse-string "
-    - {name: John Smith, age: 33}
-    - name: Mary Smith
-      age: 27
-    ")
-    => ({:name "John Smith", :age 33}
-        {:name "Mary Smith", :age 27})
+(yaml/parse-string "
+- {name: John Smith, age: 33}
+- name: Mary Smith
+  age: 27
+")
+=> ({:name "John Smith", :age 33}
+    {:name "Mary Smith", :age 27})
+```
 
 By default, keys are converted to clojure keywords.  To prevent this,
 add `:keywords false` parameters to the `parse-string` function:
 
-    (yaml/parse-string "
-    - {name: John Smith}
-    " :keywords false)
+```clojure
+(yaml/parse-string "
+- {name: John Smith}
+" :keywords false)
+```
+
+Different flow styles (`:auto, `:block`, `:flow`) allow customization of how YAML is rendered:
+
+
+```clojure
+(yaml/generate-string some-data :dumper-options {:flow-style :block})
+```
 
 ## Installation
 
