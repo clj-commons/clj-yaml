@@ -40,7 +40,7 @@ add `:keywords false` parameters to the `parse-string` function:
 " :keywords false)
 ```
 
-Different flow styles (`:auto, `:block`, `:flow`) allow customization of how YAML is rendered:
+Different flow styles (`:auto`, `:block`, `:flow`) allow customization of how YAML is rendered:
 
 
 ```clojure
