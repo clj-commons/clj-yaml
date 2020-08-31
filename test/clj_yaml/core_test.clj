@@ -3,7 +3,8 @@
             [clojure.string :as string]
             [clj-yaml.core :refer [parse-string unmark generate-string]])
   (:import [java.util Date]
-           (org.yaml.snakeyaml.error YAMLException)))
+           (org.yaml.snakeyaml.error YAMLException)
+           (org.yaml.snakeyaml.constructor DuplicateKeyException)))
 
 (def nested-hash-yaml
   "root:\n  childa: a\n  childb: \n    grandchild: \n      greatgrandchild: bar\n")
@@ -220,3 +221,12 @@ the-bin: !!binary 0101")
 (deftest allow-recursive-works
   (is (thrown-with-msg? YAMLException #"Recursive" (parse-string recursive-yaml)))
   (is (parse-string recursive-yaml :allow-recursive-keys true)))
+
+(def duplicate-keys-yaml "
+a: 1
+a: 1
+")
+
+(deftest allow-recursive-works
+  (is (parse-string duplicate-keys-yaml))
+  (is (thrown-with-msg? DuplicateKeyException #"found duplicate key" (parse-string duplicate-keys-yaml :allow-duplicate-keys false))))
