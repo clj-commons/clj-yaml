@@ -1,7 +1,7 @@
 (ns clj-yaml.core
   (:require [flatland.ordered.map :refer (ordered-map)]
             [flatland.ordered.set :refer (ordered-set)])
-  (:import (org.yaml.snakeyaml Yaml DumperOptions DumperOptions$FlowStyle)
+  (:import (org.yaml.snakeyaml Yaml DumperOptions DumperOptions$FlowStyle LoaderOptions)
            (org.yaml.snakeyaml.constructor Constructor SafeConstructor BaseConstructor)
            (org.yaml.snakeyaml.representer Representer)
            (org.yaml.snakeyaml.error Mark)
@@ -27,17 +27,37 @@
   (doto (default-dumper-options)
     (.setDefaultFlowStyle (flow-styles flow-style))))
 
+(defn ^LoaderOptions default-loader-options
+  []
+  (LoaderOptions.))
+
+(defn ^LoaderOptions make-loader-options
+  [& {:keys [max-aliases-for-collections allow-recursive-keys]}]
+  (let [loader (default-loader-options)]
+    (when max-aliases-for-collections
+      (.setMaxAliasesForCollections loader max-aliases-for-collections))
+    (when allow-recursive-keys
+      (.setAllowRecursiveKeys loader allow-recursive-keys))
+    loader))
+
 (defn ^Yaml make-yaml
   "Make a yaml encoder/decoder with some given options."
-  [& {:keys [dumper-options unsafe mark]}]
-  (let [^BaseConstructor constructor
-        (if unsafe (Constructor.)
-            (if mark (MarkedConstructor.) (SafeConstructor.)))
+  [& {:keys [dumper-options unsafe mark max-aliases-for-collections allow-recursive-keys]}]
+  (let [loader (make-loader-options :max-aliases-for-collections max-aliases-for-collections
+                                    :allow-recursive-keys allow-recursive-keys)
+        ^BaseConstructor constructor
+        (if unsafe (Constructor. loader)
+            (if mark
+              ;; construct2ndStep isn't implemented by MarkedConstructor,
+              ;; causing an exception to be thrown before loader options are
+              ;; used
+              (MarkedConstructor.)
+              (SafeConstructor. loader)))
         ;; TODO: unsafe marked constructor
         dumper (if dumper-options
                  (make-dumper-options :flow-style (:flow-style dumper-options))
                  (default-dumper-options))]
-    (Yaml. constructor (Representer.) dumper)))
+    (Yaml. constructor (Representer.) dumper loader)))
 
 (defrecord Marked
   [start end unmark])
@@ -126,5 +146,9 @@
          (encode data)))
 
 (defn parse-string
-  [^String string & {:keys [unsafe mark keywords] :or {keywords true}}]
-  (decode (.load (make-yaml :unsafe unsafe :mark mark) string) keywords))
+  [^String string & {:keys [unsafe mark keywords max-aliases-for-collections allow-recursive-keys] :or {keywords true}}]
+  (decode (.load (make-yaml :unsafe unsafe
+                            :mark mark
+                            :max-aliases-for-collections max-aliases-for-collections
+                            :allow-recursive-keys allow-recursive-keys)
+                 string) keywords))
