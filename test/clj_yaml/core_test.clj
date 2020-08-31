@@ -2,7 +2,8 @@
   (:require [clojure.test :refer (deftest testing is)]
             [clojure.string :as string]
             [clj-yaml.core :refer [parse-string unmark generate-string]])
-  (:import [java.util Date]))
+  (:import [java.util Date]
+           (org.yaml.snakeyaml.error YAMLException)))
 
 (def nested-hash-yaml
   "root:\n  childa: a\n  childb: \n    grandchild: \n      greatgrandchild: bar\n")
@@ -199,3 +200,23 @@ the-bin: !!binary 0101")
   (testing "emoji in comments are OK too"
     (let [yaml "# 💣 emoji in a comment\n42"]
       (is (= 42 (parse-string yaml))))))
+
+(def too-many-aliases
+  (->> (range 51)
+       (map #(str "b" % ": *a"))
+       (cons "a: &a [\"a\",\"a\"]")
+       (string/join "\n")))
+
+(deftest max-aliases-for-collections-works
+  (is (thrown-with-msg? YAMLException #"Number of aliases" (parse-string too-many-aliases)))
+  (is (parse-string too-many-aliases :max-aliases-for-collections 51)))
+
+(def recursive-yaml "
+---
+&A
+- *A: *A
+")
+
+(deftest allow-recursive-works
+  (is (thrown-with-msg? YAMLException #"Recursive" (parse-string recursive-yaml)))
+  (is (parse-string recursive-yaml :allow-recursive-keys true)))
