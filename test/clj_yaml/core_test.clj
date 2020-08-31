@@ -199,3 +199,12 @@ the-bin: !!binary 0101")
   (testing "emoji in comments are OK too"
     (let [yaml "# 💣 emoji in a comment\n42"]
       (is (= 42 (parse-string yaml))))))
+
+(def too-many-aliases
+  (->> (range 51)
+       (map #(str "b" % ": *a"))
+       (cons "a: &a [\"a\",\"a\"]")
+       (string/join "\n")))
+
+(deftest too-many-aliases-works
+  (is (parse-string too-many-aliases)))
