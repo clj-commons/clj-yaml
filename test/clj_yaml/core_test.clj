@@ -208,7 +208,7 @@ the-bin: !!binary 0101")
        (string/join "\n")))
 
 (deftest max-aliases-for-collections-works
-  (is (thrown? YAMLException (parse-string too-many-aliases)))
+  (is (thrown-with-msg? YAMLException #"Number of aliases" (parse-string too-many-aliases)))
   (is (parse-string too-many-aliases :max-aliases-for-collections 51)))
 
 (def recursive-yaml "
@@ -218,5 +218,5 @@ the-bin: !!binary 0101")
 ")
 
 (deftest allow-recursive-works
-  (is (thrown? YAMLException (parse-string recursive-yaml)))
+  (is (thrown-with-msg? YAMLException #"Recursive" (parse-string recursive-yaml)))
   (is (parse-string recursive-yaml :allow-recursive-keys true)))
