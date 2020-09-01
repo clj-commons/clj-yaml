@@ -32,19 +32,22 @@
   (LoaderOptions.))
 
 (defn ^LoaderOptions make-loader-options
-  [& {:keys [max-aliases-for-collections allow-recursive-keys]}]
+  [& {:keys [max-aliases-for-collections allow-recursive-keys allow-duplicate-keys]}]
   (let [loader (default-loader-options)]
     (when max-aliases-for-collections
       (.setMaxAliasesForCollections loader max-aliases-for-collections))
     (when allow-recursive-keys
       (.setAllowRecursiveKeys loader allow-recursive-keys))
+    (when (instance? Boolean allow-duplicate-keys)
+      (.setAllowDuplicateKeys loader allow-duplicate-keys))
     loader))
 
 (defn ^Yaml make-yaml
   "Make a yaml encoder/decoder with some given options."
-  [& {:keys [dumper-options unsafe mark max-aliases-for-collections allow-recursive-keys]}]
+  [& {:keys [dumper-options unsafe mark max-aliases-for-collections allow-recursive-keys allow-duplicate-keys]}]
   (let [loader (make-loader-options :max-aliases-for-collections max-aliases-for-collections
-                                    :allow-recursive-keys allow-recursive-keys)
+                                    :allow-recursive-keys allow-recursive-keys
+                                    :allow-duplicate-keys allow-duplicate-keys)
         ^BaseConstructor constructor
         (if unsafe (Constructor. loader)
             (if mark
@@ -146,9 +149,10 @@
          (encode data)))
 
 (defn parse-string
-  [^String string & {:keys [unsafe mark keywords max-aliases-for-collections allow-recursive-keys] :or {keywords true}}]
+  [^String string & {:keys [unsafe mark keywords max-aliases-for-collections allow-recursive-keys allow-duplicate-keys] :or {keywords true}}]
   (decode (.load (make-yaml :unsafe unsafe
                             :mark mark
                             :max-aliases-for-collections max-aliases-for-collections
-                            :allow-recursive-keys allow-recursive-keys)
+                            :allow-recursive-keys allow-recursive-keys
+                            :allow-duplicate-keys allow-duplicate-keys)
                  string) keywords))
