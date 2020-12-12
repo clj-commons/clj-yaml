@@ -6,6 +6,7 @@
            (org.yaml.snakeyaml.representer Representer)
            (org.yaml.snakeyaml.error Mark)
            (clj_yaml MarkedConstructor)
+           (java.io InputStream)
            (java.util LinkedHashMap)))
 
 (def flow-styles
@@ -156,3 +157,18 @@
                             :allow-recursive-keys allow-recursive-keys
                             :allow-duplicate-keys allow-duplicate-keys)
                  string) keywords))
+
+;; From https://github.com/metosin/muuntaja/pull/94/files
+(defn generate-stream
+  "Dump the content of data as yaml into writer."
+  [writer data & opts]
+  (.dump ^Yaml (apply make-yaml opts) (encode data) writer))
+
+(defn parse-stream
+  [^InputStream data & {:keys [unsafe mark keywords max-aliases-for-collections allow-recursive-keys allow-duplicate-keys] :or {keywords true}}]
+  (decode (.load (make-yaml :unsafe unsafe
+                            :mark mark
+                            :max-aliases-for-collections max-aliases-for-collections
+                            :allow-recursive-keys allow-recursive-keys
+                            :allow-duplicate-keys allow-duplicate-keys)
+                 data) keywords))
