@@ -114,7 +114,8 @@
 
   clojure.lang.Keyword
   (encode [data]
-    (name data))
+    ;; using clojure.core/name would drop the namespace
+    (subs (str data) 1))
 
   java.util.LinkedHashMap
   (decode [data keywords]
