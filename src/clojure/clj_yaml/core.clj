@@ -63,7 +63,7 @@
     (Yaml. constructor (Representer.) dumper loader)))
 
 (defrecord Marked
-           [start end unmark])
+  [start end unmark])
 
 (defn mark
   "Mark some data with start and end positions."
@@ -134,7 +134,7 @@
 
   java.util.ArrayList
   (decode [data keywords]
-    (mapv #(decode % keywords) data))
+    (map #(decode % keywords) data))
 
   Object
   (encode [data] data)
@@ -143,6 +143,7 @@
   nil
   (encode [data] data)
   (decode [data keywords] data))
+
 
 (defn generate-string [data & opts]
   (.dump ^Yaml (apply make-yaml opts)
