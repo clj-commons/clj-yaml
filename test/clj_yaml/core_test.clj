@@ -84,6 +84,9 @@ the-bin: !!binary 0101")
     (is (= "North by Northwest"       (nth parsed 1)))
     (is (= "The Man Who Wasn't There" (nth parsed 2)))))
 
+(deftest parsed-list-is-a-vector
+  (is (vector? (parse-string list-yaml))))
+
 (deftest parse-nested-hash-and-list
   (let [parsed (parse-string hashes-lists-yaml)]
     (is (= "A4786"  ((first (parsed :items)) :part_no)))
