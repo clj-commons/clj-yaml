@@ -6,6 +6,11 @@
             :distribution :repo
             :comments "Same as Clojure"}
   ;; Emit warnings on all reflection calls.
+  :deploy-repositories [["clojars" {:url "https://repo.clojars.org"
+                                    :username :env/clojars_username
+                                    :password :env/clojars_password
+                                    :sign-releases true}]]
+
   :global-vars {*warn-on-reflection* true}
   :source-paths ["src/clojure"]
   :java-source-paths ["src/java"]
