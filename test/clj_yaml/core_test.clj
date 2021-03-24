@@ -231,9 +231,20 @@ a: 1
 a: 1
 ")
 
-(deftest allow-recursive-works
+(deftest duplicate-keys-works
   (is (parse-string duplicate-keys-yaml))
   (is (thrown-with-msg? DuplicateKeyException #"found duplicate key" (parse-string duplicate-keys-yaml :allow-duplicate-keys false))))
+
+(def namespaced-keys-yaml "
+foo/bar: 42
+")
+
+(deftest namespaced-keys-works
+  (testing "namespaced keys in yaml can round trip through parse and generate"
+    (is (= {:foo/bar 42} (-> namespaced-keys-yaml
+                             parse-string
+                             generate-string
+                             parse-string)))))
 
 (defn to-bytes
   "Converts a string to a byte array."
