@@ -292,4 +292,9 @@ foo/bar: 42
         (parse-stream eof-reader)
         (is false)
         (catch org.yaml.snakeyaml.error.YAMLException e
-          (is (= java.io.EOFException (class (.getCause e)))))))))
+          (is (= java.io.EOFException (class (.getCause e))))))))
+
+  (testing "partial input stream throws ScannerException"
+    (is (thrown? org.yaml.snakeyaml.scanner.ScannerException
+                 (parse-stream (io/reader (ByteArrayInputStream. (to-bytes "{\"a")))
+                               :eof "my-val")))))

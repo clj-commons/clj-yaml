@@ -167,7 +167,7 @@
 (defn parse-stream
   [^java.io.Reader reader & {:keys [keywords eof] :or {keywords true} :as opts}]
   (letfn [(parse []
-            (decode (.load ^Yaml (apply make-yaml (flatten (seq opts)))
+            (decode (.load ^Yaml (apply make-yaml (into [] cat opts))
                            reader) keywords))]
     (if (nil? eof)
       (parse)
