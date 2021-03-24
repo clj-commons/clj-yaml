@@ -165,10 +165,15 @@
   (.dump ^Yaml (apply make-yaml opts) (encode data) writer))
 
 (defn parse-stream
-  [^InputStream data & {:keys [unsafe mark keywords max-aliases-for-collections allow-recursive-keys allow-duplicate-keys] :or {keywords true}}]
-  (decode (.load (make-yaml :unsafe unsafe
-                            :mark mark
-                            :max-aliases-for-collections max-aliases-for-collections
-                            :allow-recursive-keys allow-recursive-keys
-                            :allow-duplicate-keys allow-duplicate-keys)
-                 data) keywords))
+  [^java.io.Reader reader & {:keys [keywords eof] :or {keywords true} :as opts}]
+  (letfn [(parse []
+            (decode (.load ^Yaml (apply make-yaml (flatten (seq opts)))
+                           reader) keywords))]
+    (if (nil? eof)
+      (parse)
+      (try
+        (parse)
+        (catch org.yaml.snakeyaml.error.YAMLException e
+          (if (instance? java.io.EOFException (.getCause e))
+            eof
+            (throw e)))))))

@@ -1,6 +1,7 @@
 (ns clj-yaml.core-test
   (:require [clojure.test :refer (deftest testing is)]
             [clojure.string :as string]
+            [clojure.java.io :as io]
             [clj-yaml.core :refer [parse-string unmark generate-string
                                    parse-stream generate-stream]])
   (:import [java.util Date]
@@ -243,14 +244,14 @@ a: 1
   "Testing roundtrip of string and stream parser, and checking their equivalence."
   [data-as-string]
   (let [data (parse-string data-as-string)
-        data-stream (parse-stream (ByteArrayInputStream. (to-bytes data-as-string)))
+        data-stream (parse-stream (io/reader (ByteArrayInputStream. (to-bytes data-as-string))))
         output-stream (ByteArrayOutputStream.)
         writer (OutputStreamWriter. output-stream)
         _ (generate-stream writer data)
         reader (ByteArrayInputStream. (.toByteArray output-stream))]
     (= data ;; string -> edn
        (parse-string (generate-string data)) ;; edn -> string -> edn
-       (parse-stream reader) ;; edn -> stream -> edn
+       (parse-stream (io/reader reader)) ;; edn -> stream -> edn
        ;; stream -> edn
        data-stream)))
 
@@ -263,3 +264,21 @@ a: 1
     (is (roundtrip list-of-hashes-yaml))
     (is (roundtrip list-yaml))
     (is (roundtrip nested-hash-yaml))))
+
+(deftest eof
+  (let [eof-reader
+        (proxy [java.io.Reader] []
+          (read
+            [_cbuf _off _len]
+            (throw (java.io.EOFException. "eof"))))]
+
+    (testing "returns value when set"
+      (is (= "my-val" (parse-stream eof-reader :eof "my-val"))))
+
+    (testing "throws when nil"
+      ;; can't use thrown? as the assertion is on the cause
+      (try
+        (parse-stream eof-reader)
+        (is false)
+        (catch org.yaml.snakeyaml.error.YAMLException e
+          (is (= java.io.EOFException (class (.getCause e)))))))))
