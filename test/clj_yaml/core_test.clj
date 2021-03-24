@@ -276,25 +276,3 @@ foo/bar: 42
     (is (roundtrip list-yaml))
     (is (roundtrip nested-hash-yaml))))
 
-(deftest eof
-  (let [eof-reader
-        (proxy [java.io.Reader] []
-          (read
-            [_cbuf _off _len]
-            (throw (java.io.EOFException. "eof"))))]
-
-    (testing "returns value when set"
-      (is (= "my-val" (parse-stream eof-reader :eof "my-val"))))
-
-    (testing "throws when nil"
-      ;; can't use thrown? as the assertion is on the cause
-      (try
-        (parse-stream eof-reader)
-        (is false)
-        (catch org.yaml.snakeyaml.error.YAMLException e
-          (is (= java.io.EOFException (class (.getCause e))))))))
-
-  (testing "partial input stream throws ScannerException"
-    (is (thrown? org.yaml.snakeyaml.scanner.ScannerException
-                 (parse-stream (io/reader (ByteArrayInputStream. (to-bytes "{\"a")))
-                               :eof "my-val")))))

@@ -165,15 +165,6 @@
   (.dump ^Yaml (apply make-yaml opts) (encode data) writer))
 
 (defn parse-stream
-  [^java.io.Reader reader & {:keys [keywords eof] :or {keywords true} :as opts}]
-  (letfn [(parse []
-            (decode (.load ^Yaml (apply make-yaml (into [] cat opts))
-                           reader) keywords))]
-    (if (nil? eof)
-      (parse)
-      (try
-        (parse)
-        (catch org.yaml.snakeyaml.error.YAMLException e
-          (if (instance? java.io.EOFException (.getCause e))
-            eof
-            (throw e)))))))
+  [^java.io.Reader reader & {:keys [keywords] :or {keywords true} :as opts}]
+  (decode (.load ^Yaml (apply make-yaml (into [] cat opts))
+                 reader) keywords))
