@@ -6,7 +6,6 @@
            (org.yaml.snakeyaml.representer Representer)
            (org.yaml.snakeyaml.error Mark)
            (clj_yaml MarkedConstructor)
-           (java.io InputStream)
            (java.util LinkedHashMap)))
 
 (def flow-styles
