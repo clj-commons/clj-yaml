@@ -157,3 +157,14 @@
                             :allow-recursive-keys allow-recursive-keys
                             :allow-duplicate-keys allow-duplicate-keys)
                  string) keywords))
+
+;; From https://github.com/metosin/muuntaja/pull/94/files
+(defn generate-stream
+  "Dump the content of data as yaml into writer."
+  [writer data & opts]
+  (.dump ^Yaml (apply make-yaml opts) (encode data) writer))
+
+(defn parse-stream
+  [^java.io.Reader reader & {:keys [keywords] :or {keywords true} :as opts}]
+  (decode (.load ^Yaml (apply make-yaml (into [] cat opts))
+                 reader) keywords))
