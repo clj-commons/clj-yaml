@@ -144,19 +144,28 @@
   (encode [data] data)
   (decode [data keywords] data))
 
+(defn- load-one-or-all
+  "Load a single doc or all docs from the input, relying on the polymorphism
+  of Yaml.load/Yaml.loadAll to dispatch between a string or a reader"
+  [load-all? keywords ^Yaml yaml input]
+  (if load-all?
+    (map #(decode % keywords) (.loadAll yaml input))
+    (decode (.load yaml input) keywords)))
 
 (defn generate-string [data & opts]
   (.dump ^Yaml (apply make-yaml opts)
          (encode data)))
 
 (defn parse-string
-  [^String string & {:keys [unsafe mark keywords max-aliases-for-collections allow-recursive-keys allow-duplicate-keys] :or {keywords true}}]
-  (decode (.load (make-yaml :unsafe unsafe
-                            :mark mark
-                            :max-aliases-for-collections max-aliases-for-collections
-                            :allow-recursive-keys allow-recursive-keys
-                            :allow-duplicate-keys allow-duplicate-keys)
-                 string) keywords))
+  [^String string & {:keys [unsafe mark keywords max-aliases-for-collections allow-recursive-keys allow-duplicate-keys load-all?] :or {keywords true}}]
+  (load-one-or-all load-all?
+                   keywords
+                   (make-yaml :unsafe unsafe
+                              :mark mark
+                              :max-aliases-for-collections max-aliases-for-collections
+                              :allow-recursive-keys allow-recursive-keys
+                              :allow-duplicate-keys allow-duplicate-keys)
+                   string))
 
 ;; From https://github.com/metosin/muuntaja/pull/94/files
 (defn generate-stream
@@ -165,6 +174,8 @@
   (.dump ^Yaml (apply make-yaml opts) (encode data) writer))
 
 (defn parse-stream
-  [^java.io.Reader reader & {:keys [keywords] :or {keywords true} :as opts}]
-  (decode (.load ^Yaml (apply make-yaml (into [] cat opts))
-                 reader) keywords))
+  [^java.io.Reader reader & {:keys [keywords load-all?] :or {keywords true} :as opts}]
+  (load-one-or-all load-all?
+                   keywords
+                   ^Yaml (apply make-yaml (into [] cat opts))
+                   reader))
