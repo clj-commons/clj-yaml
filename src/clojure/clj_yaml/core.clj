@@ -149,14 +149,20 @@
   (.dump ^Yaml (apply make-yaml opts)
          (encode data)))
 
+(defn- load-str [^Yaml yaml ^String input load-all? keywords]
+  (if load-all?
+    (map #(decode % keywords) (.loadAll yaml input))
+    (decode (.load yaml input) keywords)))
+
 (defn parse-string
-  [^String string & {:keys [unsafe mark keywords max-aliases-for-collections allow-recursive-keys allow-duplicate-keys] :or {keywords true}}]
-  (decode (.load (make-yaml :unsafe unsafe
-                            :mark mark
-                            :max-aliases-for-collections max-aliases-for-collections
-                            :allow-recursive-keys allow-recursive-keys
-                            :allow-duplicate-keys allow-duplicate-keys)
-                 string) keywords))
+  [^String string & {:keys [unsafe mark keywords max-aliases-for-collections allow-recursive-keys allow-duplicate-keys load-all?] :or {keywords true}}]
+  (load-str (make-yaml :unsafe unsafe
+                       :mark mark
+                       :max-aliases-for-collections max-aliases-for-collections
+                       :allow-recursive-keys allow-recursive-keys
+                       :allow-duplicate-keys allow-duplicate-keys)
+            string
+            load-all? keywords))
 
 ;; From https://github.com/metosin/muuntaja/pull/94/files
 (defn generate-stream
@@ -164,7 +170,13 @@
   [writer data & opts]
   (.dump ^Yaml (apply make-yaml opts) (encode data) writer))
 
+(defn- load-stream [^Yaml yaml ^java.io.Reader input load-all? keywords]
+  (if load-all?
+    (map #(decode % keywords) (.loadAll yaml input))
+    (decode (.load yaml input) keywords)))
+
 (defn parse-stream
-  [^java.io.Reader reader & {:keys [keywords] :or {keywords true} :as opts}]
-  (decode (.load ^Yaml (apply make-yaml (into [] cat opts))
-                 reader) keywords))
+  [^java.io.Reader reader & {:keys [keywords load-all?] :or {keywords true} :as opts}]
+  (load-stream (apply make-yaml (into [] cat opts))
+               reader
+               load-all? keywords))
