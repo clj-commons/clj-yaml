@@ -52,17 +52,19 @@ Use the `:indent` (default: 2) and `:indicator-indent` (default: 0) options to a
 
 ```clojure
 (yaml/generate-string some-data :dumper-options {:indent 6
-                                                 :indicator-indend 3})
+                                                 :indicator-indent 3
+                                                 :flow-style :block})
 =>
 todo:
-   -    name: Fix issue
-        responsible:
-                name: Rita
+   -  name: Fix issue
+      responsible:
+            name: Rita
 ```
 `:indent` must always be larger than `:indicator-indent`. If only 1 higher, the indicator will be on a separate line:
 ```clojure
 (yaml/generate-string some-data :dumper-options {:indent 2
-                                                 :indicator-indend 1})
+                                                 :indicator-indent 1
+                                                 :flow-style :block})
 =>
 todo:
  -
