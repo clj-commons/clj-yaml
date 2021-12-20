@@ -23,9 +23,15 @@
     (.setSplitLines false)))
 
 (defn ^DumperOptions make-dumper-options
-  [& {:keys [flow-style]}]
-  (doto (default-dumper-options)
-    (.setDefaultFlowStyle (flow-styles flow-style))))
+  [{:keys [flow-style indent indicator-indent]}]
+  (let [dumper (default-dumper-options)]
+    (when flow-style
+      (.setDefaultFlowStyle dumper (flow-styles flow-style)))
+    (when indent
+      (.setIndent dumper indent))
+    (when indicator-indent
+      (.setIndicatorIndent dumper indicator-indent))
+    dumper))
 
 (defn ^LoaderOptions default-loader-options
   []
@@ -57,9 +63,7 @@
               (MarkedConstructor.)
               (SafeConstructor. loader)))
         ;; TODO: unsafe marked constructor
-        dumper (if dumper-options
-                 (make-dumper-options :flow-style (:flow-style dumper-options))
-                 (default-dumper-options))]
+        dumper (make-dumper-options dumper-options)]
     (Yaml. constructor (Representer.) dumper loader)))
 
 (defrecord Marked
