@@ -33,7 +33,7 @@ items:
 ")
 
 (def inline-list-yaml
-"--- # Shopping list
+  "--- # Shopping list
 [milk, pumpkin pie, eggs, juice]
 ")
 
@@ -166,8 +166,8 @@ the-bin: !!binary 0101")
       ;; This test ensures that generate-string uses the older behavior by default, for the sake
       ;; of stability, i.e. backwards compatibility.
       (is
-        (= "{description: Big-picture diagram showing how our top-level systems and stakeholders interact}\n"
-           (generate-string data))))))
+       (= "{description: Big-picture diagram showing how our top-level systems and stakeholders interact}\n"
+          (generate-string data))))))
 
 (deftest dump-opts
   (let [data [{:age 33 :name "jon"} {:age 44 :name "boo"}]]
@@ -186,7 +186,7 @@ the-bin: !!binary 0101")
   (let [parsed (parse-string hashes-lists-yaml)
         [first second] (:items parsed)]
     (is (= (keys first) '(:part_no :descrip :price :quantity)))
-    (is (= (keys second)'(:part_no :descrip :price :quantity :owners)))))
+    (is (= (keys second) '(:part_no :descrip :price :quantity :owners)))))
 
 
 (deftest nulls-are-fine
@@ -276,3 +276,18 @@ foo/bar: 42
     (is (roundtrip list-yaml))
     (is (roundtrip nested-hash-yaml))))
 
+(def indented-yaml "todo:
+  -  name: Fix issue
+     responsible:
+          name: Rita
+")
+
+(deftest indentation-test
+  (testing "Can use indicator-indent and indent to achieve desired indentation"
+    (is (not= indented-yaml (generate-string (parse-string indented-yaml)
+                                             :dumper-options {:flow-style :block})))
+    (is (= indented-yaml
+           (generate-string (parse-string indented-yaml)
+                            :dumper-options {:indent 5
+                                             :indicator-indent 2
+                                             :flow-style :block})))))

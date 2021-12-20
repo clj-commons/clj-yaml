@@ -48,6 +48,29 @@ Different flow styles (`:auto`, `:block`, `:flow`) allow customization of how YA
 (yaml/generate-string some-data :dumper-options {:flow-style :block})
 ```
 
+Use the :indent (default: 2) and :indicator-indent (default: 0) options to adjust indentation:
+
+```clojure
+(yaml/generate-string some-data :dumper-options {:indent 6
+                                                 :indicator-indend 3})
+=>
+todo:
+   -    name: Fix issue
+        responsible:
+                name: Rita
+```
+:indent must always be larger than :indicator-indent. If only 1 higher, the indicator will be on a separate line:
+```clojure
+(yaml/generate-string some-data :dumper-options {:indent 2
+                                                 :indicator-indend 1})
+=>
+todo:
+ -
+  name: Fix issue
+  responsible:
+    name: Rita
+```
+
 ## Installation
 
 `clj-commons/clj-yaml` is available as a Maven artifact from [Clojars](http://clojars.org/clj-commons/clj-yaml).
