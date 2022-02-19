@@ -5,3 +5,7 @@ classes
 pom.xml*
 /target
 /.lein-failures
+/.lsp
+/.clj-kondo
+.nrepl-port
+/.calva
