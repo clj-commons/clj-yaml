@@ -3,12 +3,13 @@
             [clojure.string :as string]
             [clojure.java.io :as io]
             [clj-yaml.core :refer [parse-string unmark generate-string
-                                   parse-stream generate-stream]])
+                                   parse-stream generate-stream
+                                   passthrough-constructor]])
   (:import [java.util Date]
            (java.io ByteArrayOutputStream OutputStreamWriter ByteArrayInputStream)
            java.nio.charset.StandardCharsets
            (org.yaml.snakeyaml.error YAMLException)
-           (org.yaml.snakeyaml.constructor DuplicateKeyException)))
+           (org.yaml.snakeyaml.constructor ConstructorException DuplicateKeyException)))
 
 (def nested-hash-yaml
   "root:\n  childa: a\n  childb: \n    grandchild: \n      greatgrandchild: bar\n")
@@ -291,3 +292,25 @@ foo/bar: 42
                             :dumper-options {:indent 5
                                              :indicator-indent 2
                                              :flow-style :block})))))
+
+(def yaml-with-unknown-tags "---
+scalar: !CustomScalar some-scalar
+mapping: !CustomMapping
+  x: foo
+  y: bar
+sequence: !CustomSequence
+  - a
+  - b
+  - z
+")
+
+(deftest passthrough-test
+  (testing "Throws with unknown tags and default constructor"
+    (is (thrown-with-msg? ConstructorException
+                          #"^could not determine a constructor for the tag !CustomScalar"
+                          (parse-string yaml-with-unknown-tags))))
+  (testing "Can process unknown tags with passthrough constructor"
+    (is (= {:scalar "some-scalar"
+            :mapping {:x "foo" :y "bar"}
+            :sequence ["a" "b" "z"]}
+           (parse-string yaml-with-unknown-tags :constructor passthrough-constructor)))))

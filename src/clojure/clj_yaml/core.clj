@@ -5,7 +5,7 @@
            (org.yaml.snakeyaml.constructor Constructor SafeConstructor BaseConstructor)
            (org.yaml.snakeyaml.representer Representer)
            (org.yaml.snakeyaml.error Mark)
-           (clj_yaml MarkedConstructor)
+           (clj_yaml MarkedConstructor PassthroughConstructor)
            (java.util LinkedHashMap)))
 
 (def flow-styles
@@ -48,21 +48,28 @@
       (.setAllowDuplicateKeys loader allow-duplicate-keys))
     loader))
 
+(def passthrough-constructor (fn [] (PassthroughConstructor.)))
+
 (defn ^Yaml make-yaml
   "Make a yaml encoder/decoder with some given options."
-  [& {:keys [dumper-options unsafe mark max-aliases-for-collections allow-recursive-keys allow-duplicate-keys]}]
+  [& {:keys [constructor dumper-options unsafe mark max-aliases-for-collections allow-recursive-keys allow-duplicate-keys]}]
   (let [loader (make-loader-options :max-aliases-for-collections max-aliases-for-collections
                                     :allow-recursive-keys allow-recursive-keys
                                     :allow-duplicate-keys allow-duplicate-keys)
         ^BaseConstructor constructor
-        (if unsafe (Constructor. loader)
-            (if mark
-              ;; construct2ndStep isn't implemented by MarkedConstructor,
-              ;; causing an exception to be thrown before loader options are
-              ;; used
-              (MarkedConstructor.)
-              (SafeConstructor. loader)))
-        ;; TODO: unsafe marked constructor
+        (cond
+          unsafe (Constructor. loader)
+
+          ;; construct2ndStep isn't implemented by MarkedConstructor,
+          ;; causing an exception to be thrown before loader options are
+          ;; used
+          mark (MarkedConstructor.)
+
+          constructor (constructor)
+
+          ;; TODO: unsafe marked constructor
+          :else (SafeConstructor. loader))
+
         dumper (make-dumper-options dumper-options)]
     (Yaml. constructor (Representer.) dumper loader)))
 
@@ -154,9 +161,10 @@
          (encode data)))
 
 (defn parse-string
-  [^String string & {:keys [unsafe mark keywords max-aliases-for-collections allow-recursive-keys allow-duplicate-keys] :or {keywords true}}]
+  [^String string & {:keys [constructor unsafe mark keywords max-aliases-for-collections allow-recursive-keys allow-duplicate-keys] :or {keywords true}}]
   (decode (.load (make-yaml :unsafe unsafe
                             :mark mark
+                            :constructor constructor
                             :max-aliases-for-collections max-aliases-for-collections
                             :allow-recursive-keys allow-recursive-keys
                             :allow-duplicate-keys allow-duplicate-keys)
