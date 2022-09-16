@@ -95,3 +95,9 @@ clj-commons/clj-yaml {:mvn/version "0.7.0"}
     $ lein deps
     $ lein test
     $ lein install
+
+## License
+
+(c) Lance Bradley - Licensed under the same terms as clojure itself. See LICENCE file for details.
+
+Portions (c) Owain Lewis as marked.
