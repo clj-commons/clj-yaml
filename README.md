@@ -7,6 +7,7 @@ decoding for Clojure via the [snakeyaml][] Java library.
 [![Clojars Project](https://img.shields.io/clojars/v/clj-commons/clj-yaml.svg)](https://clojars.org/clj-commons/clj-yaml) 
 [![cljdoc badge](https://cljdoc.org/badge/clj-commons/clj-yaml)](https://cljdoc.org/d/clj-commons/clj-yaml)
 [![CircleCI Status](https://circleci.com/gh/clj-commons/clj-yaml.svg?style=svg)](https://circleci.com/gh/clj-commons/clj-yaml)
+[![Slack chat](https://img.shields.io/badge/slack-join_chat-brightgreen.svg)](https://clojurians.slack.com/archives/C042XAQFCCU)
 
 (This is a maintained fork of [the original][]).
 
