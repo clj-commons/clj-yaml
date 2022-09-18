@@ -1,7 +1,7 @@
 `clj-commons/clj-yaml` provides [YAML](http://yaml.org) encoding and
 decoding for Clojure via the [snakeyaml][] Java library.
 
-[SnakeYAML]: https://bitbucket.org/asomov/snakeyaml/
+[SnakeYAML]: https://bitbucket.org/snakeyaml/snakeyaml
 
 
 [![Clojars Project](https://img.shields.io/clojars/v/clj-commons/clj-yaml.svg)](https://clojars.org/clj-commons/clj-yaml) 
