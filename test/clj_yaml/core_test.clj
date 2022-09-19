@@ -2,9 +2,8 @@
   (:require [clojure.test :refer (deftest testing is)]
             [clojure.string :as string]
             [clojure.java.io :as io]
-            [clj-yaml.core :refer [parse-string unmark generate-string
-                                   parse-stream generate-stream
-                                   passthrough-constructor]])
+            [clj-yaml.core :as yaml :refer [parse-string unmark generate-string
+                                            parse-stream generate-stream]])
   (:import [java.util Date]
            (java.io ByteArrayOutputStream OutputStreamWriter ByteArrayInputStream)
            java.nio.charset.StandardCharsets
@@ -304,7 +303,7 @@ sequence: !CustomSequence
   - z
 ")
 
-(deftest passthrough-test
+(deftest unknown-tags-test
   (testing "Throws with unknown tags and default constructor"
     (is (thrown-with-msg? ConstructorException
                           #"^could not determine a constructor for the tag !CustomScalar"
@@ -313,4 +312,27 @@ sequence: !CustomSequence
     (is (= {:scalar "some-scalar"
             :mapping {:x "foo" :y "bar"}
             :sequence ["a" "b" "z"]}
-           (parse-string yaml-with-unknown-tags :constructor passthrough-constructor)))))
+           (parse-string yaml-with-unknown-tags :passthrough true))))
+  (testing "Can process unknown tags with unknown-tag constructor"
+    (is (= {:scalar {::yaml/tag "!CustomScalar" ::yaml/value "some-scalar"}
+            :mapping {::yaml/tag "!CustomMapping" ::yaml/value {:x "foo" :y "bar"}}
+            :sequence {::yaml/tag "!CustomSequence" ::yaml/value ["a" "b" "z"]}}
+       (parse-string yaml-with-unknown-tags :unknown-tag true)))))
+
+(comment
+
+  (def dumper-options (doto (org.yaml.snakeyaml.DumperOptions.)
+                        (.setVersion org.yaml.snakeyaml.DumperOptions$Version/V1_1)))
+
+  (def yaml (org.yaml.snakeyaml.Yaml.
+              (org.yaml.snakeyaml.representer.Representer.) dumper-options))
+
+  
+  @(def out (.dump yaml "083"))
+  ;; => Reflection warning, /Users/grzm/dev/clj-yaml/test/clj_yaml/core_test.clj:327:3 - call to method dump can't be resolved (target class is unknown).
+  ;;    "%YAML 1.1\n--- foo\n"
+  (print out)
+
+  (parse-string "083" :mark true)
+
+  :end)

@@ -5,7 +5,7 @@
            (org.yaml.snakeyaml.constructor Constructor SafeConstructor BaseConstructor)
            (org.yaml.snakeyaml.representer Representer)
            (org.yaml.snakeyaml.error Mark)
-           (clj_yaml MarkedConstructor PassthroughConstructor)
+           (clj_yaml MarkedConstructor PassthroughConstructor UnknownTagConstructor)
            (java.util LinkedHashMap)))
 
 (def flow-styles
@@ -52,7 +52,7 @@
 
 (defn ^Yaml make-yaml
   "Make a yaml encoder/decoder with some given options."
-  [& {:keys [constructor dumper-options unsafe mark max-aliases-for-collections allow-recursive-keys allow-duplicate-keys]}]
+  [& {:keys [unknown-tag passthrough dumper-options unsafe mark max-aliases-for-collections allow-recursive-keys allow-duplicate-keys]}]
   (let [loader (make-loader-options :max-aliases-for-collections max-aliases-for-collections
                                     :allow-recursive-keys allow-recursive-keys
                                     :allow-duplicate-keys allow-duplicate-keys)
@@ -61,11 +61,12 @@
           unsafe (Constructor. loader)
 
           ;; construct2ndStep isn't implemented by MarkedConstructor,
-          ;; causing an exception to be thrown before loader options are
-          ;; used
+          ;; causing an exception to be thrown before loader options
+          ;; are used
           mark (MarkedConstructor.)
 
-          constructor (constructor)
+          unknown-tag (UnknownTagConstructor.)
+          passthrough (PassthroughConstructor.)
 
           ;; TODO: unsafe marked constructor
           :else (SafeConstructor. loader))
@@ -112,6 +113,11 @@
             (-> data .marked
                 (decode keywords)))))
 
+  clj_yaml.UnknownTagConstructor$UnknownTag
+  (decode [data keywords]
+    {::tag (str (.tag data))
+     ::value (-> (.value data) (decode keywords))})
+  
   clojure.lang.IPersistentMap
   (encode [data]
     (let [lhm (LinkedHashMap.)]
@@ -161,10 +167,11 @@
          (encode data)))
 
 (defn parse-string
-  [^String string & {:keys [constructor unsafe mark keywords max-aliases-for-collections allow-recursive-keys allow-duplicate-keys] :or {keywords true}}]
+  [^String string & {:keys [unknown-tag passthrough unsafe mark keywords max-aliases-for-collections allow-recursive-keys allow-duplicate-keys] :or {keywords true}}]
   (decode (.load (make-yaml :unsafe unsafe
                             :mark mark
-                            :constructor constructor
+                            :unknown-tag unknown-tag
+                            :passthrough passthrough
                             :max-aliases-for-collections max-aliases-for-collections
                             :allow-recursive-keys allow-recursive-keys
                             :allow-duplicate-keys allow-duplicate-keys)
