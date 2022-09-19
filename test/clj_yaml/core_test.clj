@@ -1,14 +1,19 @@
 (ns clj-yaml.core-test
-  (:require [clojure.test :refer (deftest testing is)]
-            [clojure.string :as string]
-            [clojure.java.io :as io]
-            [clj-yaml.core :as yaml :refer [parse-string unmark generate-string
-                                            parse-stream generate-stream]])
-  (:import [java.util Date]
-           (java.io ByteArrayOutputStream OutputStreamWriter ByteArrayInputStream)
-           java.nio.charset.StandardCharsets
-           (org.yaml.snakeyaml.error YAMLException)
-           (org.yaml.snakeyaml.constructor ConstructorException DuplicateKeyException)))
+  (:require
+   [clj-yaml.core :as yaml :refer [generate-stream generate-string
+                                   parse-stream parse-string unmark]]
+   [clojure.java.io :as io]
+   [clojure.string :as string]
+   [clojure.test :refer (deftest testing is)]
+   [flatland.ordered.map :refer [ordered-map]])
+  (:import
+   (java.io ByteArrayInputStream ByteArrayOutputStream OutputStreamWriter)
+   java.nio.charset.StandardCharsets
+   [java.util Date]
+   [org.yaml.snakeyaml.composer ComposerException]
+   (org.yaml.snakeyaml.constructor ConstructorException DuplicateKeyException)
+   (org.yaml.snakeyaml.constructor DuplicateKeyException)
+   (org.yaml.snakeyaml.error YAMLException)))
 
 (def nested-hash-yaml
   "root:\n  childa: a\n  childb: \n    grandchild: \n      greatgrandchild: bar\n")
@@ -166,8 +171,8 @@ the-bin: !!binary 0101")
       ;; This test ensures that generate-string uses the older behavior by default, for the sake
       ;; of stability, i.e. backwards compatibility.
       (is
-        (= "{description: Big-picture diagram showing how our top-level systems and stakeholders interact}\n"
-           (generate-string data))))))
+       (= "{description: Big-picture diagram showing how our top-level systems and stakeholders interact}\n"
+          (generate-string data))))))
 
 (deftest dump-opts
   (let [data [{:age 33 :name "jon"} {:age 44 :name "boo"}]]
@@ -276,6 +281,43 @@ foo/bar: 42
     (is (roundtrip list-yaml))
     (is (roundtrip nested-hash-yaml))))
 
+(defn- ->stream [string]
+  (io/reader (.getBytes ^String string)))
+
+(def multi-doc-yaml "
+---
+foo: true
+---
+bar: false")
+
+(def single-doc-yaml "
+---
+lol: yolo")
+
+(deftest load-all-test
+  (testing "Without load-all?"
+    (is (= (ordered-map {:lol "yolo"})
+           (parse-string single-doc-yaml)))
+    (is (= (ordered-map {:lol "yolo"})
+           (parse-stream (->stream single-doc-yaml))))
+    (is (thrown-with-msg? ComposerException #"expected a single document in the stream\n"
+                          (parse-stream (->stream multi-doc-yaml))))
+    (is (thrown-with-msg? ComposerException #"expected a single document in the stream\n"
+                          (parse-string multi-doc-yaml))))
+
+  (testing "With load-all?=true on single docs"
+    (is (= [(ordered-map {:lol "yolo"})]
+           (parse-string single-doc-yaml :load-all? true)))
+    (is (= [(ordered-map {:lol "yolo"})]
+           (parse-stream (->stream single-doc-yaml) :load-all? true))))
+
+  (testing "With load-all?=true on multi docs"
+    (is (= [(ordered-map {:foo true}) (ordered-map {:bar false})]
+           (parse-string multi-doc-yaml :load-all? true)))
+    (is (= [(ordered-map {:foo true}) (ordered-map {:bar false})]
+           (parse-stream (->stream multi-doc-yaml) :load-all? true))))
+  )
+
 (def indented-yaml "todo:
   -  name: Fix issue
      responsible:
@@ -323,3 +365,4 @@ sequence: !CustomSequence
                          :unknown-tag-fn (fn [{:keys [tag value]}]
                                            (if (= "!Base12" tag)
                                              (Integer/parseInt value 12) value)))))))
+
