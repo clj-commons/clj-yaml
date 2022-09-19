@@ -5,6 +5,7 @@ classes
 pom.xml*
 /target
 /.lein-failures
+/.lein-repl-history
 /.lsp
 /.clj-kondo
 .nrepl-port
