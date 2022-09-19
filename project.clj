@@ -1,4 +1,4 @@
-(defproject org.clojars.clumsyjedi/clj-yaml (or (System/getenv "PROJECT_VERSION") "0.7.4")
+(defproject clj-commons/clj-yaml (or (System/getenv "PROJECT_VERSION") "0.7.4")
   :description "YAML encoding and decoding for Clojure using SnakeYAML"
   :url "https://github.com/clj-commons/clj-yaml"
   :license {:name "Eclipse Public License - v 1.0"
