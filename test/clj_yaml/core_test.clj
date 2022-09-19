@@ -3,12 +3,14 @@
             [clojure.string :as string]
             [clojure.java.io :as io]
             [clj-yaml.core :refer [parse-string unmark generate-string
-                                   parse-stream generate-stream]])
+                                   parse-stream generate-stream]]
+            [flatland.ordered.map :refer [ordered-map]])
   (:import [java.util Date]
            (java.io ByteArrayOutputStream OutputStreamWriter ByteArrayInputStream)
            java.nio.charset.StandardCharsets
            (org.yaml.snakeyaml.error YAMLException)
-           (org.yaml.snakeyaml.constructor DuplicateKeyException)))
+           (org.yaml.snakeyaml.constructor DuplicateKeyException)
+           [org.yaml.snakeyaml.composer ComposerException]))
 
 (def nested-hash-yaml
   "root:\n  childa: a\n  childb: \n    grandchild: \n      greatgrandchild: bar\n")
@@ -275,6 +277,43 @@ foo/bar: 42
     (is (roundtrip list-of-hashes-yaml))
     (is (roundtrip list-yaml))
     (is (roundtrip nested-hash-yaml))))
+
+(defn- ->stream [string]
+  (io/reader (.getBytes ^String string)))
+
+(def multi-doc-yaml "
+---
+foo: true
+---
+bar: false")
+
+(def single-doc-yaml "
+---
+lol: yolo")
+
+(deftest load-all-test
+  (testing "Without load-all?"
+    (is (= (ordered-map {:lol "yolo"})
+           (parse-string single-doc-yaml)))
+    (is (= (ordered-map {:lol "yolo"})
+           (parse-stream (->stream single-doc-yaml))))
+    (is (thrown-with-msg? ComposerException #"expected a single document in the stream\n"
+                          (parse-stream (->stream multi-doc-yaml))))
+    (is (thrown-with-msg? ComposerException #"expected a single document in the stream\n"
+                          (parse-string multi-doc-yaml))))
+
+  (testing "With load-all?=true on single docs"
+    (is (= [(ordered-map {:lol "yolo"})]
+           (parse-string single-doc-yaml :load-all? true)))
+    (is (= [(ordered-map {:lol "yolo"})]
+           (parse-stream (->stream single-doc-yaml) :load-all? true))))
+
+  (testing "With load-all?=true on multi docs"
+    (is (= [(ordered-map {:foo true}) (ordered-map {:bar false})]
+           (parse-string multi-doc-yaml :load-all? true)))
+    (is (= [(ordered-map {:foo true}) (ordered-map {:bar false})]
+           (parse-stream (->stream multi-doc-yaml) :load-all? true))))
+  )
 
 (def indented-yaml "todo:
   -  name: Fix issue
