@@ -1,0 +1,106 @@
+= `clj-commons/clj-yaml`
+:lib-version: 0.7.110
+:project-coords: clj-commons/clj-yaml
+
+Provides http://yaml.org[YAML] encoding and decoding for Clojure via the https://bitbucket.org/snakeyaml/snakeyaml[snakeyaml] Java library.
+
+// Badges
+https://clojars.org/{project-coords}[image:https://img.shields.io/clojars/v/{project-coords}.svg[Clojars Project]] 
+https://cljdoc.org/d/{project-coords}[image:https://cljdoc.org/badge/{project-coords}[cljdoc badge]] 
+https://circleci.com/gh/{project-coords}[image:https://circleci.com/gh/{project-coords}.svg?style=svg[CircleCI Status]] 
+https://clojurians.slack.com/archives/C042XAQFCCU[image:https://img.shields.io/badge/slack-join_chat-brightgreen.svg[Slack chat]]
+
+(This is a maintained fork of https://github.com/CircleCI-Archived/clj-yaml[the circleci fork] which forked from https://github.com/lancepantz/clj-yaml[the original])
+
+== Usage
+
+[source,clojure]
+----
+(require '[clj-yaml.core :as yaml])
+
+(yaml/generate-string
+  [{:name "John Smith", :age 33}
+   {:name "Mary Smith", :age 27}])
+"- {name: John Smith, age: 33}\n- {name: Mary Smith, age: 27}\n"
+
+(yaml/parse-string "
+- {name: John Smith, age: 33}
+- name: Mary Smith
+  age: 27
+")
+=> ({:name "John Smith", :age 33}
+    {:name "Mary Smith", :age 27})
+----
+
+By default, keys are converted to clojure keywords. To prevent this, add `:keywords false` parameters to the `parse-string` function:
+
+[source,clojure]
+----
+(yaml/parse-string "
+- {name: John Smith}
+" :keywords false)
+----
+
+Different flow styles (`:auto`, `:block`, `:flow`) allow customization of how YAML is rendered:
+
+[source,clojure]
+----
+(yaml/generate-string some-data :dumper-options {:flow-style :block})
+----
+
+Use the `:indent` (default: `2`) and `:indicator-indent` (default: `0`) options to adjust indentation:
+
+[source,clojure]
+----
+(yaml/generate-string some-data :dumper-options {:indent 6
+                                                 :indicator-indent 3
+                                                 :flow-style :block})
+=>
+todo:
+   -  name: Fix issue
+      responsible:
+            name: Rita
+----
+
+`:indent` must always be larger than `:indicator-indent`. If only 1 higher, the indicator will be on a separate line:
+
+[source,clojure]
+----
+(yaml/generate-string some-data :dumper-options {:indent 2
+                                                 :indicator-indent 1
+                                                 :flow-style :block})
+=>
+todo:
+ -
+  name: Fix issue
+  responsible:
+    name: Rita
+----
+
+== Installation
+
+`clj-commons/clj-yaml` is available as a Maven artifact from http://clojars.org/clj-commons/clj-yaml[Clojars].
+
+=== Leiningen/Boot
+
+[source,clojure,subs="attributes+"]
+----
+[clj-commons/clj-yaml "{lib-version}"]
+----
+
+=== Clojure CLI/`deps.edn`
+
+[source,clojure,subs="attributes+"]
+----
+clj-commons/clj-yaml {:mvn/version "{lib-version}"}
+----
+
+== Development
+
+[source,shell]
+----
+$ git clone git://github.com/clj-commons/clj-yaml.git
+$ lein deps
+$ lein test
+$ lein install
+----
