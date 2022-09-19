@@ -9,10 +9,10 @@ decoding for Clojure via the [snakeyaml][] Java library.
 [![CircleCI Status](https://circleci.com/gh/clj-commons/clj-yaml.svg?style=svg)](https://circleci.com/gh/clj-commons/clj-yaml)
 [![Slack chat](https://img.shields.io/badge/slack-join_chat-brightgreen.svg)](https://clojurians.slack.com/archives/C042XAQFCCU)
 
-(This is a maintained fork of [the original][]).
+(This is a maintained fork of [the circleci fork][] which forked from [the original][])
 
+[the circleci fork]: https://github.com/CircleCI-Archived/clj-yaml
 [the original]: https://github.com/lancepantz/clj-yaml
-
 
 ## Usage
 
