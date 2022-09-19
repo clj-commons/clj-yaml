@@ -1,0 +1,85 @@
+= Changelog
+
+== Unreleased
+
+* Support loading all YAML docs via new `:load-all?` opt for `parse-string` and `parse-stream`
+(https://github.com/clj-commons/clj-yaml/pull/22[#22])
+(https://github.com/clj-commons/clj-yaml/commits?author=clumsyjedi[@clumsyjedi])
+
+== v0.7.110 - 2022-09-13
+
+* Bump snakeyaml from 1.31 to 1.32 in response to CVE-2022-38752
+(https://github.com/clj-commons/clj-yaml/pull/34[#34])
+(https://github.com/danielcompton[@danielcompton])
+
+== v0.7.109 - 2022-09-02
+
+* Bump snakeyaml from 1.26 to 1.31 in response to CVE-2022-25857
+(https://github.com/clj-commons/clj-yaml/pull/33[#33])
+(https://github.com/wavejumper[@wavejumper])
+
+== v0.7.108 - 2022-02-21
+
+* Add indent control via new `:indent` and `:indicator-indent` for `:dumper-options`
+(https://github.com/clj-commons/clj-yaml/issues/27[#27])
+(https://github.com/Oddsor[@Oddsor])
+
+== v0.7.107 - 2021-07-15
+
+* Add `parse-stream` and `generate-stream`
+(https://github.com/clj-commons/clj-yaml/issues/3[#3])
+(https://github.com/davidpham87[@davidpham87])
+
+== v0.7.106 - 2021-01-28
+
+* Support Clojure namespaced keys
+(https://github.com/clj-commons/clj-yaml/issues/16[#16])
+(https://github.com/skuro[@skuro])
+
+== v0.7.2 - 2020-09-01
+
+*  Bump snakeyaml from 1.25 to 1.26 in response to CVE-2017-18640
+(https://github.com/clj-commons/clj-yaml/pull/13[#13])
+(https://github.com/erichaberkorn[@erichaberkorn])
+*  Expose `:max-aliases-for-collections` and `:allow-recursive-keys` options for `parse-string`
+(https://github.com/clj-commons/clj-yaml/pull/13[#13])
+(https://github.com/erichaberkorn[@erichaberkorn])
+*  Expose `:allow-duplicate-keys` option for `parse-string`
+(https://github.com/clj-commons/clj-yaml/pull/14[#14])
+(https://github.com/erichaberkorn[@erichaberkorn])
+
+== v0.7.1 - 2019-04-14
+
+* Bump snakeyaml from 1.24 to 1.25, org.flatland/ordered from 1.57 to 1.59, and clojure from 1.7.0 to 1.10.1 (and mark as provided)
+(https://github.com/clj-commons/clj-yaml/pull/7[#7])
+(https://github.com/stig[@stig])
+(https://github.com/clj-commons/clj-yaml/pull/10[#10])
+(https://github.com/slipset[@slipset])
+
+== v0.7.0 - 2019-03-15
+
+* Accept emoji
+(https://github.com/clj-commons/clj-yaml/pull/5[#5])
+(https://github.com/gordonsyme[@gordonsyme])
+* Bump snakeyaml from 1.23 to 1.24
+(https://github.com/clj-commons/clj-yaml/pull/5[#5])
+(https://github.com/gordonsyme[@gordonsyme])
+
+== v0.6.1 - 2019-02-06
+
+* Restore default text-wrapping behavior of prior release
+(https://github.com/clj-commons/clj-yaml/pull/2[#2])
+(https://github.com/aviflax[@aviflax])
+
+== v0.6.0 - 2019-01-04
+
+First release under https://github.com/clj-commons[clj-commons] project!
+
+* Change org and group-id: `circleci` is now `clj-commons`
+(https://github.com/slipset[@slipset])
+
+== Older versions
+
+This project forked from https://github.com/CircleCI-Archived/clj-yaml[circleci/yaml] which forked from https://github.com/lancepantz/clj-yaml[clj-yaml].
+
+Neither of these projects maintained a change log.
