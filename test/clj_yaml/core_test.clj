@@ -1,16 +1,19 @@
 (ns clj-yaml.core-test
-  (:require [clojure.test :refer (deftest testing is)]
-            [clojure.string :as string]
-            [clojure.java.io :as io]
-            [clj-yaml.core :refer [parse-string unmark generate-string
-                                   parse-stream generate-stream]]
-            [flatland.ordered.map :refer [ordered-map]])
-  (:import [java.util Date]
-           (java.io ByteArrayOutputStream OutputStreamWriter ByteArrayInputStream)
-           java.nio.charset.StandardCharsets
-           (org.yaml.snakeyaml.error YAMLException)
-           (org.yaml.snakeyaml.constructor DuplicateKeyException)
-           [org.yaml.snakeyaml.composer ComposerException]))
+  (:require
+   [clj-yaml.core :as yaml :refer [generate-stream generate-string
+                                   parse-stream parse-string unmark]]
+   [clojure.java.io :as io]
+   [clojure.string :as string]
+   [clojure.test :refer (deftest testing is)]
+   [flatland.ordered.map :refer [ordered-map]])
+  (:import
+   (java.io ByteArrayInputStream ByteArrayOutputStream OutputStreamWriter)
+   java.nio.charset.StandardCharsets
+   [java.util Date]
+   [org.yaml.snakeyaml.composer ComposerException]
+   (org.yaml.snakeyaml.constructor ConstructorException DuplicateKeyException)
+   (org.yaml.snakeyaml.constructor DuplicateKeyException)
+   (org.yaml.snakeyaml.error YAMLException)))
 
 (def nested-hash-yaml
   "root:\n  childa: a\n  childb: \n    grandchild: \n      greatgrandchild: bar\n")
@@ -330,3 +333,36 @@ lol: yolo")
                             :dumper-options {:indent 5
                                              :indicator-indent 2
                                              :flow-style :block})))))
+
+(def yaml-with-unknown-tags "---
+scalar: !CustomScalar some-scalar
+mapping: !CustomMapping
+  x: foo
+  y: bar
+sequence: !CustomSequence
+  - a
+  - b
+  - z
+")
+
+(deftest unknown-tags-test
+  (testing "Throws with unknown tags and default constructor"
+    (is (thrown-with-msg? ConstructorException
+                          #"^could not determine a constructor for the tag !CustomScalar"
+                          (parse-string yaml-with-unknown-tags))))
+  (testing "Can process unknown tags with strip-unknown-tags? constructor"
+    (is (= {:scalar "some-scalar"
+            :mapping {:x "foo" :y "bar"}
+            :sequence ["a" "b" "z"]}
+           (parse-string yaml-with-unknown-tags :unknown-tag-fn :value))))
+  (testing "Can process unknown tags with :unknown-tag-fn as identity"
+    (is (= {:scalar {:tag "!CustomScalar" :value "some-scalar"}
+            :mapping {:tag "!CustomMapping" :value {:x "foo" :y "bar"}}
+            :sequence {:tag "!CustomSequence" :value ["a" "b" "z"]}}
+           (parse-string yaml-with-unknown-tags :unknown-tag-fn identity)))
+    (is (= {:base-12 12 :base-10 "10"}
+           (parse-string "{base-12: !Base12 10, base-10: !Base10 10}"
+                         :unknown-tag-fn (fn [{:keys [tag value]}]
+                                           (if (= "!Base12" tag)
+                                             (Integer/parseInt value 12) value)))))))
+

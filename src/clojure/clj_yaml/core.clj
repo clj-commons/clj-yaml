@@ -5,6 +5,8 @@
            (org.yaml.snakeyaml.constructor Constructor SafeConstructor BaseConstructor)
            (org.yaml.snakeyaml.representer Representer)
            (org.yaml.snakeyaml.error Mark)
+           (clj_yaml MarkedConstructor UnknownTagsConstructor)
+           (java.util LinkedHashMap)
            (clj_yaml MarkedConstructor)
            (java.util LinkedHashMap)
            (java.io StringReader)))
@@ -51,19 +53,24 @@
 
 (defn ^Yaml make-yaml
   "Make a yaml encoder/decoder with some given options."
-  [& {:keys [dumper-options unsafe mark max-aliases-for-collections allow-recursive-keys allow-duplicate-keys]}]
+  [& {:keys [unknown-tag-fn dumper-options unsafe mark max-aliases-for-collections allow-recursive-keys allow-duplicate-keys]}]
   (let [loader (make-loader-options :max-aliases-for-collections max-aliases-for-collections
                                     :allow-recursive-keys allow-recursive-keys
                                     :allow-duplicate-keys allow-duplicate-keys)
         ^BaseConstructor constructor
-        (if unsafe (Constructor. loader)
-            (if mark
-              ;; construct2ndStep isn't implemented by MarkedConstructor,
-              ;; causing an exception to be thrown before loader options are
-              ;; used
-              (MarkedConstructor.)
-              (SafeConstructor. loader)))
-        ;; TODO: unsafe marked constructor
+        (cond
+          unsafe (Constructor. loader)
+
+          ;; construct2ndStep isn't implemented by MarkedConstructor,
+          ;; causing an exception to be thrown before loader options
+          ;; are used
+          mark (MarkedConstructor.)
+
+          unknown-tag-fn (UnknownTagsConstructor.)
+
+          ;; TODO: unsafe marked constructor
+          :else (SafeConstructor. loader))
+
         dumper (make-dumper-options dumper-options)]
     (Yaml. constructor (Representer.) dumper loader)))
 
@@ -91,11 +98,11 @@
   "A protocol for things that can be coerced to and from the types
    that snakeyaml knows how to encode and decode."
   (encode [data])
-  (decode [data keywords]))
+  (decode [data keywords unknown-tag-fn]))
 
 (extend-protocol YAMLCodec
   clj_yaml.MarkedConstructor$Marked
-  (decode [data keywords]
+  (decode [data keywords unknown-tag-fn]
     (letfn [(from-Mark [^Mark mark]
               {:line (.getLine mark)
                :index (.getIndex mark)
@@ -104,7 +111,12 @@
       (mark (-> data .start from-Mark)
             (-> data .end from-Mark)
             (-> data .marked
-                (decode keywords)))))
+                (decode keywords unknown-tag-fn)))))
+
+  clj_yaml.UnknownTagsConstructor$UnknownTag
+  (decode [data keywords unknown-tag-fn]
+    (unknown-tag-fn {:tag (str (.tag data))
+                     :value (-> (.value data) (decode keywords unknown-tag-fn))}))
 
   clojure.lang.IPersistentMap
   (encode [data]
@@ -123,7 +135,7 @@
     (subs (str data) 1))
 
   java.util.LinkedHashMap
-  (decode [data keywords]
+  (decode [data keywords unknown-tag-fn]
     (letfn [(decode-key [k]
               (if keywords
                 ;; (keyword k) is nil for numbers etc
@@ -131,43 +143,44 @@
                 k))]
       (into (ordered-map)
             (for [[k v] data]
-              [(-> k (decode keywords) decode-key) (decode v keywords)]))))
+              [(-> k (decode keywords unknown-tag-fn) decode-key) (decode v keywords unknown-tag-fn)]))))
 
   java.util.LinkedHashSet
-  (decode [data keywords]
+  (decode [data _keywords _unknown-tag-fn]
     (into (ordered-set) data))
 
   java.util.ArrayList
-  (decode [data keywords]
-    (map #(decode % keywords) data))
+  (decode [data keywords unknown-tag-fn]
+    (map #(decode % keywords unknown-tag-fn) data))
 
   Object
   (encode [data] data)
-  (decode [data keywords] data)
+  (decode [data _keywords _unknown-tag-fn] data)
 
   nil
   (encode [data] data)
-  (decode [data keywords] data))
+  (decode [data _keywords _unknown-tag-fn] data))
 
 
 (defn generate-string [data & opts]
   (.dump ^Yaml (apply make-yaml opts)
          (encode data)))
 
-(defn- load-stream [^Yaml yaml ^java.io.Reader input load-all? keywords]
+(defn- load-stream [^Yaml yaml ^java.io.Reader input load-all? keywords unknown-tag-fn]
   (if load-all?
-    (map #(decode % keywords) (.loadAll yaml input))
-    (decode (.load yaml input) keywords)))
+    (map #(decode % keywords unknown-tag-fn) (.loadAll yaml input))
+    (decode (.load yaml input) keywords unknown-tag-fn)))
 
 (defn parse-string
-  [^String string & {:keys [unsafe mark keywords max-aliases-for-collections allow-recursive-keys allow-duplicate-keys load-all?] :or {keywords true}}]
-  (load-stream (make-yaml :unsafe unsafe
-                          :mark mark
-                          :max-aliases-for-collections max-aliases-for-collections
-                          :allow-recursive-keys allow-recursive-keys
-                          :allow-duplicate-keys allow-duplicate-keys)
-               (StringReader. string)
-               load-all? keywords))
+  [^String string & {:keys [unknown-tag-fn unsafe mark keywords max-aliases-for-collections
+                            allow-recursive-keys allow-duplicate-keys load-all?] :or {keywords true}}]
+  (let [yaml (make-yaml :unsafe unsafe
+                        :mark mark
+                        :unknown-tag-fn unknown-tag-fn
+                        :max-aliases-for-collections max-aliases-for-collections
+                        :allow-recursive-keys allow-recursive-keys
+                        :allow-duplicate-keys allow-duplicate-keys)]
+    (load-stream yaml (StringReader. string) load-all? keywords unknown-tag-fn)))
 
 ;; From https://github.com/metosin/muuntaja/pull/94/files
 (defn generate-stream
@@ -176,7 +189,7 @@
   (.dump ^Yaml (apply make-yaml opts) (encode data) writer))
 
 (defn parse-stream
-  [^java.io.Reader reader & {:keys [keywords load-all?] :or {keywords true} :as opts}]
+  [^java.io.Reader reader & {:keys [keywords load-all? unknown-tag-fn] :or {keywords true} :as opts}]
   (load-stream (apply make-yaml (into [] cat opts))
                reader
-               load-all? keywords))
+               load-all? keywords unknown-tag-fn))
