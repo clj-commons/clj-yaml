@@ -166,21 +166,21 @@
   (.dump ^Yaml (apply make-yaml opts)
          (encode data)))
 
-(defn- load-stream [^Yaml yaml ^java.io.Reader input load-all? keywords unknown-tag-fn]
-  (if load-all?
+(defn- load-stream [^Yaml yaml ^java.io.Reader input load-all keywords unknown-tag-fn]
+  (if load-all
     (map #(decode % keywords unknown-tag-fn) (.loadAll yaml input))
     (decode (.load yaml input) keywords unknown-tag-fn)))
 
 (defn parse-string
   [^String string & {:keys [unknown-tag-fn unsafe mark keywords max-aliases-for-collections
-                            allow-recursive-keys allow-duplicate-keys load-all?] :or {keywords true}}]
+                            allow-recursive-keys allow-duplicate-keys load-all] :or {keywords true}}]
   (let [yaml (make-yaml :unsafe unsafe
                         :mark mark
                         :unknown-tag-fn unknown-tag-fn
                         :max-aliases-for-collections max-aliases-for-collections
                         :allow-recursive-keys allow-recursive-keys
                         :allow-duplicate-keys allow-duplicate-keys)]
-    (load-stream yaml (StringReader. string) load-all? keywords unknown-tag-fn)))
+    (load-stream yaml (StringReader. string) load-all keywords unknown-tag-fn)))
 
 ;; From https://github.com/metosin/muuntaja/pull/94/files
 (defn generate-stream
@@ -189,7 +189,7 @@
   (.dump ^Yaml (apply make-yaml opts) (encode data) writer))
 
 (defn parse-stream
-  [^java.io.Reader reader & {:keys [keywords load-all? unknown-tag-fn] :or {keywords true} :as opts}]
+  [^java.io.Reader reader & {:keys [keywords load-all unknown-tag-fn] :or {keywords true} :as opts}]
   (load-stream (apply make-yaml (into [] cat opts))
                reader
-               load-all? keywords unknown-tag-fn))
+               load-all keywords unknown-tag-fn))
