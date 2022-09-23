@@ -133,7 +133,7 @@ A huge thank you to https://github.com/clj-commons/clj-yaml/graphs/contributors[
 === Founders
 
 * https://github.com/lancepantz[@lancepantz] - the creator or clj-yaml
-* https://github.com/marcomorain[@marcomorain] - the holder of the torch for the circle fork
+* https://github.com/marcomorain[@marcomorain] - the holder of the torch for the CircleCI fork
 
 === Current Active Maintainers
 
