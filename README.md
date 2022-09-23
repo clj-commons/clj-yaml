@@ -42,17 +42,17 @@ add `:keywords false` parameters to the `parse-string` function:
 ```
 
 Unknown tags can be handled by passing a handler function via the
-:unknown-tag-fn parameter. The handler function should take two
-arguments: the tag and the value. Note that the value passed to the
-`unknown-tag-fn` is a string if it's a scalar, regardless of the
+:unknown-tag-fn parameter. The handler function is provided a map
+which includes `:tag` and `:value` keys. Note that the value passed to
+the `unknown-tag-fn` is a string if it's a scalar, regardless of the
 quoting (or lack thereof) of the scalar value.
 
 ```clojure
 ;; drop tags
-(yaml/parse-string "!Base12 10" :unknown-tag-fn (fn [tag value] value))
+(yaml/parse-string "!Base12 10" :unknown-tag-fn :value
 ;; => "10"
 (yaml/parse-string "!Base12 10"
-                   :unknown-tag-fn (fn [tag value]
+                   :unknown-tag-fn (fn [{:keys [tag value]}]
                                       (if (= "!Base12" tag)
                                           (Integer/parseInt value 12)
                                           value)))

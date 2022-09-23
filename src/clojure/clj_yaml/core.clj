@@ -112,7 +112,8 @@
 
   clj_yaml.UnknownTagsConstructor$UnknownTag
   (decode [data keywords unknown-tag-fn]
-    (unknown-tag-fn (str (.tag data)) (-> (.value data) (decode keywords unknown-tag-fn))))
+    (unknown-tag-fn {:tag (str (.tag data))
+                     :value (-> (.value data) (decode keywords unknown-tag-fn))}))
 
   clojure.lang.IPersistentMap
   (encode [data]
