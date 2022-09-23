@@ -1,5 +1,7 @@
 = Changelog
 
+Clj-yaml makes use of SnakeYAML, please also refer to the https://bitbucket.org/snakeyaml/snakeyaml/wiki/Changes[SnakeYAML changelog].
+
 == Unreleased
 
 * Support loading all YAML docs via new `:load-all?` opt for `parse-string` and `parse-stream`
