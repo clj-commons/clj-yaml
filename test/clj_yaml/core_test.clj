@@ -295,7 +295,7 @@ bar: false")
 lol: yolo")
 
 (deftest load-all-test
-  (testing "Without load-all?"
+  (testing "Without load-all"
     (is (= (ordered-map {:lol "yolo"})
            (parse-string single-doc-yaml)))
     (is (= (ordered-map {:lol "yolo"})
@@ -305,17 +305,17 @@ lol: yolo")
     (is (thrown-with-msg? ComposerException #"expected a single document in the stream\n"
                           (parse-string multi-doc-yaml))))
 
-  (testing "With load-all?=true on single docs"
+  (testing "With load-all=true on single docs"
     (is (= [(ordered-map {:lol "yolo"})]
-           (parse-string single-doc-yaml :load-all? true)))
+           (parse-string single-doc-yaml :load-all true)))
     (is (= [(ordered-map {:lol "yolo"})]
-           (parse-stream (->stream single-doc-yaml) :load-all? true))))
+           (parse-stream (->stream single-doc-yaml) :load-all true))))
 
-  (testing "With load-all?=true on multi docs"
+  (testing "With load-all=true on multi docs"
     (is (= [(ordered-map {:foo true}) (ordered-map {:bar false})]
-           (parse-string multi-doc-yaml :load-all? true)))
+           (parse-string multi-doc-yaml :load-all true)))
     (is (= [(ordered-map {:foo true}) (ordered-map {:bar false})]
-           (parse-stream (->stream multi-doc-yaml) :load-all? true))))
+           (parse-stream (->stream multi-doc-yaml) :load-all true))))
   )
 
 (def indented-yaml "todo:

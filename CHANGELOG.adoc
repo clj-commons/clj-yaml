@@ -4,7 +4,7 @@ Clj-yaml makes use of SnakeYAML, please also refer to the https://bitbucket.org/
 
 == Unreleased
 
-* Support loading all YAML docs via new `:load-all?` opt for `parse-string` and `parse-stream`
+* Support loading all YAML docs via new `:load-all` opt for `parse-string` and `parse-stream`
 (https://github.com/clj-commons/clj-yaml/pull/22[#22])
 (https://github.com/clj-commons/clj-yaml/commits?author=clumsyjedi[@clumsyjedi])
 
