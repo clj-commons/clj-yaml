@@ -5,7 +5,7 @@
            (org.yaml.snakeyaml.constructor Constructor SafeConstructor BaseConstructor)
            (org.yaml.snakeyaml.representer Representer)
            (org.yaml.snakeyaml.error Mark)
-           (clj_yaml MarkedConstructor PassthroughConstructor UnknownTagConstructor)
+           (clj_yaml MarkedConstructor PassThroughUnknownTagsConstructor StripUnknownTagsConstructor)
            (java.util LinkedHashMap)))
 
 (def flow-styles
@@ -48,11 +48,9 @@
       (.setAllowDuplicateKeys loader allow-duplicate-keys))
     loader))
 
-(def passthrough-constructor (fn [] (PassthroughConstructor.)))
-
 (defn ^Yaml make-yaml
   "Make a yaml encoder/decoder with some given options."
-  [& {:keys [unknown-tag passthrough dumper-options unsafe mark max-aliases-for-collections allow-recursive-keys allow-duplicate-keys]}]
+  [& {:keys [pass-through-unknown-tags? strip-unknown-tags? dumper-options unsafe mark max-aliases-for-collections allow-recursive-keys allow-duplicate-keys]}]
   (let [loader (make-loader-options :max-aliases-for-collections max-aliases-for-collections
                                     :allow-recursive-keys allow-recursive-keys
                                     :allow-duplicate-keys allow-duplicate-keys)
@@ -65,8 +63,8 @@
           ;; are used
           mark (MarkedConstructor.)
 
-          unknown-tag (UnknownTagConstructor.)
-          passthrough (PassthroughConstructor.)
+          pass-through-unknown-tags? (PassThroughUnknownTagsConstructor.)
+          strip-unknown-tags? (StripUnknownTagsConstructor.)
 
           ;; TODO: unsafe marked constructor
           :else (SafeConstructor. loader))
@@ -113,7 +111,7 @@
             (-> data .marked
                 (decode keywords)))))
 
-  clj_yaml.UnknownTagConstructor$UnknownTag
+  clj_yaml.PassThroughUnknownTagsConstructor$UnknownTag
   (decode [data keywords]
     {::tag (str (.tag data))
      ::value (-> (.value data) (decode keywords))})
@@ -167,11 +165,11 @@
          (encode data)))
 
 (defn parse-string
-  [^String string & {:keys [unknown-tag passthrough unsafe mark keywords max-aliases-for-collections allow-recursive-keys allow-duplicate-keys] :or {keywords true}}]
+  [^String string & {:keys [pass-through-unknown-tags? strip-unknown-tags? unsafe mark keywords max-aliases-for-collections allow-recursive-keys allow-duplicate-keys] :or {keywords true}}]
   (decode (.load (make-yaml :unsafe unsafe
                             :mark mark
-                            :unknown-tag unknown-tag
-                            :passthrough passthrough
+                            :pass-through-unknown-tags? pass-through-unknown-tags?
+                            :strip-unknown-tags? strip-unknown-tags?
                             :max-aliases-for-collections max-aliases-for-collections
                             :allow-recursive-keys allow-recursive-keys
                             :allow-duplicate-keys allow-duplicate-keys)

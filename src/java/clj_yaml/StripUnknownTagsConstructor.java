@@ -36,9 +36,9 @@ import org.yaml.snakeyaml.error.Mark;
  * This is used as a fallback strategies to use the underlying type instead of
  * throwing an exception.
  */
-public class PassthroughConstructor extends Constructor {
+public class StripUnknownTagsConstructor extends Constructor {
 
-    private class PassthroughConstruct extends AbstractConstruct {
+    private class StripUnknownTagConstruct extends AbstractConstruct {
         public Object construct(Node node) {
             // reset node to scalar tag type for parsing
             Tag tag = null;
@@ -61,8 +61,8 @@ public class PassthroughConstructor extends Constructor {
         public void construct2ndStep(Node node, Object object) {}
     }
 
-    public PassthroughConstructor() {
+    public StripUnknownTagsConstructor() {
         // Add a catch-all to catch any unidentifiable nodes
-        this.yamlMultiConstructors.put("", new PassthroughConstruct());
+        this.yamlMultiConstructors.put("", new StripUnknownTagConstruct());
     }
 }

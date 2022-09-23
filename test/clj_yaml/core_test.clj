@@ -166,8 +166,8 @@ the-bin: !!binary 0101")
       ;; This test ensures that generate-string uses the older behavior by default, for the sake
       ;; of stability, i.e. backwards compatibility.
       (is
-       (= "{description: Big-picture diagram showing how our top-level systems and stakeholders interact}\n"
-          (generate-string data))))))
+        (= "{description: Big-picture diagram showing how our top-level systems and stakeholders interact}\n"
+           (generate-string data))))))
 
 (deftest dump-opts
   (let [data [{:age 33 :name "jon"} {:age 44 :name "boo"}]]
@@ -308,31 +308,13 @@ sequence: !CustomSequence
     (is (thrown-with-msg? ConstructorException
                           #"^could not determine a constructor for the tag !CustomScalar"
                           (parse-string yaml-with-unknown-tags))))
-  (testing "Can process unknown tags with passthrough constructor"
+  (testing "Can process unknown tags with strip-unknown-tags? constructor"
     (is (= {:scalar "some-scalar"
             :mapping {:x "foo" :y "bar"}
             :sequence ["a" "b" "z"]}
-           (parse-string yaml-with-unknown-tags :passthrough true))))
-  (testing "Can process unknown tags with unknown-tag constructor"
+           (parse-string yaml-with-unknown-tags :strip-unknown-tags? true))))
+  (testing "Can process unknown tags with pass-through-unknown-tags? constructor"
     (is (= {:scalar {::yaml/tag "!CustomScalar" ::yaml/value "some-scalar"}
             :mapping {::yaml/tag "!CustomMapping" ::yaml/value {:x "foo" :y "bar"}}
             :sequence {::yaml/tag "!CustomSequence" ::yaml/value ["a" "b" "z"]}}
-       (parse-string yaml-with-unknown-tags :unknown-tag true)))))
-
-(comment
-
-  (def dumper-options (doto (org.yaml.snakeyaml.DumperOptions.)
-                        (.setVersion org.yaml.snakeyaml.DumperOptions$Version/V1_1)))
-
-  (def yaml (org.yaml.snakeyaml.Yaml.
-              (org.yaml.snakeyaml.representer.Representer.) dumper-options))
-
-  
-  @(def out (.dump yaml "083"))
-  ;; => Reflection warning, /Users/grzm/dev/clj-yaml/test/clj_yaml/core_test.clj:327:3 - call to method dump can't be resolved (target class is unknown).
-  ;;    "%YAML 1.1\n--- foo\n"
-  (print out)
-
-  (parse-string "083" :mark true)
-
-  :end)
+           (parse-string yaml-with-unknown-tags :pass-through-unknown-tags? true)))))

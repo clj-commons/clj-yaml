@@ -7,9 +7,9 @@ import org.yaml.snakeyaml.constructor.AbstractConstruct;
 import org.yaml.snakeyaml.nodes.Node;
 import org.yaml.snakeyaml.nodes.Tag;
 
-public class UnknownTagConstructor extends SafeConstructor {
+public class PassThroughUnknownTagsConstructor extends SafeConstructor {
 
-    public UnknownTagConstructor() {
+    public PassThroughUnknownTagsConstructor() {
         this.yamlMultiConstructors.put("", new UnknownTagConstruct());
     }
 
