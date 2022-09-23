@@ -312,9 +312,14 @@ sequence: !CustomSequence
     (is (= {:scalar "some-scalar"
             :mapping {:x "foo" :y "bar"}
             :sequence ["a" "b" "z"]}
-           (parse-string yaml-with-unknown-tags :strip-unknown-tags? true))))
-  (testing "Can process unknown tags with pass-through-unknown-tags? constructor"
-    (is (= {:scalar {::yaml/tag "!CustomScalar" ::yaml/value "some-scalar"}
-            :mapping {::yaml/tag "!CustomMapping" ::yaml/value {:x "foo" :y "bar"}}
-            :sequence {::yaml/tag "!CustomSequence" ::yaml/value ["a" "b" "z"]}}
-           (parse-string yaml-with-unknown-tags :pass-through-unknown-tags? true)))))
+           (parse-string yaml-with-unknown-tags :unknown-tag-fn (fn [_ v] v)))))
+  (testing "Can process unknown tags with :unknown-tag-fn as identity"
+    (is (= {:scalar {:tag "!CustomScalar" :value "some-scalar"}
+            :mapping {:tag "!CustomMapping" :value {:x "foo" :y "bar"}}
+            :sequence {:tag "!CustomSequence" :value ["a" "b" "z"]}}
+           (parse-string yaml-with-unknown-tags :unknown-tag-fn (fn [t v] {:tag t :value v}))))
+    (is (= {:base-12 12 :base-10 "10"}
+           (parse-string "{base-12: !Base12 10, base-10: !Base10 10}"
+                         :unknown-tag-fn (fn [t v]
+                                           (if (= "!Base12" t)
+                                             (Integer/parseInt v 12) v)))))))

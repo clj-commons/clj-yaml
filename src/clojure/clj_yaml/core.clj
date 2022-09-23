@@ -5,7 +5,7 @@
            (org.yaml.snakeyaml.constructor Constructor SafeConstructor BaseConstructor)
            (org.yaml.snakeyaml.representer Representer)
            (org.yaml.snakeyaml.error Mark)
-           (clj_yaml MarkedConstructor PassThroughUnknownTagsConstructor StripUnknownTagsConstructor)
+           (clj_yaml MarkedConstructor UnknownTagsConstructor)
            (java.util LinkedHashMap)))
 
 (def flow-styles
@@ -50,7 +50,7 @@
 
 (defn ^Yaml make-yaml
   "Make a yaml encoder/decoder with some given options."
-  [& {:keys [pass-through-unknown-tags? strip-unknown-tags? dumper-options unsafe mark max-aliases-for-collections allow-recursive-keys allow-duplicate-keys]}]
+  [& {:keys [unknown-tag-fn dumper-options unsafe mark max-aliases-for-collections allow-recursive-keys allow-duplicate-keys]}]
   (let [loader (make-loader-options :max-aliases-for-collections max-aliases-for-collections
                                     :allow-recursive-keys allow-recursive-keys
                                     :allow-duplicate-keys allow-duplicate-keys)
@@ -63,8 +63,7 @@
           ;; are used
           mark (MarkedConstructor.)
 
-          pass-through-unknown-tags? (PassThroughUnknownTagsConstructor.)
-          strip-unknown-tags? (StripUnknownTagsConstructor.)
+          unknown-tag-fn (UnknownTagsConstructor.)
 
           ;; TODO: unsafe marked constructor
           :else (SafeConstructor. loader))
@@ -96,11 +95,11 @@
   "A protocol for things that can be coerced to and from the types
    that snakeyaml knows how to encode and decode."
   (encode [data])
-  (decode [data keywords]))
+  (decode [data keywords unknown-tag-fn]))
 
 (extend-protocol YAMLCodec
   clj_yaml.MarkedConstructor$Marked
-  (decode [data keywords]
+  (decode [data keywords unknown-tag-fn]
     (letfn [(from-Mark [^Mark mark]
               {:line (.getLine mark)
                :index (.getIndex mark)
@@ -109,13 +108,12 @@
       (mark (-> data .start from-Mark)
             (-> data .end from-Mark)
             (-> data .marked
-                (decode keywords)))))
+                (decode keywords unknown-tag-fn)))))
 
-  clj_yaml.PassThroughUnknownTagsConstructor$UnknownTag
-  (decode [data keywords]
-    {::tag (str (.tag data))
-     ::value (-> (.value data) (decode keywords))})
-  
+  clj_yaml.UnknownTagsConstructor$UnknownTag
+  (decode [data keywords unknown-tag-fn]
+    (unknown-tag-fn (str (.tag data)) (-> (.value data) (decode keywords unknown-tag-fn))))
+
   clojure.lang.IPersistentMap
   (encode [data]
     (let [lhm (LinkedHashMap.)]
@@ -133,7 +131,7 @@
     (subs (str data) 1))
 
   java.util.LinkedHashMap
-  (decode [data keywords]
+  (decode [data keywords unknown-tag-fn]
     (letfn [(decode-key [k]
               (if keywords
                 ;; (keyword k) is nil for numbers etc
@@ -141,23 +139,23 @@
                 k))]
       (into (ordered-map)
             (for [[k v] data]
-              [(-> k (decode keywords) decode-key) (decode v keywords)]))))
+              [(-> k (decode keywords unknown-tag-fn) decode-key) (decode v keywords unknown-tag-fn)]))))
 
   java.util.LinkedHashSet
-  (decode [data keywords]
+  (decode [data _keywords _unknown-tag-fn]
     (into (ordered-set) data))
 
   java.util.ArrayList
-  (decode [data keywords]
-    (map #(decode % keywords) data))
+  (decode [data keywords unknown-tag-fn]
+    (map #(decode % keywords unknown-tag-fn) data))
 
   Object
   (encode [data] data)
-  (decode [data keywords] data)
+  (decode [data _keywords _unknown-tag-fn] data)
 
   nil
   (encode [data] data)
-  (decode [data keywords] data))
+  (decode [data _keywords _unknown-tag-fn] data))
 
 
 (defn generate-string [data & opts]
@@ -165,15 +163,14 @@
          (encode data)))
 
 (defn parse-string
-  [^String string & {:keys [pass-through-unknown-tags? strip-unknown-tags? unsafe mark keywords max-aliases-for-collections allow-recursive-keys allow-duplicate-keys] :or {keywords true}}]
-  (decode (.load (make-yaml :unsafe unsafe
-                            :mark mark
-                            :pass-through-unknown-tags? pass-through-unknown-tags?
-                            :strip-unknown-tags? strip-unknown-tags?
-                            :max-aliases-for-collections max-aliases-for-collections
-                            :allow-recursive-keys allow-recursive-keys
-                            :allow-duplicate-keys allow-duplicate-keys)
-                 string) keywords))
+  [^String string & {:keys [unknown-tag-fn unsafe mark keywords max-aliases-for-collections allow-recursive-keys allow-duplicate-keys] :or {keywords true}}]
+  (let [yaml (make-yaml :unsafe unsafe
+                        :mark mark
+                        :unknown-tag-fn unknown-tag-fn
+                        :max-aliases-for-collections max-aliases-for-collections
+                        :allow-recursive-keys allow-recursive-keys
+                        :allow-duplicate-keys allow-duplicate-keys)]
+    (decode (.load yaml string) keywords unknown-tag-fn)))
 
 ;; From https://github.com/metosin/muuntaja/pull/94/files
 (defn generate-stream
@@ -182,6 +179,6 @@
   (.dump ^Yaml (apply make-yaml opts) (encode data) writer))
 
 (defn parse-stream
-  [^java.io.Reader reader & {:keys [keywords] :or {keywords true} :as opts}]
+  [^java.io.Reader reader & {:keys [keywords unknown-tag-fn] :or {keywords true} :as opts}]
   (decode (.load ^Yaml (apply make-yaml (into [] cat opts))
-                 reader) keywords))
+                 reader) keywords unknown-tag-fn))
