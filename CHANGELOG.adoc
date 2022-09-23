@@ -8,8 +8,9 @@ Clj-yaml makes use of SnakeYAML, please also refer to the https://bitbucket.org/
 (https://github.com/clj-commons/clj-yaml/pull/22[#22])
 (https://github.com/clj-commons/clj-yaml/commits?author=clumsyjedi[@clumsyjedi])
 
-*  Support `:unknown-tag-fn` to read unknown tags and values (https://github.com/grzm[@grzm])
+*  Support `:unknown-tag-fn` to read unknown tags and values
 (https://github.com/clj-commons/clj-yaml/issues/23[#23])
+(https://github.com/grzm[@grzm])
 
 == v0.7.110 - 2022-09-13
 
