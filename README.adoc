@@ -43,10 +43,10 @@ By default, keys are converted to clojure keywords. To prevent this, add `:keywo
 ----
 
 Unknown tags can be handled by passing a handler function via the
-:unknown-tag-fn parameter. The handler function is provided a map
-which includes `:tag` and `:value` keys. Note that the value passed to
-the `unknown-tag-fn` is a string if it's a scalar, regardless of the
-quoting (or lack thereof) of the scalar value.
+`:unknown-tag-fn` parameter. The handler function is provided a map which
+includes `:tag` and `:value` keys. Note that the value passed to the
+`unknown-tag-fn` is a string if it's a scalar, regardless of the quoting (or
+lack thereof) of the scalar value.
 
 [source,clojure]
 ----
