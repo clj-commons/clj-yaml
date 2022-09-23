@@ -125,6 +125,21 @@ $ lein test
 $ lein install
 ----
 
+== People
+
+=== Contributors
+A huge thank you to https://github.com/clj-commons/clj-yaml/graphs/contributors[all the people who have contributed directly to clj-yaml]!
+
+=== Founders
+
+* https://github.com/lancepantz[@lancepantz] - the creator or clj-yaml
+* https://github.com/marcomorain[@marcomorain] - the holder of the torch for the circle fork
+
+=== Current Active Maintainers
+
+* https://github.com/borkdude[@borkdude]
+* https://github.com/lread[@lread]
+
 == License
 (c) Lance Bradley - Licensed under the same terms as clojure itself. See LICENCE file for details.
 Portions (c) Owain Lewis as marked.
