@@ -16,17 +16,17 @@
    :block DumperOptions$FlowStyle/BLOCK
    :flow DumperOptions$FlowStyle/FLOW})
 
-(defn ^DumperOptions default-dumper-options
+(defn default-dumper-options
   "clj-yaml 0.5.6 used SnakeYAML 1.13 which by default did *not* split long
   lines. clj-yaml 0.6.0 upgraded to SnakeYAML 1.23 which by default *did* split
   long lines. This ensures that generate-string uses the older behavior by
   default, for the sake of stability, i.e. backwards compatibility."
-  []
+  ^DumperOptions []
   (doto (DumperOptions.)
     (.setSplitLines false)))
 
-(defn ^DumperOptions make-dumper-options
-  [{:keys [flow-style indent indicator-indent]}]
+(defn make-dumper-options
+  ^DumperOptions [{:keys [flow-style indent indicator-indent]}]
   (let [dumper (default-dumper-options)]
     (when flow-style
       (.setDefaultFlowStyle dumper (flow-styles flow-style)))
@@ -36,12 +36,12 @@
       (.setIndicatorIndent dumper indicator-indent))
     dumper))
 
-(defn ^LoaderOptions default-loader-options
-  []
+(defn default-loader-options
+  ^LoaderOptions []
   (LoaderOptions.))
 
-(defn ^LoaderOptions make-loader-options
-  [& {:keys [max-aliases-for-collections allow-recursive-keys allow-duplicate-keys]}]
+(defn make-loader-options
+  ^LoaderOptions [& {:keys [max-aliases-for-collections allow-recursive-keys allow-duplicate-keys]}]
   (let [loader (default-loader-options)]
     (when max-aliases-for-collections
       (.setMaxAliasesForCollections loader max-aliases-for-collections))
@@ -51,9 +51,9 @@
       (.setAllowDuplicateKeys loader allow-duplicate-keys))
     loader))
 
-(defn ^Yaml make-yaml
+(defn make-yaml
   "Make a yaml encoder/decoder with some given options."
-  [& {:keys [unknown-tag-fn dumper-options unsafe mark max-aliases-for-collections allow-recursive-keys allow-duplicate-keys]}]
+  ^Yaml [& {:keys [unknown-tag-fn dumper-options unsafe mark max-aliases-for-collections allow-recursive-keys allow-duplicate-keys]}]
   (let [loader (make-loader-options :max-aliases-for-collections max-aliases-for-collections
                                     :allow-recursive-keys allow-recursive-keys
                                     :allow-duplicate-keys allow-duplicate-keys)
