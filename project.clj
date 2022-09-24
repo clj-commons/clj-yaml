@@ -16,6 +16,7 @@
   :java-source-paths ["src/java"]
   :javac-options ["-target" "1.7" "-source" "1.7" "-Xlint:-options"]
   :dependencies
-  [[org.yaml/snakeyaml "1.33-SNAPSHOT"]
+  [[io.github.borkdude/snakeyaml "1.33"]
+   #_[org.yaml/snakeyaml "1.33-SNAPSHOT"]
    [org.flatland/ordered "1.5.9"]]
   :profiles {:provided {:dependencies [[org.clojure/clojure "1.10.1"]]}})

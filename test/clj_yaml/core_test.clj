@@ -367,7 +367,6 @@ sequence: !CustomSequence
                                            (if (= "!Base12" tag)
                                              (Integer/parseInt value 12) value)))))))
 
-
 (deftest leading-zero-test
   (testing "leading zero is quoted"
     (is (= "['083']"
