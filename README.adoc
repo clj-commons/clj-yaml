@@ -125,6 +125,20 @@ $ lein test
 $ lein install
 ----
 
+== Use as git dependency
+
+To get the latest changes that are not yet released to Clojars, you can use this library as a git dependency:
+
+[source,clojure]
+----
+$ cat deps.edn
+{:deps {clj-commons/clj-yaml {:git/url "https://github.com/clj-commons/clj-yaml"
+                              :git/sha "05eaca35c34c092ffdd2e620ef07962ce147a88b"}}}
+
+$ clj -X:deps prep
+$ clj -M -e "(require '[clj-yaml.core :as yaml])"
+----
+
 == People
 
 === Contributors
