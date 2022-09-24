@@ -27,3 +27,20 @@
                :target-dir class-dir})
   (b/jar {:class-dir class-dir
           :jar-file jar-file}))
+
+(defn install [_]
+  (jar {})
+  (b/install {:basis basis
+              :lib lib
+              :version version
+              :jar-file jar-file
+              :class-dir class-dir}))
+
+(defn deploy [opts]
+  (jar opts)
+  ((requiring-resolve 'deps-deploy.deps-deploy/deploy)
+   (merge {:installer :remote
+           :artifact jar-file
+           :pom-file (b/pom-path {:lib lib :class-dir class-dir})}
+          opts))
+  opts)
