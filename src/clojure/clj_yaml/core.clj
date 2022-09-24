@@ -11,6 +11,8 @@
            (java.util LinkedHashMap)
            (java.io StringReader)))
 
+(set! *warn-on-reflection* true)
+
 (def flow-styles
   {:auto DumperOptions$FlowStyle/AUTO
    :block DumperOptions$FlowStyle/BLOCK
