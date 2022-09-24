@@ -10,3 +10,4 @@ pom.xml*
 /.clj-kondo
 .nrepl-port
 /.calva
+.cpcache

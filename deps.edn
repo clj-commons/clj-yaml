@@ -1,0 +1,11 @@
+{:paths ["src/clojure" "target/classes"]
+ :deps {org.yaml/snakeyaml {:mvn/version "1.32"}
+        org.flatland/ordered {:mvn/version "1.5.9"}}
+ :deps/prep-lib {:alias :build
+                 :fn compile-java
+                 :ensure "target/classes"}
+ :aliases
+ {:build ;; added by neil
+  {:deps {io.github.clojure/tools.build {:git/tag "v0.8.3" :git/sha "0d20256"}
+          slipset/deps-deploy {:mvn/version "0.2.0"}}
+   :ns-default build}}}
