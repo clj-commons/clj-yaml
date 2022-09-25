@@ -1,4 +1,5 @@
 = `clj-commons/clj-yaml`
+// DO NOT EDIT: the lib-version parameter is automatically updated by bb publish
 :lib-version: 0.7.169
 :project-coords: clj-commons/clj-yaml
 
@@ -117,12 +118,26 @@ clj-commons/clj-yaml {:mvn/version "{lib-version}"}
 
 == Development
 
+We use babashka tasks.
+To see a list of available tasks:
+
+[source,shell]
+----
+bb tasks
+----
+
 [source,shell]
 ----
 $ git clone git://github.com/clj-commons/clj-yaml.git
-$ lein deps
-$ lein test
-$ lein install
+$ bb download-deps
+$ bb compile-java
+$ bb test
+----
+
+If you want more control over tests:
+[source,shell]
+----
+$ clojure -M:test <your cognitect test runner opts here>
 ----
 
 == Use as git dependency

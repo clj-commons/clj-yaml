@@ -1,0 +1,34 @@
+name: tests
+on:
+  workflow_call:
+  push:
+    branches:
+      - master
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ${{ matrix.os.name }}-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [{name: 'windows', shell: 'pwsh'}, {name: 'ubuntu', shell: 'bash'}]
+        jdk: ['8', '11', '17']
+
+    name: ${{matrix.os.name}} - jdk ${{ matrix.jdk }}
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Setup
+      uses: ./.github/workflows/shared-setup
+      with:
+        jdk: ${{ matrix.jdk }}
+        shell: ${{ matrix.os.shell }}
+
+    - name: Compile java
+      run: bb compile-java
+
+    - name: Run tests
+      run: bb test

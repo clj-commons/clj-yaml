@@ -1,0 +1,50 @@
+{:paths ["script" "build"]
+ :deps {lread/status-line {:git/url "https://github.com/lread/status-line.git"
+                           :sha "35ed39645038e81b42cb15ed6753b8462e60a06d"}
+        babashka/neil {:git/url "https://github.com/babashka/neil.git"
+                       :sha "6fc58cc6a4253c2c15f05135f1610ab3d46d961f"}
+        version-clj/version-clj {:mvn/version "2.0.2"}}
+ :tasks {;; setup
+         :requires ([babashka.fs :as fs]
+                    [clojure.string :as string]
+                    [lread.status-line :as status])
+         :enter (let [{:keys [name]} (current-task)] (status/line :head "TASK %s %s" name (string/join " " *command-line-args*)))
+         :leave (let [{:keys [name]} (current-task)] (status/line :detail "\nTASK %s done." name))
+
+         ;; tasks
+         clean
+         {:doc "clean build work"
+          :task (when (fs/exists? "target")
+                  (fs/delete-tree "target"))}
+         download-deps
+         {:doc "bring down Clojure deps"
+          :task download-deps/-main}
+         compile-java
+         {:doc "compile java sources"
+          :task (clojure "-T:build compile-java")}
+         test
+         {:doc "run tests"
+          :task (do
+                  (when (not (fs/exists? "target/classes"))
+                    (run 'compile-java))
+                  (clojure "-M:test"))}
+         pubcheck
+         {:doc "run only publish checks (without publishing)"
+          :task publish/pubcheck}
+         publish
+         {:doc "Publish a release (for maintainers)"
+          :task publish/-main}
+         neil ;; let's not rely on a random version of neil
+         {:doc "Pinned version of babashka/neil (used in scripting)"
+          :task babashka.neil/-main}
+
+         ;; hidden tasks, no need for folks to be trying these ci invoked tasks
+         -ci-clojars-deploy
+         {:doc "triggered on ci by release tag"
+          :task ci-publish/clojars-deploy}
+         -ci-github-create-release
+         {:doc "triggered on ci by release tag"
+          :task ci-publish/github-create-release}
+         -ci-cljdoc-request-build
+         {:doc "ask cljdoc to build docs for new release"
+          :task ci-publish/cljdoc-request-build}}}
