@@ -5,7 +5,8 @@
    [clojure.java.io :as io]
    [clojure.string :as string]
    [clojure.test :refer (deftest testing is)]
-   [flatland.ordered.map :refer [ordered-map]])
+   [flatland.ordered.map :refer [ordered-map]]
+   [clojure.string :as str])
   (:import
    (java.io ByteArrayInputStream ByteArrayOutputStream OutputStreamWriter)
    java.nio.charset.StandardCharsets
@@ -365,4 +366,9 @@ sequence: !CustomSequence
                          :unknown-tag-fn (fn [{:keys [tag value]}]
                                            (if (= "!Base12" tag)
                                              (Integer/parseInt value 12) value)))))))
+
+(deftest leading-zero-test
+  (testing "leading zero is quoted"
+    (is (= "['083']"
+           (str/trim (generate-string ["083"]))))))
 
