@@ -16,6 +16,8 @@ Clj-yaml makes use of SnakeYAML, please also refer to the https://bitbucket.org/
 (https://github.com/clj-commons/clj-yaml/issues/23[#23])
 (https://github.com/grzm[@grzm])
 
+* Bump SnakeYAML to 1.33, fixes (https://github.com/clj-commons/clj-yaml/issues/35[#35])
+
 == v0.7.110 - 2022-09-13
 
 * Bump snakeyaml from 1.31 to 1.32 in response to CVE-2022-38752
