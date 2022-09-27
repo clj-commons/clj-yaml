@@ -2,7 +2,6 @@ bin
 lib
 classes
 *.jar
-pom.xml*
 /target
 /.lein-failures
 /.lein-repl-history
