@@ -34,7 +34,8 @@
       (throw (ex-info "jdk version must be at least 8" {})))
     (b/javac (cond-> {:src-dirs ["src/java"]
                       :class-dir class-dir
-                      :basis basis}
+                      :basis basis
+                      :javac-opts ["-Xlint"]}
                (> major 8)
                ;; replaces old jdk <= 8 -source and -target opts
                (assoc :javac-opts ["--release" "8" "-Xlint"])))))
