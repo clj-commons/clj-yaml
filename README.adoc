@@ -7,8 +7,8 @@ Provides http://yaml.org[YAML] encoding and decoding for Clojure via the https:/
 
 // Badges
 https://clojars.org/{project-coords}[image:https://img.shields.io/clojars/v/{project-coords}.svg[Clojars Project]] 
-https://cljdoc.org/d/{project-coords}[image:https://cljdoc.org/badge/{project-coords}[cljdoc badge]] 
-https://circleci.com/gh/{project-coords}[image:https://circleci.com/gh/{project-coords}.svg?style=svg[CircleCI Status]] 
+https://cljdoc.org/d/{project-coords}[image:https://cljdoc.org/badge/{project-coords}[cljdoc badge]]
+https://github.com/{project-coords}/actions/workflows/tests.yml[image:https://github.com/{project-coords}/actions/workflows/tests.yml/badge.svg[CI tests]]
 https://babashka.org[image:https://raw.githubusercontent.com/babashka/babashka/master/logo/built-in-badge.svg[bb built-in]]
 https://clojurians.slack.com/archives/C042XAQFCCU[image:https://img.shields.io/badge/slack-join_chat-brightgreen.svg[Slack chat]]
 
