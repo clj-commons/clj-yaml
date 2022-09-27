@@ -8,7 +8,7 @@
  {;; we use babashka/neil for project attributes
   ;; publish workflow references these values (and automatically bumps patch)
   :neil {:project {:version "1.0.25"
-                   :name clj-commons/yaml}}
+                   :name clj-commons/clj-yaml}}
   :test {:extra-paths ["test"]
          :extra-deps {io.github.cognitect-labs/test-runner
                       {:git/tag "v0.5.1" :git/sha "dfb30dd"}}
