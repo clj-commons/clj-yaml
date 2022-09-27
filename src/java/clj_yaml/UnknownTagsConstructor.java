@@ -1,5 +1,6 @@
 package clj_yaml;
 
+import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.constructor.Construct;
 import org.yaml.snakeyaml.constructor.Constructor;
 import org.yaml.snakeyaml.constructor.SafeConstructor;
@@ -10,6 +11,7 @@ import org.yaml.snakeyaml.nodes.Tag;
 public class UnknownTagsConstructor extends SafeConstructor {
 
     public UnknownTagsConstructor() {
+        super(new LoaderOptions());
         this.yamlMultiConstructors.put("", new UnknownTagConstruct());
     }
 
