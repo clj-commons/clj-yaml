@@ -134,12 +134,6 @@ $ bb compile-java
 $ bb test
 ----
 
-If you want more control over tests:
-[source,shell]
-----
-$ clojure -M:test <your cognitect test runner opts here>
-----
-
 == Use as git dependency
 
 To get the latest changes that are not yet released to Clojars, you can use this library as a git dependency:
