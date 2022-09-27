@@ -8,7 +8,7 @@
 
 ;; Note to lurkers: doc updates are geared to AsciiDoc files.
 
-(def github-coords "clj-commons/yaml")
+(def github-coords "clj-commons/clj-yaml")
 (def changelog-fname "CHANGELOG.adoc")
 (def readme-fname "README.adoc")
 ;; this project started with "Release-" but we prefer "v" as a version tag prefix
