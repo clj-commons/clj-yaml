@@ -23,11 +23,11 @@
          {:doc "compile java sources"
           :task (clojure "-T:build compile-java")}
          test
-         {:doc "run tests"
+         {:doc "run tests (recognizes cognitect test-runner args)"
           :task (do
                   (when (not (fs/exists? "target/classes"))
                     (run 'compile-java))
-                  (clojure "-M:test"))}
+                  (apply clojure "-M:test" *command-line-args*))}
          pubcheck
          {:doc "run only publish checks (without publishing)"
           :task publish/pubcheck}
