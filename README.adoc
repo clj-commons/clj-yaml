@@ -52,6 +52,7 @@ Note that babashka only exposes the higher level functions.
 ;      {:name "Mary Smith", :age 27})
 ----
 
+==== Key Conversion
 By default, YAML keys are converted to clojure keywords. To prevent this, add `:keywords false` parameters to the `parse-string` function:
 
 [source,clojure]
@@ -61,6 +62,11 @@ By default, YAML keys are converted to clojure keywords. To prevent this, add `:
 " :keywords false)
 ;; => ({"name" "John Smith"})
 ----
+
+TIP: The `:keywords` option defaults to `true` for historical reasons.
+Depending on the YAML you are parsing, you very well might want to set this to `false`.
+When clj-yaml detects a key that cannot be converted to a Clojure keyword, it will leave it unconverted.
+Keep in mind detection is not sophisticated and can result in keywords that are illegal and unreadable.
 
 ==== Unknown tags [[unknown-tags]]
 Unknown tags can be handled by passing a handler function via the
