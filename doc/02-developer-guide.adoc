@@ -2,6 +2,9 @@
 :toclevels: 5
 :toc:
 
+== Audience
+You want contribute to, or learn about, the development of the clj-yaml library.
+
 == Contributing
 
 We very much appreciate contributions from the community.
@@ -59,8 +62,6 @@ We use Babashka tasks, to see all available tasks run:
 ----
 bb tasks
 ----
-
-=== JVM Tests
 
 Optionally:
 

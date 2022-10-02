@@ -6,8 +6,8 @@
   - [[parse-string]]
   - [[generate-stream]]
   - [[generate-string]]
-  - [[marked?]]
-  - [[unmark]]
+  - [[marked?]] - relevant to `:mark` option when parsing only
+  - [[unmark]] - relevant to `:mark` option when parsing only
 
   If history were to be rewritten we might have started with the above as
   our public API.
