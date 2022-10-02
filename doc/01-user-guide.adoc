@@ -1,7 +1,8 @@
 = User Guide
+:toclevels: 5
+:toc:
 // DO NOT EDIT: the lib-version parameter is automatically updated by bb publish
 :lib-version: 0.7.169
-:toc-level: 4
 
 == Introduction
 
@@ -14,8 +15,6 @@ Clj-yaml is a Clojure friendly wrapper over https://bitbucket.org/snakeyaml/snak
 - Jan 2019 - clj-commons adopts clj-yaml where it can get the ongoing love and care that it needs
 
 == Installation
-
-`clj-commons/clj-yaml` is available as a Maven artifact from http://clojars.org/clj-commons/clj-yaml[Clojars].
 
 === Leiningen/Boot
 
@@ -31,7 +30,7 @@ Clj-yaml is a Clojure friendly wrapper over https://bitbucket.org/snakeyaml/snak
 clj-commons/clj-yaml {:mvn/version "{lib-version}"}
 ----
 
-=== Use as git dependency
+=== As Git Dependency
 
 To get the latest changes that are not yet released to Clojars, you can use this library as a git dependency:
 

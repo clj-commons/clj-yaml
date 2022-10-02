@@ -1,3 +1,7 @@
+= Developer Guide
+:toclevels: 5
+:toc:
+
 == Contributing
 
 We very much appreciate contributions from the community.
@@ -22,6 +26,7 @@ When we merge your PR, we'll usually squash it, so that will clean up any rambli
 The current version of Babashka.
 The current version of Clojure.
 JDK8+
+Some knowledge of Java if you are going to add/modify Java code (there's not much!).
 
 === Babashka Built-in
 
@@ -35,6 +40,16 @@ All documentation is written in AsciiDoc.
 @lread likes to follow https://asciidoctor.org/docs/asciidoc-recommended-practices/#one-sentence-per-line[AsciiDoc best practice of one sentence per line] but won't be entirely pedantic about that.
 
 We host our docs on cljdoc.
+
+== The Public API
+
+Like many other libraries, clj-yaml did not clearly distinguish its public API from its implementation details.
+
+A library with an explicitly defined public API reduces the surface of what we need to be careful not to break and gives us the freedom to change what is clearly internal.
+
+Because users of clj-yaml have made full use of the `clj-yaml.core` namespace, we continue to support it.
+
+But moving forward, we will be very careful not to expose what we feel are implementation details.
 
 == Babashka Tasks
 

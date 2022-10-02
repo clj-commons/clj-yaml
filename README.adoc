@@ -1,11 +1,7 @@
 = `clj-commons/clj-yaml`
-// DO NOT EDIT: the lib-version parameter is automatically updated by bb publish
-:lib-version: 0.7.169
 :project-coords: clj-commons/clj-yaml
-:toc-level: 4
-:toc: macro
 
-Provides http://yaml.org[YAML] encoding and decoding for Clojure via the https://bitbucket.org/snakeyaml/snakeyaml[snakeyaml] Java library.
+Provides http://yaml.org[YAML] encoding and decoding for Clojure via the https://bitbucket.org/snakeyaml/snakeyaml[SnakeYAML] Java library.
 
 // Badges
 https://clojars.org/{project-coords}[image:https://img.shields.io/clojars/v/{project-coords}.svg[Clojars Project]] 
@@ -14,8 +10,7 @@ https://github.com/{project-coords}/actions/workflows/tests.yml[image:https://gi
 https://babashka.org[image:https://raw.githubusercontent.com/babashka/babashka/master/logo/built-in-badge.svg[bb built-in]]
 https://clojurians.slack.com/archives/C042XAQFCCU[image:https://img.shields.io/badge/slack-join_chat-brightgreen.svg[Slack chat]]
 
-(This is a maintained fork of https://github.com/CircleCI-Archived/clj-yaml[the circleci fork] which forked from https://github.com/lancepantz/clj-yaml[the original])
-
+(This is a maintained fork of https://github.com/CircleCI-Archived/clj-yaml[the circleci clj-yaml fork] which forked from https://github.com/lancepantz/clj-yaml[the original clj-yaml])
 
 == Documentation
 
@@ -38,5 +33,6 @@ A huge thank you to https://github.com/clj-commons/clj-yaml/graphs/contributors[
 * https://github.com/lread[@lread]
 
 == License
-(c) Lance Bradley - Licensed under the same terms as clojure itself. See LICENCE file for details.
+(c) Lance Bradley - Licensed under the same terms as Clojure itself.
+See link:LICENSE[LICENSE] file for details.
 Portions (c) Owain Lewis as marked.

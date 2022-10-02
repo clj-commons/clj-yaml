@@ -1,5 +1,6 @@
 = Maintainer Guide
-:toc: levels 4
+:toclevels: 4
+:toc:
 
 == Audience
 You are a maintainer of this project.
