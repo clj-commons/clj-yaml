@@ -18,6 +18,13 @@ Clj-yaml makes use of SnakeYAML, please also refer to the https://bitbucket.org/
 * Stop using deprecated SnakeYAML constructor
 (https://github.com/clj-commons/clj-yaml/issues/61[#61])
 (https://github.com/lread[@lread])
+* Docs
+** Docs and docstring reviewed and updated 
+(https://github.com/clj-commons/clj-yaml/issues/65[#65])
+(https://github.com/lead[@lread])
+** Public API reviewed and defined and documented
+(https://github.com/clj-commons/clj-yaml/issues/66[#66])
+(https://github.com/lead[@lread])
 
 == v0.7.169 - 2022-09-26
 
