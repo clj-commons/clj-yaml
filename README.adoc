@@ -32,7 +32,7 @@ Perhaps you are doing so to overcome a limitation in clj-yaml that we could addr
 
 Note that babashka only exposes the higher level functions.
 
-=== Parsing YAML
+==== Quick Start
 
 [source,clojure]
 ----
@@ -51,6 +51,8 @@ Note that babashka only exposes the higher level functions.
 ;; => ({:name "John Smith", :age 33}
 ;;     {:name "Mary Smith", :age 27})
 ----
+
+=== Parsing YAML
 
 ==== Key Conversion
 By default, YAML keys are converted to clojure keywords. To prevent this, add `:keywords false` parameters to the `parse-string` function:
@@ -213,7 +215,7 @@ If it is only 1 higher, the indicator will be on a separate line:
                                                  :indicator-indent 1
                                                  :flow-style :block})
 ----
-outputs:
+results in:
 [source,yaml]
 ----
 todo:

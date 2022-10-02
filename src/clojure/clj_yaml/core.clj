@@ -6,6 +6,7 @@
   - [[parse-string]]
   - [[generate-stream]]
   - [[generate-string]]
+  - [[mark?]]
   - [[unmark]]
 
   If history were to be rewritten we might have started with the above as
@@ -17,10 +18,13 @@
   If you find yourself using something in clj-yaml not listed above, it could be
   you are doing so to overcome a limitation that we could address in clj-yaml itself.
   If that's the case, we encourage you to work with us to potentially improve
-  clj-yaml for everybody by raising an issue.
+  clj-yaml for everybody. You can start by raising an issue.
 
-  General note: We don't do any wrapping of SnakeYAML exceptions.
-  The SnakeYAML base exception is `org.yaml.snakeyaml.error.YAMLException`."
+  General notes:
+  - We don't do any wrapping of SnakeYAML exceptions.
+  The SnakeYAML base exception is `org.yaml.snakeyaml.error.YAMLException`.
+  - Original YAML elements order is preserved with ordered set and map data structures,
+  currently via `org.flatland/ordered` lib."
   (:require [flatland.ordered.map :refer (ordered-map)]
             [flatland.ordered.set :refer (ordered-set)])
   (:import (org.yaml.snakeyaml Yaml DumperOptions DumperOptions$FlowStyle LoaderOptions)
@@ -73,7 +77,9 @@
 (defn default-loader-options
   "⚙️ low level, please consider higher level [[clj-yaml.core]] API first
 
-  Returns internal default SnakeYAML loader options."
+  Returns internal default SnakeYAML loader options.
+
+  Consider instead [[make-loader-options]]"
   ^LoaderOptions []
   (LoaderOptions.))
 
@@ -148,7 +154,7 @@
 (defprotocol YAMLCodec
   "⚙️ low level, please consider higher level [[clj-yaml.core]] API first
 
-  A protocol to translate to/from Clojure and SnakeYAML constructs"
+  A protocol to translate to/from Clojure and SnakeYAML data structures"
   (encode [data] "Encode Clojure -> SnakeYAML")
   (decode [data keywords unknown-tag-fn] "Decode SnakeYAML -> Clojure"))
 
@@ -214,7 +220,7 @@
   (decode [data _keywords _unknown-tag-fn] data))
 
 (defn generate-string
-  "Return a string of YAML from Clojure `data` strucutre.
+  "Return a string of YAML from Clojure `data` structure.
 
   Relevant `& opts` (don't wrap `opts` in map):
   - `:dumper-options` map of (see [docs](/README.adoc#dumper-options) for example usage.):
@@ -237,7 +243,7 @@
     (decode (.load yaml input) keywords unknown-tag-fn)))
 
 (defn parse-string
-  "Returns parsed `yaml-string` as Clojure structures.
+  "Returns parsed `yaml-string` as Clojure data structures.
 
   Valid `& opts` (don't wrap `opts` in map):
   - `:keywords` - when `true` attempts to convert YAML keys to Clojure keywords, else makes no conversion
@@ -278,7 +284,7 @@
 
 (defn generate-stream
   ;; From https://github.com/metosin/muuntaja/pull/94/files
-  "Dump Clojure `data` as YAML to `writer`.
+  "Dump Clojure `data` structure as YAML to `writer`.
 
   See [[generate-string]] for `& opts`"
   [writer data & opts]
