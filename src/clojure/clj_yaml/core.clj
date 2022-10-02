@@ -139,14 +139,14 @@
 (defn marked?
   "Returns `true` if `m` was marked with positional data.
 
-  See [docs](/README.adoc#mark)."
+  See [docs](doc/01-user-uguide.adoc#mark)."
   [m]
   (instance? Marked m))
 
 (defn unmark
   "Returns `m` without positional data wrapper, else `m` if not wrapped.
 
-  See [docs](/README.adoc#mark)."
+  See [docs](doc/01-user-uguide.adoc#mark)."
   [m]
   (if (marked? m)
     (:unmark m)
@@ -224,7 +224,7 @@
   "Return a string of YAML from Clojure `data` structure.
 
   Relevant `& opts` (don't wrap `opts` in map):
-  - `:dumper-options` map of (see [docs](/README.adoc#dumper-options) for example usage.):
+  - `:dumper-options` map of (see [docs](doc/01-user-uguide.adoc#dumper-options) for example usage.):
     - `:flow-style` can be:
       - `:auto` - let SnakeYAML decide
       - `:block` - indented syntax
@@ -256,7 +256,7 @@
     - default: `false`
   - `:unknown-tag-fn` - Single-argument fn, arg is map with keys `:tag` and `:value`; return replaces the YAML tag and value.
     - default behaviour: clj-yaml throws on unknown tags.
-    - see [docs](/README.adoc#unknown-tags) for example usage.
+    - see [docs](doc/01-user-uguide.adoc#unknown-tags) for example usage.
   - `:max-aliases-for-collections` the maximum number of YAML aliases for collections (sequences and mappings).
     - Default: `50`
     - throws when value is exceeded.
@@ -266,10 +266,10 @@
     - Default: `true` - last duplicate key wins.
   - `:unsafe` - when `true` attempt to load tagged elements to Java objects, else prohibits via throw.
     - default: `false`
-    - **WARNING**: be very wary of parsing unsafe YAML. See [docs](/README.adoc#unsafe)
+    - **WARNING**: be very wary of parsing unsafe YAML. See [docs](doc/01-user-uguide.adoc#unsafe)
   - `:mark` - when `true` position of YAML input is tracked and returned in alternate structure.
     - default: `false`
-    - See [docs](/README.adoc#mark)
+    - See [docs](doc/01-user-uguide.adoc#mark)
 
   Note: clj-yaml will only recognize the first of `:unsafe`, `:mark` or `:unknown-tag-fn`"
   [^String yaml-string & {:keys [keywords load-all unknown-tag-fn
