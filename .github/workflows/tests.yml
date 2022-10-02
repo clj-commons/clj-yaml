@@ -8,6 +8,21 @@ on:
     branches: [ "master" ]
 
 jobs:
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3.0.2
+
+      - name: Setup
+        uses: ./.github/workflows/shared-setup
+        with:
+          jdk: '11'
+
+      - name: Lint
+        run: bb lint
+
   test:
     runs-on: ${{ matrix.os.name }}-latest
     strategy:

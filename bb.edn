@@ -28,6 +28,9 @@
                   (when (not (fs/exists? "target/classes"))
                     (run 'compile-java))
                   (apply clojure "-M:test" *command-line-args*))}
+         lint
+         {:doc "[--rebuild] Lint source code"
+          :task lint/-main}
          pubcheck
          {:doc "run only publish checks (without publishing)"
           :task publish/pubcheck}

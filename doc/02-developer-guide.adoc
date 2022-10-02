@@ -85,3 +85,10 @@ You can also include cognitect test runner options:
 ----
 $ bb test --var 'clj-yaml.core-test/emoji-can-be-parsed'
 ----
+
+Our CI workflow lints sources with clj-kondo, and you can too!
+
+[source,shell]
+----
+$ bb lint
+----
