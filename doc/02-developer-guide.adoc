@@ -48,7 +48,7 @@ We host our docs on cljdoc.
 
 Like many other libraries, clj-yaml did not clearly distinguish its public API from its implementation details.
 
-A library with an explicitly defined public API reduces the surface of what we need to be careful not to break and gives us the freedom to change what is clearly internal.
+A library with an explicitly defined public API reduces the surface area of what we need to be careful not to break and gives us the freedom to change what is clearly internal.
 
 Because users of clj-yaml have made full use of the `clj-yaml.core` namespace, we continue to support it.
 

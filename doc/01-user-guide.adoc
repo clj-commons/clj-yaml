@@ -9,7 +9,7 @@ You want to learn more about how to use the clj-yaml library from your app, libr
 
 == Introduction
 
-Clj-yaml is a Clojure friendly wrapper over https://bitbucket.org/snakeyaml/snakeyaml/src/master/[SnakeYAML].
+Clj-yaml is a Clojure wrapper over https://bitbucket.org/snakeyaml/snakeyaml/src/master/[SnakeYAML].
 
 === History
 
@@ -21,7 +21,7 @@ Clj-yaml is a Clojure friendly wrapper over https://bitbucket.org/snakeyaml/snak
 
 === Babashka
 
-Not installation required.
+No installation required.
 Clj-yaml is built into babashka.
 
 === Leiningen/Boot
@@ -94,7 +94,7 @@ Note that:
 === Parsing YAML
 
 ==== Key Conversion
-By default, YAML keys are converted to clojure keywords. To prevent this, add the `:keywords false` option to the `parse-string` function:
+By default, YAML keys are converted to Clojure keywords. To prevent this, add the `:keywords false` option to the `parse-string` function:
 
 [source,clojure]
 ----
