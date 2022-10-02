@@ -1,12 +1,12 @@
 (ns clj-yaml.core
   "Parse and generate YAML.
 
-  Please strongly prefer these high level functions:
+  Please strongly prefer these high-level functions:
   - [[parse-stream]]
   - [[parse-string]]
   - [[generate-stream]]
   - [[generate-string]]
-  - [[mark?]]
+  - [[marked?]]
   - [[unmark]]
 
   If history were to be rewritten we might have started with the above as
@@ -18,10 +18,11 @@
   If you find yourself using something in clj-yaml not listed above, it could be
   you are doing so to overcome a limitation that we could address in clj-yaml itself.
   If that's the case, we encourage you to work with us to potentially improve
-  clj-yaml for everybody. You can start by raising an issue.
+  clj-yaml for everybody. You can start by raising an issue and/or reaching out to us
+  on Slack.
 
   General notes:
-  - We don't do any wrapping of SnakeYAML exceptions.
+  - We don't do any wrapping/conversion of SnakeYAML exceptions.
   The SnakeYAML base exception is `org.yaml.snakeyaml.error.YAMLException`.
   - Original YAML elements order is preserved with ordered set and map data structures,
   currently via `org.flatland/ordered` lib."
@@ -51,8 +52,8 @@
   "⚙️ low level, please consider higher level [[clj-yaml.core]] API first
 
   Returns internal default SnakeYAML dumper options.
-  - preserves clj-yaml backward compat by explicitly setting option to split long lines to false.
-  The current default in SnakeYAML used to be false but has become true.
+  - preserves clj-yaml backward compat by explicitly setting option to split long lines to `false`.
+  The current default in SnakeYAML used to be `false` but has become `true`.
 
   Consider instead [[make-dumper-options]]"
   ^DumperOptions []
@@ -131,7 +132,7 @@
 (defn mark
   "⚙️ low level, please consider higher level [[clj-yaml.core]] API first
 
-  Returns internal wrapped `marked` with `start` and `end` positional data."
+  Returns internal structure wrapping `marked` with `start` and `end` positional data."
   [start end marked]
   (Marked. start end marked))
 
@@ -248,7 +249,7 @@
   Valid `& opts` (don't wrap `opts` in map):
   - `:keywords` - when `true` attempts to convert YAML keys to Clojure keywords, else makes no conversion
     - default: `true`.
-    - when clj-yaml detects that a YAML key cannot be converted to a legal Clojure keyword it leaves the key as is
+    - when clj-yaml detects that a YAML key cannot be converted to a legal Clojure keyword it leaves the key as is.
     - detection is not sophisticated and clj-yaml will produce invalid Clojure keywords, so although our default is `true` here, `false` can be a better choice.
   - `:load-all` - when `true` loads all YAML documents from `yaml-string` and returns a vector of parsed docs.
   Else only first YAML document is loaded, and return is that individual parsed doc.
@@ -263,10 +264,10 @@
     - Default: `false`
   - `:allow-duplicate-keys` - when `false` throws on duplicate keys.
     - Default: `true` - last duplicate key wins.
-  - `:unsafe` - when `true` attempt to load tags to custom Java objects, else prohibits .
+  - `:unsafe` - when `true` attempt to load tagged elements to Java objects, else prohibits via throw.
     - default: `false`
     - **WARNING**: be very wary of parsing unsafe YAML. See [docs](/README.adoc#unsafe)
-  - `:mark` - when `true` row and col position of YAML input is tracked and returned in alternate structure.
+  - `:mark` - when `true` position of YAML input is tracked and returned in alternate structure.
     - default: `false`
     - See [docs](/README.adoc#mark)
 
@@ -291,7 +292,7 @@
   (.dump ^Yaml (apply make-yaml opts) (encode data) writer))
 
 (defn parse-stream
-  "Returns Clojure structures for stream of YAML read from `reader`.
+  "Returns Clojure data structures for stream of YAML read from `reader`.
 
   See [[parse-string]] for `& opts`"
   [^java.io.Reader reader & {:keys [keywords load-all unknown-tag-fn] :or {keywords true} :as opts}]
