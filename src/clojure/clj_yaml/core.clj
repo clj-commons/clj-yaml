@@ -36,7 +36,7 @@
 (set! *warn-on-reflection* true)
 
 (def flow-styles
-  "[low level, please consider higher level API first]
+  "⚙️ low level, please consider higher level [[clj-yaml.core]] API first
 
   Internal mappings to SnakeYAML's internal flow styles"
   {:auto DumperOptions$FlowStyle/AUTO
@@ -44,7 +44,7 @@
    :flow DumperOptions$FlowStyle/FLOW})
 
 (defn default-dumper-options
-  "[low level, please consider higher level API first]
+  "⚙️ low level, please consider higher level [[clj-yaml.core]] API first
 
   Returns internal default SnakeYAML dumper options.
   - preserves clj-yaml backward compat by explicitly setting option to split long lines to false.
@@ -56,7 +56,7 @@
     (.setSplitLines false)))
 
 (defn make-dumper-options
-  "[low level, please consider higher level API first]
+  "⚙️ low level, please consider higher level [[clj-yaml.core]] API first
 
   Returns internal SnakeYAML dumper options.
   See [[generate-string]] for description of options."
@@ -71,14 +71,14 @@
     dumper))
 
 (defn default-loader-options
-  "[low level, please consider higher level API first]
+  "⚙️ low level, please consider higher level [[clj-yaml.core]] API first
 
   Returns internal default SnakeYAML loader options."
   ^LoaderOptions []
   (LoaderOptions.))
 
 (defn make-loader-options
-  "[low level, please consider higher level API first]
+  "⚙️ low level, please consider higher level [[clj-yaml.core]] API first
 
   Returns internal SnakeYAML loader options.
   See [[parse-string]] for description of options."
@@ -93,7 +93,7 @@
     loader))
 
 (defn make-yaml
-  "[low level, please consider higher level API first]
+  "⚙️ low level, please consider higher level [[clj-yaml.core]] API first
 
   Returns internal SnakeYAML encoder/decoder.
 
@@ -123,7 +123,7 @@
   [start end unmark])
 
 (defn mark
-  "[low level, please consider higher level API first]
+  "⚙️ low level, please consider higher level [[clj-yaml.core]] API first
 
   Returns internal wrapped `marked` with `start` and `end` positional data."
   [start end marked]
@@ -146,7 +146,7 @@
     m))
 
 (defprotocol YAMLCodec
-  "[low level, please consider higher level API first]
+  "⚙️ low level, please consider higher level [[clj-yaml.core]] API first
 
   A protocol to translate to/from Clojure and SnakeYAML constructs"
   (encode [data] "Encode Clojure -> SnakeYAML")
@@ -278,14 +278,14 @@
 
 (defn generate-stream
   ;; From https://github.com/metosin/muuntaja/pull/94/files
-  "Dump the content of Clojure `data` as YAML into `writer`.
+  "Dump Clojure `data` as YAML to `writer`.
 
   See [[generate-string]] for `& opts`"
   [writer data & opts]
   (.dump ^Yaml (apply make-yaml opts) (encode data) writer))
 
 (defn parse-stream
-  "Returns yaml from `reader` as Clojure structures.
+  "Returns Clojure structures for stream of YAML read from `reader`.
 
   See [[parse-string]] for `& opts`"
   [^java.io.Reader reader & {:keys [keywords load-all unknown-tag-fn] :or {keywords true} :as opts}]
