@@ -1,5 +1,6 @@
 = Maintainer Guide
-:toc: levels 4
+:toclevels: 4
+:toc:
 
 == Audience
 You are a maintainer of this project.
@@ -26,9 +27,9 @@ Then locally:
 . bumps the version `<release count>` (our scheme is `major.minor.<release count>`)
 ** Our version is stored in `deps.edn` under `:aliases` `:neil` `:project` `:version`
 . applies version to:
-.. `README.adoc`
+.. `doc/01-user-guide.adoc`
 .. `CHANGELOG.adoc`
-. git commits: `deps.edn` `README.adoc` `CHANGELOG.adoc`
+. git commits: `deps.edn` `doc/01-user-guide.adoc` `CHANGELOG.adoc`
 . git tags with release tag `v<version>`
 . pushes commit
 . pushes tag
