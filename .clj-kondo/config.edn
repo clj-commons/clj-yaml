@@ -1,0 +1,2 @@
+;; don't adopt any user preferences
+{:config-paths ^:replace []}

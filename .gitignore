@@ -6,7 +6,7 @@ classes
 /.lein-failures
 /.lein-repl-history
 /.lsp
-/.clj-kondo
+.cache
 .nrepl-port
 /.calva
 .cpcache

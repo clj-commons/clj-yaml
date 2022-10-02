@@ -17,4 +17,8 @@
   {:extra-paths ["build"]
    :deps {io.github.clojure/tools.build {:git/tag "v0.8.3" :git/sha "0d20256"}
           slipset/deps-deploy {:mvn/version "0.2.0"}}
-   :ns-default build}}}
+   :ns-default build}
+  ;; for consistent linting we use a specific version of clj-kondo through the jvm
+  :clj-kondo {:extra-deps {clj-kondo/clj-kondo {:mvn/version "2022.09.08"}}
+              :override-deps {org.clojure/clojure {:mvn/version "1.11.1"}}
+              :main-opts ["-m" "clj-kondo.main"]}}}
