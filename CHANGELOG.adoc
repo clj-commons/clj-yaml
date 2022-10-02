@@ -26,7 +26,12 @@ Clj-yaml makes use of SnakeYAML, please also refer to the https://bitbucket.org/
 (https://github.com/clj-commons/clj-yaml/issues/66[#66])
 (https://github.com/lead[@lread])
 
-== v0.7.169 - 2022-09-26
+== v0.7.169 - 2022-09-26 [minor breaking]
+
+WARNING: We have discovered that some folks use some clj-yaml functionality we assumed was internal.
+This release changed the `YAMLCodec` `decode` function signature and will be a breaking change for those people who directly use this lower level function.
+Other users should be unaffected. 
+See https://github.com/clj-commons/clj-yaml/issues/67[#67].
 
 * Support loading all YAML docs via new `:load-all` opt for `parse-string` and `parse-stream`
 (https://github.com/clj-commons/clj-yaml/pull/22[#22])
