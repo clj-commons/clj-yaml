@@ -1,4 +1,6 @@
 {:cljdoc.doc/tree
  [["Readme" {:file "README.adoc"}]
   ["Changelog" {:file "CHANGELOG.adoc"}]
-  ["Maintainer Guide" {:file "doc/maintainer-guide.adoc"}]]}
+  ["User Guide" {:file "doc/01-user-guide.adoc"}]
+  ["Developer Guide" {:file "doc/02-developer-guide.adoc"}]
+  ["Maintainer Guide" {:file "doc/03-maintainer-guide.adoc"}]]}

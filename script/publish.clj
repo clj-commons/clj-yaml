@@ -10,7 +10,7 @@
 
 (def github-coords "clj-commons/clj-yaml")
 (def changelog-fname "CHANGELOG.adoc")
-(def readme-fname "README.adoc")
+(def user-guide-fname "doc/01-user-guide.adoc")
 ;; this project started with "Release-" but we prefer "v" as a version tag prefix
 (def legacy-version-tag-prefix "Release-")
 
@@ -115,9 +115,9 @@
       (status/die 1 "Expected to %s in %s" desc fname)
       (spit fname new-content))))
 
-(defn- update-readme! [version]
-  (status/line :detail "Applying version %s to readme" version)
-  (update-file! readme-fname
+(defn- update-user-guide! [version]
+  (status/line :detail "Applying version %s to user guide" version)
+  (update-file! user-guide-fname
                 "update :lib-version: adoc attribute"
                 #"(?m)^(:lib-version: )(.*)$"
                 (str "$1" version)))
@@ -155,7 +155,7 @@
                  "$3")))
 
 (defn- commit-changes! [version]
-  (t/shell "git add deps.edn" changelog-fname readme-fname)
+  (t/shell "git add deps.edn" changelog-fname user-guide-fname)
   (t/shell "git commit -m" (str "publish: apply version " version)))
 
 (defn- tag! [tag version]
@@ -196,7 +196,7 @@
     (status/line :detail "Release tag: %s" release-tag)
     (status/line :detail "Last release tag: %s" last-release-tag)
     (status/line :head "Updating docs")
-    (update-readme! version)
+    (update-user-guide! version)
     (update-changelog! version release-tag last-release-tag)
     (status/line :head "Committing changes")
     (commit-changes! version)
