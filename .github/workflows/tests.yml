@@ -47,4 +47,4 @@ jobs:
       run: bb compile-java
 
     - name: Run tests
-      run: bb test
+      run: bb test --clj-version :all

@@ -86,6 +86,14 @@ You can also include cognitect test runner options:
 $ bb test --var 'clj-yaml.core-test/emoji-can-be-parsed'
 ----
 
+...and/or Clojure version:
+
+[source,shell]
+----
+$ bb test --clj-version 1.9
+----
+(defaults to `1.8`, specify `:all` to test against all supported Clojure versions)
+
 Our CI workflow lints sources with clj-kondo, and you can too!
 
 [source,shell]

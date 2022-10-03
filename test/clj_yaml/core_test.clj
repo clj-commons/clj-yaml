@@ -2,6 +2,7 @@
   (:require
    [clj-yaml.core :as yaml :refer [generate-stream generate-string
                                    parse-stream parse-string unmark]]
+   [clj-yaml.test-report]
    [clojure.java.io :as io]
    [clojure.string :as string]
    [clojure.test :refer (deftest testing is)]
