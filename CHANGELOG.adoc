@@ -18,7 +18,7 @@ Clj-yaml makes use of SnakeYAML, please also refer to the https://bitbucket.org/
 With this release we move to a `1.x.<release count>` scheme.
 
 * Docs
-** Docs and docstring reviewed and updated 
+** Docs and docstring reviewed and updated
 (https://github.com/clj-commons/clj-yaml/issues/65[#65])
 (https://github.com/lead[@lread])
 ** Public API reviewed and defined and documented
@@ -30,6 +30,9 @@ With this release we move to a `1.x.<release count>` scheme.
 (https://github.com/lread[@lread])
 ** Expanded automatic CI testing to include JDKs 11, 17 and Windows (was previously JDK8 and Ubuntu only)
 (https://github.com/clj-commons/clj-yaml/issues/47[#47])
+(https://github.com/lead[@lread])
+** Now CI testing against all supported Clojure versions (was previously just testing against default on CI)
+(https://github.com/clj-commons/clj-yaml/issues/71[#71])
 (https://github.com/lead[@lread])
 ** Added more automation when publishing a release
 (https://github.com/clj-commons/clj-yaml/issues/47[#47])
@@ -48,7 +51,7 @@ See https://github.com/clj-commons/clj-yaml/issues/67[#67].
 
 * Support loading all YAML docs via new `:load-all` opt for `parse-string` and `parse-stream`
 (https://github.com/clj-commons/clj-yaml/pull/22[#22])
-(https://github.com/clj-commons/clj-yaml/commits?author=clumsyjedi[@clumsyjedi])
+(https://github.com/clumsyjedi[@clumsyjedi])
 
 *  Support `:unknown-tag-fn` to read unknown tags and values
 (https://github.com/clj-commons/clj-yaml/issues/23[#23])
