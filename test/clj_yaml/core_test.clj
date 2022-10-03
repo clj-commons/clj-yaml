@@ -394,3 +394,30 @@ sequence: !CustomSequence
   (let [parsed (parse-string "!!java.lang.Long 5" :unsafe true)]
     (is (= 5 parsed) "SnakeYAML can be asked to create innocuous looking classes - value match")
     (is (= "class java.lang.Long" (str (class parsed))) "SnakeYAML can be asked to create innocuous looking classes - type match")))
+
+(deftest low-level-decode-legacy-compat-test
+  ;; Dear reader, we don't want to encourage you to use low level functions in this way,
+  ;; this test is here to verify that we are compatible with existing code in the wild
+  (let [to-decode (doto (java.util.LinkedHashMap.) (.put "a" 1))]
+    (is (= (ordered-map {"a" 1})
+           (yaml/decode to-decode false))
+        "decode supports legacy [data keywords] signature - keywords false")
+    (is (= (ordered-map {:a 1})
+           (yaml/decode to-decode true))
+        "decode supports legacy [data keywords] signature - keywords true")
+
+    (is (= (ordered-map {"a" 1})
+           (yaml/decode to-decode nil))
+        "decode supports legacy [data keywords] signature - keywords nil")
+
+    (is (= (ordered-map {"a" 1})
+           (yaml/decode to-decode {}))
+        "decode supports new [data opts] signature - keywords not specified")
+
+    (is (= (ordered-map {:a 1})
+           (yaml/decode to-decode {:keywords true}))
+        "decode supports new [data opts] signature - keywords specified true")
+
+    (is (= (ordered-map {"a" 1})
+           (yaml/decode to-decode {:keywords false}))
+        "decode supports new [data opts] signature - keywords specified true")))
