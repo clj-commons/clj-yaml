@@ -15,9 +15,8 @@ Clj-yaml makes use of SnakeYAML, please also refer to the https://bitbucket.org/
 //   (adjust these in publish.clj as you see fit)
 == Unreleased
 
-* Stop using deprecated SnakeYAML constructor
-(https://github.com/clj-commons/clj-yaml/issues/61[#61])
-(https://github.com/lread[@lread])
+With this release we move to a `1.x.<release count>` scheme.
+
 * Docs
 ** Docs and docstring reviewed and updated 
 (https://github.com/clj-commons/clj-yaml/issues/65[#65])
@@ -25,6 +24,20 @@ Clj-yaml makes use of SnakeYAML, please also refer to the https://bitbucket.org/
 ** Public API reviewed and defined and documented
 (https://github.com/clj-commons/clj-yaml/issues/66[#66])
 (https://github.com/lead[@lread])
+* Quality
+** Stop using deprecated SnakeYAML constructor
+(https://github.com/clj-commons/clj-yaml/issues/61[#61])
+(https://github.com/lread[@lread])
+** Expanded automatic CI testing to include JDKs 11, 17 and Windows (was previously JDK8 and Ubuntu only)
+(https://github.com/clj-commons/clj-yaml/issues/47[#47])
+(https://github.com/lead[@lread])
+** Added more automation when publishing a release
+(https://github.com/clj-commons/clj-yaml/issues/47[#47])
+(https://github.com/lead[@lread])
+
+** Added clj-kondo linting
+(https://github.com/clj-commons/clj-yaml/issues/69[#69])
+(https://github.com/lread[@lread])
 
 == v0.7.169 - 2022-09-26 [minor breaking]
 
