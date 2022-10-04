@@ -150,6 +150,34 @@ the-bin: !!binary 0101")
                   first
                   keys))))
 
+(deftest unconvertable-key-not-converted-to-keyword
+  ;; we are not sophisticated here, but do handle some cases
+  (is (= {42 1 :b 2}
+         (parse-string "{42: 1, b: 2}" :keywords true))))
+
+(deftest key-fn-option
+  (is (= {:a 1}
+         (parse-string "{a: 1}" :key-fn #(-> % :key keyword)))
+      "can operate like :keywords true")
+  (is (= {"A" 1}
+         (parse-string "{a: 1}" :key-fn #(-> % :key string/upper-case)))
+      "overrides default :keywords true")
+  (is (= {"A" 1}
+         (parse-string "{a: 1}"
+                       :keywords false
+                       :key-fn #(-> % :key string/upper-case)))
+      "overrides :keywords false")
+  (is (= {"A" 1}
+         (parse-string "{a: 1}"
+                       :keywords true
+                       :key-fn #(-> % :key string/upper-case)))
+      "overrides :keywords true")
+  (is (= {"BA" 1}
+         (parse-string "{!blam ab: 1}"
+                       :key-fn #(-> % :key string/upper-case)
+                       :unknown-tag-fn #(-> % :value string/reverse)))
+      "can be combined with :unknown-tag-fn"))
+
 (deftest marking-source-position-works
   (let [parsed (parse-string inline-list-yaml :mark true)]
     ;; The list starts at the beginning of line 1.
