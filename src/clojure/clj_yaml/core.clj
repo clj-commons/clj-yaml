@@ -265,7 +265,7 @@
 
   Valid `& opts` (`opts` are keyword args, see [docs](/doc/01-user-guide.adoc#keyword-args)):
   - `:key-fn` - Single-argument fn, arg is a map with `:key`; called on YAML keys, return replaces YAML key.
-    - default behaviour: no key conversion
+    - default behaviour: see `:keywords`
     - overrides `:keywords`, consider using this option instead of `:keywords`
     - see [docs](/doc/01-user-guide.adoc#key-conv)
   - `:keywords` - when `true` attempts to convert YAML keys to Clojure keywords, else makes no conversion
