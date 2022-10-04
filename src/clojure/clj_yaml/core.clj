@@ -152,16 +152,26 @@
     (:unmark m)
     m))
 
+(defn- decode-opts
+  "Supports old decode signature `(decode keywords)` by understanding that `opts` might be `keywords` boolean.
+  We'll assume that if `opts` is not a map then we are supporting legacy usage."
+  [opts]
+  (if (map? opts)
+    opts
+    {:keywords opts}))
+
 (defprotocol YAMLCodec
   "⚙️ low level, please consider higher level [[clj-yaml.core]] API first
 
   A protocol to translate to/from Clojure and SnakeYAML data structures"
-  (encode [data] "Encode Clojure -> SnakeYAML")
-  (decode [data keywords unknown-tag-fn] "Decode SnakeYAML -> Clojure"))
+  (encode [data]
+    "Encode Clojure -> SnakeYAML")
+  (decode [data opts]
+    "Decode SnakeYAML -> Clojure"))
 
 (extend-protocol YAMLCodec
   clj_yaml.MarkedConstructor$Marked
-  (decode [data keywords unknown-tag-fn]
+  (decode [data opts]
     (letfn [(from-Mark [^Mark mark]
               {:line (.getLine mark)
                :index (.getIndex mark)
@@ -169,13 +179,16 @@
       ;; Decode the marked data and rewrap it with its source position.
       (mark (-> data .start from-Mark)
             (-> data .end from-Mark)
-            (-> data .marked
-                (decode keywords unknown-tag-fn)))))
+            (-> data
+                .marked
+                (decode opts)))))
 
   clj_yaml.UnknownTagsConstructor$UnknownTag
-  (decode [data keywords unknown-tag-fn]
-    (unknown-tag-fn {:tag (str (.tag data))
-                     :value (-> (.value data) (decode keywords unknown-tag-fn))}))
+  (decode [data opts]
+    (let [{:keys [unknown-tag-fn] :as opts} (decode-opts opts)]
+      (unknown-tag-fn {:tag (str (.tag data))
+                       :value (-> (.value data)
+                                  (decode opts))})))
 
   clojure.lang.IPersistentMap
   (encode [data]
@@ -194,36 +207,37 @@
     (subs (str data) 1))
 
   java.util.LinkedHashMap
-  (decode [data keywords unknown-tag-fn]
-    (letfn [(decode-key [k]
-              (if keywords
-                ;; (keyword k) is nil for numbers etc
-                (or (keyword k) k)
-                k))]
-      (into (ordered-map)
-            (for [[k v] data]
-              [(-> k (decode keywords unknown-tag-fn) decode-key) (decode v keywords unknown-tag-fn)]))))
+  (decode [data opts]
+    (let [{:keys [keywords] :as opts} (decode-opts opts)]
+      (letfn [(decode-key [k]
+                (if keywords
+                  ;; (keyword k) is nil for numbers etc
+                  (or (keyword k) k)
+                  k))]
+        (into (ordered-map)
+              (for [[k v] data]
+                [(-> k (decode opts) decode-key) (decode v opts)])))))
 
   java.util.LinkedHashSet
-  (decode [data _keywords _unknown-tag-fn]
+  (decode [data _opts]
     (into (ordered-set) data))
 
   java.util.ArrayList
-  (decode [data keywords unknown-tag-fn]
-    (map #(decode % keywords unknown-tag-fn) data))
+  (decode [data opts]
+    (map #(decode % opts) data))
 
   Object
   (encode [data] data)
-  (decode [data _keywords _unknown-tag-fn] data)
+  (decode [data _opts] data)
 
   nil
   (encode [data] data)
-  (decode [data _keywords _unknown-tag-fn] data))
+  (decode [data _opts] data))
 
 (defn generate-string
   "Return a string of YAML from Clojure `data` structure.
 
-  Relevant `& opts` (don't wrap `opts` in map):
+  Relevant `& opts` (`opts` are keyword args, see [docs](/doc/01-user-guide.adoc#keyword-args)):
   - `:dumper-options` map of (see [docs](/doc/01-user-guide.adoc#dumper-options) for example usage.):
     - `:flow-style` can be:
       - `:auto` - let SnakeYAML decide
@@ -238,15 +252,18 @@
   (.dump ^Yaml (apply make-yaml opts)
          (encode data)))
 
-(defn- load-stream [^Yaml yaml ^java.io.Reader input load-all keywords unknown-tag-fn]
-  (if load-all
-    (map #(decode % keywords unknown-tag-fn) (.loadAll yaml input))
-    (decode (.load yaml input) keywords unknown-tag-fn)))
+(def ^:private load-opts-defaults {:keywords true})
+
+(defn- load-stream [^Yaml yaml ^java.io.Reader input opts]
+  (let [{:keys [load-all] :as opts} (merge load-opts-defaults opts)]
+    (if load-all
+      (map #(decode % opts) (.loadAll yaml input))
+      (decode (.load yaml input) opts))))
 
 (defn parse-string
   "Returns parsed `yaml-string` as Clojure data structures.
 
-  Valid `& opts` (don't wrap `opts` in map):
+  Valid `& opts` (`opts` are keyword args, see [docs](/doc/01-user-guide.adoc#keyword-args)):
   - `:keywords` - when `true` attempts to convert YAML keys to Clojure keywords, else makes no conversion
     - default: `true`.
     - when clj-yaml detects that a YAML key cannot be converted to a legal Clojure keyword it leaves the key as is.
@@ -272,16 +289,11 @@
     - See [docs](/doc/01-user-guide.adoc#mark)
 
   Note: clj-yaml will only recognize the first of `:unsafe`, `:mark` or `:unknown-tag-fn`"
-  [^String yaml-string & {:keys [keywords load-all unknown-tag-fn
-                                 max-aliases-for-collections allow-recursive-keys allow-duplicate-keys
-                                 unsafe mark] :or {keywords true}}]
-  (let [yaml (make-yaml :unsafe unsafe
-                        :mark mark
-                        :unknown-tag-fn unknown-tag-fn
-                        :max-aliases-for-collections max-aliases-for-collections
-                        :allow-recursive-keys allow-recursive-keys
-                        :allow-duplicate-keys allow-duplicate-keys)]
-    (load-stream yaml (StringReader. yaml-string) load-all keywords unknown-tag-fn)))
+  [^String yaml-string & opts]
+  (let [{:as opts-map} opts]
+    (load-stream (apply make-yaml opts)
+                 (StringReader. yaml-string)
+                 opts-map)))
 
 (defn generate-stream
   ;; From https://github.com/metosin/muuntaja/pull/94/files
@@ -289,13 +301,16 @@
 
   See [[generate-string]] for `& opts`"
   [writer data & opts]
-  (.dump ^Yaml (apply make-yaml opts) (encode data) writer))
+  (.dump ^Yaml (apply make-yaml opts)
+         (encode data)
+         writer))
 
 (defn parse-stream
   "Returns Clojure data structures for stream of YAML read from `reader`.
 
   See [[parse-string]] for `& opts`"
-  [^java.io.Reader reader & {:keys [keywords load-all unknown-tag-fn] :or {keywords true} :as opts}]
-  (load-stream (apply make-yaml (into [] cat opts))
-               reader
-               load-all keywords unknown-tag-fn))
+  [^java.io.Reader reader & opts]
+  (let [{:as opts-map} opts]
+    (load-stream (apply make-yaml opts)
+                 reader
+                 opts-map)))

@@ -109,6 +109,26 @@ Depending on the YAML you are parsing, you very well might want to set this to `
 When clj-yaml detects a key that cannot be converted to a Clojure keyword, it will leave it unconverted.
 Keep in mind detection is not sophisticated and can result in keywords that are illegal and unreadable.
 
+[[keyword-args]]
+==== Function Options as Keyword Args
+
+You'll notice that clj-yaml functions use keyword args for options.
+
+Clojure 1.11 allows these types of functions to instead be called with a map for the options:
+
+[source,clojure]
+----
+;; old school
+(yaml/parse-string "ok: 42" :keywords false)
+;; => {"ok" 42}
+
+;; clojure 1.11 also allows:
+(yaml/parse-string "ok: 42" {:keywords false})
+;; => {"ok" 42}
+----
+
+TIP: If you are using a version of Clojure before v1.11, or you want to stay compatible with older versions of Clojure, you'll need to call these functions the old school way.
+
 ==== Unknown tags [[unknown-tags]]
 Unknown tags can be handled by passing a handler function via the `:unknown-tag-fn` option.
 The handler function is provided a map which includes `:tag` and `:value` keys.
