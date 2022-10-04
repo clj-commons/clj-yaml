@@ -396,7 +396,7 @@ sequence: !CustomSequence
     (is (= "class java.lang.Long" (str (class parsed))) "SnakeYAML can be asked to create innocuous looking classes - type match")))
 
 (deftest low-level-decode-legacy-compat-test
-  ;; Dear reader, we don't want to encourage you to use low level functions in this way,
+  ;; Dear reader, we don't want to encourage you to use low level functions in any way,
   ;; this test is here to verify that we are compatible with existing code in the wild
   (let [to-decode (doto (java.util.LinkedHashMap.) (.put "a" 1))]
     (is (= (ordered-map {"a" 1})
