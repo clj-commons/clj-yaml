@@ -208,12 +208,12 @@
 
   java.util.LinkedHashMap
   (decode [data opts]
-    (let [{:keys [keywords] :as opts} (decode-opts opts)]
+    (let [{:keys [keywords key-fn] :as opts} (decode-opts opts)]
       (letfn [(decode-key [k]
-                (if keywords
-                  ;; (keyword k) is nil for numbers etc
-                  (or (keyword k) k)
-                  k))]
+                (cond
+                  key-fn (key-fn {:key k})
+                  keywords (or (keyword k) k)
+                  :else k))]
         (into (ordered-map)
               (for [[k v] data]
                 [(-> k (decode opts) decode-key) (decode v opts)])))))
@@ -264,10 +264,17 @@
   "Returns parsed `yaml-string` as Clojure data structures.
 
   Valid `& opts` (`opts` are keyword args, see [docs](/doc/01-user-guide.adoc#keyword-args)):
+  - `:key-fn` - Single-argument fn, arg is a map with `:key`; called on YAML keys, return replaces YAML key.
+    - default behaviour: see `:keywords`
+    - overrides `:keywords`, consider using this option instead of `:keywords`
+    - see [docs](/doc/01-user-guide.adoc#key-conv)
   - `:keywords` - when `true` attempts to convert YAML keys to Clojure keywords, else makes no conversion
     - default: `true`.
+    - ignored when `:key-fn` is specified
     - when clj-yaml detects that a YAML key cannot be converted to a legal Clojure keyword it leaves the key as is.
     - detection is not sophisticated and clj-yaml will produce invalid Clojure keywords, so although our default is `true` here, `false` can be a better choice.
+    - consider instead using `:key-fn`
+    - see [docs](/doc/01-user-guide.adoc#key-conv)
   - `:load-all` - when `true` loads all YAML documents from `yaml-string` and returns a vector of parsed docs.
   Else only first YAML document is loaded, and return is that individual parsed doc.
     - default: `false`
@@ -286,7 +293,7 @@
     - **WARNING**: be very wary of parsing unsafe YAML. See [docs](/doc/01-user-guide.adoc#unsafe)
   - `:mark` - when `true` position of YAML input is tracked and returned in alternate structure.
     - default: `false`
-    - See [docs](/doc/01-user-guide.adoc#mark)
+    - see [docs](/doc/01-user-guide.adoc#mark)
 
   Note: clj-yaml will only recognize the first of `:unsafe`, `:mark` or `:unknown-tag-fn`"
   [^String yaml-string & opts]

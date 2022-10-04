@@ -93,8 +93,10 @@ Note that:
 
 === Parsing YAML
 
+[[key-conv]]
 ==== Key Conversion
-By default, YAML keys are converted to Clojure keywords. To prevent this, add the `:keywords false` option to the `parse-string` function:
+
+By default, YAML keys are converted to Clojure keywords. To prevent this, include the `:keywords false` option when calling `parse-string` or `parse-stream` functions:
 
 [source,clojure]
 ----
@@ -104,30 +106,35 @@ By default, YAML keys are converted to Clojure keywords. To prevent this, add th
 ;; => ({"name" "John Smith"})
 ----
 
-TIP: The `:keywords` option defaults to `true` for historical reasons.
-Depending on the YAML you are parsing, you very well might want to set this to `false`.
+The `:keywords` option defaults to `true` for historical reasons.
 When clj-yaml detects a key that cannot be converted to a Clojure keyword, it will leave it unconverted.
-Keep in mind detection is not sophisticated and can result in keywords that are illegal and unreadable.
+Detection and conversion is not sophisticated and can result in keywords that are illegal and unreadable.
 
-[[keyword-args]]
-==== Function Options as Keyword Args
+For this reason we added the `:key-fn` option.
+This allows you to take control and do whatever conversion makes sense for your YAML key inputs.
 
-You'll notice that clj-yaml functions use keyword args for options.
-
-Clojure 1.11 allows these types of functions to instead be called with a map for the options:
+You can use `:key-fn` to do something similar to `:keywords true`:
 
 [source,clojure]
 ----
-;; old school
-(yaml/parse-string "ok: 42" :keywords false)
-;; => {"ok" 42}
-
-;; clojure 1.11 also allows:
-(yaml/parse-string "ok: 42" {:keywords false})
-;; => {"ok" 42}
+(yaml/parse-string "
+- {name: John Smith}
+" :key-fn #(-> % :key keyword))
+;; => ({:name "John Smith"})
 ----
 
-TIP: If you are using a version of Clojure before v1.11, or you want to stay compatible with older versions of Clojure, you'll need to call these functions the old school way.
+Or, something entirely different:
+
+[source,clojure]
+----
+(require '[clojure.string :as string])
+
+(yaml/parse-string "
+- {name: John Smith}
+" :key-fn #(-> % :key string/upper-case string/reverse))
+;; => ({"EMAN" "John Smith"})
+----
+
 
 ==== Unknown tags [[unknown-tags]]
 Unknown tags can be handled by passing a handler function via the `:unknown-tag-fn` option.
@@ -281,3 +288,23 @@ todo:
   responsible:
     name: Rita
 ----
+
+[[keyword-args]]
+=== Function Options as Keyword Args
+
+You'll notice that clj-yaml functions use keyword args for options.
+
+Clojure 1.11 allows these types of functions to instead be called with a map for the options:
+
+[source,clojure]
+----
+;; old school
+(yaml/parse-string "ok: 42" :keywords false)
+;; => {"ok" 42}
+
+;; clojure 1.11 also allows:
+(yaml/parse-string "ok: 42" {:keywords false})
+;; => {"ok" 42}
+----
+
+TIP: If you are using a version of Clojure before v1.11, or you want to stay compatible with older versions of Clojure, you'll need to call these functions the old school way.

@@ -17,12 +17,16 @@ Clj-yaml makes use of SnakeYAML, please also refer to the https://bitbucket.org/
 
 WARNING: We addressed the breaking change in 0.7.169.
 This breaks v0.7.169 for those directly using the low-level `decode` function, but restores compatibility for prior versions.
+Those not using the low-level `decode` function directly are unaffected.
 
 * Breaking changes
 ** Unbreak breaking change introduced in v0.7.169 and break v0.7.169 for low level `decode` function
 (https://github.com/clj-commons/clj-yaml/issues/67[#67])
 (https://github.com/lead[@lread])
-
+* New Features
+** Added `:key-fn` to `parse-string` and `parse-stream` for full control over YAML key conversion
+(https://github.com/clj-commons/clj-yaml/issues/64[#64])
+(https://github.com/lead[@lread])
 * With this release we move to a `1.x.<release count>` scheme.
 * Docs
 ** Docs and docstring reviewed and updated
