@@ -53,7 +53,7 @@ Those not using the low-level `decode` function directly are unaffected.
 (https://github.com/clj-commons/clj-yaml/issues/69[#69])
 (https://github.com/lread[@lread])
 
-== v0.7.169 - 2022-09-26 [minor breaking]
+== v0.7.169 [minor breaking] - 2022-09-26 
 
 WARNING: We have discovered that some folks use some clj-yaml functionality we assumed was internal.
 This release changed the `YAMLCodec` `decode` function signature and will be a breaking change for those people who directly use this lower level function.
