@@ -13,7 +13,9 @@ Clj-yaml makes use of SnakeYAML, please also refer to the https://bitbucket.org/
 // - unreleased section empty
 // - optional attribute is not [breaking] or [minor breaking]
 //   (adjust these in publish.clj as you see fit)
-== Unreleased [minor breaking]
+== Unreleased
+
+== v1.0.26 [minor breaking] - 2022-10-04 [[v1.0.26]]
 
 WARNING: We addressed the breaking change in 0.7.169.
 This breaks v0.7.169 for those directly using the low-level `decode` function, but restores compatibility for prior versions.
@@ -52,6 +54,8 @@ Those not using the low-level `decode` function directly are unaffected.
 ** Added clj-kondo linting
 (https://github.com/clj-commons/clj-yaml/issues/69[#69])
 (https://github.com/lread[@lread])
+
+https://github.com/clj-commons/clj-yaml/compare/Release-0.7.169\...v1.0.26[commit log]
 
 == v0.7.169 [minor breaking] - 2022-09-26 
 
