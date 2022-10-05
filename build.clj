@@ -38,7 +38,7 @@
                       :javac-opts ["-Xlint"]}
                (> major 8)
                ;; replaces old jdk <= 8 -source and -target opts
-               (assoc :javac-opts ["--release" "8" "-Xlint"])))))
+               (assoc :javac-opts ["--release" "8" "-Xlint" "-Werror"])))))
 
 (defn jar [_]
   (compile-java nil)
