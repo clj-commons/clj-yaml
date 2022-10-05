@@ -15,6 +15,14 @@ Clj-yaml makes use of SnakeYAML, please also refer to the https://bitbucket.org/
 //   (adjust these in publish.clj as you see fit)
 == Unreleased
 
+* Quality
+** Stop using deprecated SnakeYAML Representer constructor
+(https://github.com/clj-commons/clj-yaml/issues/76[#76])
+(https://github.com/lead[@lread])
+** Add Eastwood linting as lint-eastwood bb task and to CI
+(https://github.com/clj-commons/clj-yaml/issues/77[#77])
+(https://github.com/lead[@lread])
+
 == v1.0.26 [minor breaking] - 2022-10-04 [[v1.0.26]]
 
 WARNING: We addressed the breaking change in 0.7.169.
@@ -38,7 +46,7 @@ Those not using the low-level `decode` function directly are unaffected.
 (https://github.com/clj-commons/clj-yaml/issues/66[#66])
 (https://github.com/lead[@lread])
 * Quality
-** Stop using deprecated SnakeYAML constructor
+** Stop using deprecated SnakeYAML SafeConstructor constructor
 (https://github.com/clj-commons/clj-yaml/issues/61[#61])
 (https://github.com/lread[@lread])
 ** Expanded automatic CI testing to include JDKs 11, 17 and Windows (was previously JDK8 and Ubuntu only)

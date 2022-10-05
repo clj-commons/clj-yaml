@@ -25,9 +25,16 @@
          test
          {:doc "Runs tests under Clojure [--clj-version] (recognizes cognitect test-runner args)"
           :task test-clj/-main}
-         lint
-         {:doc "[--rebuild] Lint source code"
+         lint-kondo
+         {:doc "[--rebuild] Lint source code with clj-kondo"
           :task lint/-main}
+         lint-eastwood
+         {:doc "Lint source code with Eastwood"
+          :depends [compile-java]
+          :task (clojure "-M:test:eastwood")}
+         lint
+         {:doc "Run all lints"
+          :depends [lint-kondo lint-eastwood]}
          pubcheck
          {:doc "run only publish checks (without publishing)"
           :task publish/pubcheck}
