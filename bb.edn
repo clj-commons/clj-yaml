@@ -24,7 +24,11 @@
           :task (clojure "-T:build compile-java")}
          test
          {:doc "Runs tests under Clojure [--clj-version] (recognizes cognitect test-runner args)"
-          :task test-clj/-main}
+          :requires ([test-clj])
+          :task (do
+                  (when (not (fs/exists? "target/classes"))
+                    (run 'compile-java))
+                  (apply test-clj/-main *command-line-args*))}
          lint-kondo
          {:doc "[--rebuild] Lint source code with clj-kondo"
           :task lint/-main}
