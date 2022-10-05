@@ -406,11 +406,11 @@ sequence: !CustomSequence
 
 (deftest unsafe-deny-test
   (is (thrown-with-msg? YAMLException #"(?m).*could not.*constructor.*ScriptEngineManager"
-                        (parse-string dangerous-yaml)
-                        "by default, SnakeYaml stops creation of classes - malicious example"))
+                        (parse-string dangerous-yaml))
+      "by default, SnakeYaml stops creation of classes - malicious example")
   (is (thrown-with-msg? YAMLException #"(?m).*could not.*constructor.*java\.lang\.Long"
-                        (parse-string "!!java.lang.Long 5")
-                        "by default, SnakeYaml stops creation of classes - innocuous looking class example")))
+                        (parse-string "!!java.lang.Long 5"))
+      "by default, SnakeYaml stops creation of classes - innocuous looking class example"))
 
 (deftest unsafe-allow-test
   ;; be very wary of permitting unsafe class construction!
