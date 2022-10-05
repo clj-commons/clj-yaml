@@ -32,13 +32,15 @@
     (println "compile-java with java version" version)
     (when (< major 8)
       (throw (ex-info "jdk version must be at least 8" {})))
-    (b/javac (cond-> {:src-dirs ["src/java"]
-                      :class-dir class-dir
-                      :basis basis
-                      :javac-opts ["-Xlint"]}
-               (> major 8)
-               ;; replaces old jdk <= 8 -source and -target opts
-               (assoc :javac-opts ["--release" "8" "-Xlint" "-Werror"])))))
+    (let [javac-opts ["-Xlint" "-Werror"]]
+      (b/javac (cond-> {:src-dirs ["src/java"]
+                        :class-dir class-dir
+                        :basis basis
+                        ;; don't need -source and -target because by default we are compiling with jdk8
+                        :javac-opts javac-opts}
+                 (> major 8)
+                 ;; --release replaces -source and -target opts for > jdk8
+                 (update :javac-opts #(conj % "--release" "8")))))))
 
 (defn jar [_]
   (compile-java nil)
