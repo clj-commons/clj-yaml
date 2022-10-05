@@ -10,3 +10,4 @@ classes
 .nrepl-port
 /.calva
 .cpcache
+/.eastwood

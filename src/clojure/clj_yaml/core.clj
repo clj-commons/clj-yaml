@@ -123,8 +123,8 @@
           ;; TODO: unsafe marked constructor
           :else (SafeConstructor. loader))
 
-        dumper (make-dumper-options dumper-options)]
-    (Yaml. constructor (Representer.) dumper loader)))
+        dumper-opts (make-dumper-options dumper-options)]
+    (Yaml. constructor (Representer. dumper-opts) dumper-opts loader)))
 
 (defrecord Marked
   [start end unmark])
