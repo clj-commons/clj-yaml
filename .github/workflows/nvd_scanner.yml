@@ -36,4 +36,4 @@ jobs:
 
     - name: Run NVD Scanner
       working-directory: ./nvd_check_helper_project
-      run: clojure -J-Dclojure.main.report=stderr -M -m nvd.task.check ./github_actions_config.json "$(cd ..; clojure -Spath -A:any:aliases)"
+      run: clojure -J-Dclojure.main.report=stderr -M -m nvd.task.check ./github_actions_config.json "$(cd ..; clojure -Spath)"
