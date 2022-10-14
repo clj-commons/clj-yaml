@@ -89,8 +89,10 @@
 
   Returns internal SnakeYAML loader options.
   See [[parse-string]] for description of options."
-  ^LoaderOptions [& {:keys [max-aliases-for-collections allow-recursive-keys allow-duplicate-keys]}]
+  ^LoaderOptions [& {:keys [max-aliases-for-collections allow-recursive-keys allow-duplicate-keys nesting-depth-limit]}]
   (let [loader (default-loader-options)]
+    (when nesting-depth-limit
+      (.setNestingDepthLimit loader nesting-depth-limit))
     (when max-aliases-for-collections
       (.setMaxAliasesForCollections loader max-aliases-for-collections))
     (when allow-recursive-keys
@@ -105,10 +107,11 @@
   Returns internal SnakeYAML encoder/decoder.
 
   See [[parse-string]] and [[generate-string]] for description of options."
-  ^Yaml [& {:keys [unknown-tag-fn dumper-options unsafe mark max-aliases-for-collections allow-recursive-keys allow-duplicate-keys]}]
+  ^Yaml [& {:keys [unknown-tag-fn dumper-options unsafe mark max-aliases-for-collections allow-recursive-keys allow-duplicate-keys nesting-depth-limit]}]
   (let [loader (make-loader-options :max-aliases-for-collections max-aliases-for-collections
                                     :allow-recursive-keys allow-recursive-keys
-                                    :allow-duplicate-keys allow-duplicate-keys)
+                                    :allow-duplicate-keys allow-duplicate-keys
+                                    :nesting-depth-limit nesting-depth-limit)
         ^BaseConstructor constructor
         (cond
           unsafe (Constructor. loader)
@@ -282,6 +285,9 @@
     - default behaviour: clj-yaml throws on unknown tags.
     - see [docs](/doc/01-user-guide.adoc#unknown-tags) for example usage.
   - `:max-aliases-for-collections` the maximum number of YAML aliases for collections (sequences and mappings).
+    - Default: `50`
+    - throws when value is exceeded.
+  - `:nesting-depth-limit` the maximum number of nested YAML levels.
     - Default: `50`
     - throws when value is exceeded.
   - `:allow-recursive-keys` - when `true` allows recursive keys for mappings. Only checks the case where the key is the direct value.
