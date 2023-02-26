@@ -19,14 +19,12 @@
     <notes><![CDATA[
     False positive, does not apply to snakeyaml at all.
     ]]> </notes>
-    <filePath regex="true">.*\bsnakeyaml-1.33.jar</filePath>
     <cve>CVE-2022-3064</cve>
   </suppress>
   <suppress>
     <notes><![CDATA[
     False positive, does not apply to snakeyaml at all.
     ]]> </notes>
-     <filePath regex="true">.*\bsnakeyaml-1.33.jar</filePath>
     <cve>CVE-2021-4235</cve>
   </suppress>
 </suppressions>
