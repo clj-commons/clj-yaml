@@ -2,7 +2,7 @@ bin
 lib
 classes
 *.jar
-/target
+target
 /.lein-failures
 /.lein-repl-history
 /.lsp
