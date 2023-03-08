@@ -164,7 +164,7 @@ IMPORTANT: Be very wary of specifying `:unsafe true` unless you completely trust
 Consider instead using `:unknown-tag-fn` for fine and deliberate control.
 
 An example of some malicious YAML is https://j0vsec.com/post/cve-2021-25738/[well described by J0VSEC].
-Here's the dangerous snippit described:
+Here's the dangerous snippet described:
 
 [source, yaml]
 ----
