@@ -1,0 +1,38 @@
+name: Vulnerability Scan
+
+on:
+  schedule:
+    - cron: "5 0 * * *"
+  push:
+    branches:
+    - master
+
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Setup
+      uses: ./.github/workflows/shared-setup
+      with:
+        jdk: '11'
+
+    - name: Get Date
+      id: get-date
+      run: |
+        echo "date=$(/bin/date -u "+%Y%m%d")" >> $GITHUB_OUTPUT
+      shell: bash
+
+    - name: Cache NVD Database
+      uses: actions/cache@v3
+      with:
+        path: /home/runner/.nvd-cache/
+        key: nvd-cache-we-are-happy-to-share-across-branches-${{ steps.get-date.outputs.date }}
+
+    - name: Run NVD Scanner
+      run: bb nvd-scan

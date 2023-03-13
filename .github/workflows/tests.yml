@@ -1,0 +1,65 @@
+name: tests
+on:
+  # allow this workflow to be called from other workflows, namely: publish
+  workflow_call:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  lint-kondo:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup
+        uses: ./.github/workflows/shared-setup
+        with:
+          jdk: '11'
+
+      - name: Lint
+        run: bb lint-kondo
+
+  lint-eastwood:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup
+        uses: ./.github/workflows/shared-setup
+        with:
+          jdk: '11'
+
+      - name: Lint
+        run: bb lint-eastwood
+
+  test:
+    runs-on: ${{ matrix.os.name }}-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [{name: 'windows', shell: 'pwsh'}, {name: 'ubuntu', shell: 'bash'}]
+        jdk: ['8', '11', '17']
+
+    name: ${{matrix.os.name}} - jdk ${{ matrix.jdk }}
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Setup
+      uses: ./.github/workflows/shared-setup
+      with:
+        jdk: ${{ matrix.jdk }}
+        shell: ${{ matrix.os.shell }}
+
+    - name: Compile java
+      run: bb compile-java
+
+    - name: Run tests
+      run: bb test --clj-version :all

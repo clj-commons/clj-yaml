@@ -2,11 +2,11 @@
   (:require
    [clj-yaml.core :as yaml :refer [generate-stream generate-string
                                    parse-stream parse-string unmark]]
+   [clj-yaml.test-report]
    [clojure.java.io :as io]
    [clojure.string :as string]
    [clojure.test :refer (deftest testing is)]
-   [flatland.ordered.map :refer [ordered-map]]
-   [clojure.string :as str])
+   [flatland.ordered.map :refer [ordered-map]])
   (:import
    (java.io ByteArrayInputStream ByteArrayOutputStream OutputStreamWriter)
    java.nio.charset.StandardCharsets
@@ -150,6 +150,34 @@ the-bin: !!binary 0101")
                   first
                   keys))))
 
+(deftest unconvertable-key-not-converted-to-keyword
+  ;; we are not sophisticated here, but do handle some cases
+  (is (= {42 1 :b 2}
+         (parse-string "{42: 1, b: 2}" :keywords true))))
+
+(deftest key-fn-option
+  (is (= {:a 1}
+         (parse-string "{a: 1}" :key-fn #(-> % :key keyword)))
+      "can operate like :keywords true")
+  (is (= {"A" 1}
+         (parse-string "{a: 1}" :key-fn #(-> % :key string/upper-case)))
+      "overrides default :keywords true")
+  (is (= {"A" 1}
+         (parse-string "{a: 1}"
+                       :keywords false
+                       :key-fn #(-> % :key string/upper-case)))
+      "overrides :keywords false")
+  (is (= {"A" 1}
+         (parse-string "{a: 1}"
+                       :keywords true
+                       :key-fn #(-> % :key string/upper-case)))
+      "overrides :keywords true")
+  (is (= {"BA" 1}
+         (parse-string "{!blam ab: 1}"
+                       :key-fn #(-> % :key string/upper-case)
+                       :unknown-tag-fn #(-> % :value string/reverse)))
+      "can be combined with :unknown-tag-fn"))
+
 (deftest marking-source-position-works
   (let [parsed (parse-string inline-list-yaml :mark true)]
     ;; The list starts at the beginning of line 1.
@@ -219,8 +247,22 @@ the-bin: !!binary 0101")
        (string/join "\n")))
 
 (deftest max-aliases-for-collections-works
-  (is (thrown-with-msg? YAMLException #"Number of aliases" (parse-string too-many-aliases)))
-  (is (parse-string too-many-aliases :max-aliases-for-collections 51)))
+  (is (thrown-with-msg? YAMLException #"Number of aliases" (parse-string too-many-aliases))
+      "throws when default of 50 is exceeded")
+  (is (parse-string too-many-aliases :max-aliases-for-collections 51)
+      "passes when we bump max to 51"))
+
+(def nested-depth-51
+  (->> (range 51)
+       (map (fn [i]
+              (str (string/join (repeat i "  ")) "a:")))
+       (string/join "\n")))
+
+(deftest nesting-depth-limit-works
+  (is (thrown-with-msg? YAMLException #"Nesting Depth exceeded max" (parse-string nested-depth-51))
+      "throws when default of 50 is exceeded")
+  (is (parse-string nested-depth-51 :nesting-depth-limit 51)
+      "passes when we bump max to 51"))
 
 (def recursive-yaml "
 ---
@@ -370,5 +412,52 @@ sequence: !CustomSequence
 (deftest leading-zero-test
   (testing "leading zero is quoted"
     (is (= "['083']"
-           (str/trim (generate-string ["083"]))))))
+           (string/trim (generate-string ["083"]))))))
 
+(def dangerous-yaml "!!javax.script.ScriptEngineManager [!!java.net.URLClassLoader [[!!java.net.URL [\"very-bad-badness-here\"]]]]")
+
+(deftest unsafe-deny-test
+  (is (thrown-with-msg? YAMLException #"(?m).*could not.*constructor.*ScriptEngineManager"
+                        (parse-string dangerous-yaml))
+      "by default, SnakeYaml stops creation of classes - malicious example")
+  (is (thrown-with-msg? YAMLException #"(?m).*could not.*constructor.*java\.lang\.Long"
+                        (parse-string "!!java.lang.Long 5"))
+      "by default, SnakeYaml stops creation of classes - innocuous looking class example"))
+
+(deftest unsafe-allow-test
+  ;; be very wary of permitting unsafe class construction!
+  (let [exm (try (parse-string dangerous-yaml :unsafe true)
+                 (catch Throwable e
+                   (Throwable->map e)))]
+    (is (= (:cause exm) "no protocol: very-bad-badness-here")
+        "SnakeYAML can be asked to create unsafe classes (it tried to create that nested URL) - malicious example"))
+  (let [parsed (parse-string "!!java.lang.Long 5" :unsafe true)]
+    (is (= 5 parsed) "SnakeYAML can be asked to create innocuous looking classes - value match")
+    (is (= "class java.lang.Long" (str (class parsed))) "SnakeYAML can be asked to create innocuous looking classes - type match")))
+
+(deftest low-level-decode-legacy-compat-test
+  ;; Dear reader, we don't want to encourage you to use low level functions in any way,
+  ;; this test is here to verify that we are compatible with existing code in the wild
+  (let [to-decode (doto (java.util.LinkedHashMap.) (.put "a" 1))]
+    (is (= (ordered-map {"a" 1})
+           (yaml/decode to-decode false))
+        "decode supports legacy [data keywords] signature - keywords false")
+    (is (= (ordered-map {:a 1})
+           (yaml/decode to-decode true))
+        "decode supports legacy [data keywords] signature - keywords true")
+
+    (is (= (ordered-map {"a" 1})
+           (yaml/decode to-decode nil))
+        "decode supports legacy [data keywords] signature - keywords nil")
+
+    (is (= (ordered-map {"a" 1})
+           (yaml/decode to-decode {}))
+        "decode supports new [data opts] signature - keywords not specified")
+
+    (is (= (ordered-map {:a 1})
+           (yaml/decode to-decode {:keywords true}))
+        "decode supports new [data opts] signature - keywords specified true")
+
+    (is (= (ordered-map {"a" 1})
+           (yaml/decode to-decode {:keywords false}))
+        "decode supports new [data opts] signature - keywords specified true")))

@@ -1,0 +1,5 @@
+;; don't adopt any user preferences
+{:config-paths ^:replace []
+ :linters {:redundant-fn-wrapper {:level :warning}
+           :unused-value {:level :warning}
+           :aliased-namespace-symbol {:level :warning}}}

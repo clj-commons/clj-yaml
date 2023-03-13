@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
+  <!-- You can find examples in https://jeremylong.github.io/DependencyCheck/general/suppression.html -->
+  <suppress>
+    <notes><![CDATA[
+    Fixed for 1.33 but still showing up in reports.
+    ]]> </notes>
+    <filePath regex="true">.*\bsnakeyaml-1.33.jar</filePath>
+    <cve>CVE-2022-38752</cve>
+  </suppress>
+  <suppress>
+    <notes><![CDATA[
+    Because we use SafeConstructor by default, we consider ourselves safe by default.
+    ]]> </notes>
+    <filePath regex="true">.*\bsnakeyaml-1.33.jar</filePath>
+    <cve>CVE-2022-1471</cve>
+  </suppress>
+  <suppress>
+    <notes><![CDATA[
+    False positive, does not apply to snakeyaml at all.
+    ]]> </notes>
+    <filePath regex="true">.*\bsnakeyaml-1.33.jar</filePath>
+    <cve>CVE-2022-3064</cve>
+  </suppress>
+  <suppress>
+    <notes><![CDATA[
+    False positive, does not apply to snakeyaml at all.
+    ]]> </notes>
+     <filePath regex="true">.*\bsnakeyaml-1.33.jar</filePath>
+    <cve>CVE-2021-4235</cve>
+  </suppress>
+</suppressions>

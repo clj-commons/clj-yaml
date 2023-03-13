@@ -1,5 +1,6 @@
 package clj_yaml;
 
+import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.constructor.Construct;
 import org.yaml.snakeyaml.constructor.Constructor;
 import org.yaml.snakeyaml.constructor.SafeConstructor;
@@ -21,7 +22,7 @@ public class MarkedConstructor extends SafeConstructor {
     public MarkedConstructor() {
         // Make sure SafeConstructor's constructor is called first,
         // so that we overwrite the keys that SafeConstructor sets.
-        super();
+        super(new LoaderOptions());
         // Wrap all the constructors with Marking constructors.
         for (Tag tag : tags) {
             Construct old = this.yamlConstructors.get(tag);
