@@ -14,6 +14,7 @@ Clj-yaml makes use of SnakeYAML, please also refer to the https://bitbucket.org/
 // - optional attribute is not [breaking] or [minor breaking]
 //   (adjust these in publish.clj as you see fit)
 == Unreleased
+
 * New Features
 ** Added `:nesting-depth-limit` to `parse-string` and `parse-stream`
 (https://github.com/clj-commons/clj-yaml/issues/81[#81])
