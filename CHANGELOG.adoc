@@ -24,7 +24,7 @@ Clj-yaml makes use of SnakeYAML, please also refer to the https://bitbucket.org/
 (https://github.com/clj-commons/clj-yaml/issues/76[#76])
 (https://github.com/lead[@lread])
 
-** Bump `org.flatland/ordered` to `1.5.10
+** Bump `org.flatland/ordered` to `1.15.10
 (https://github.com/clj-commons/clj-yaml/issues/96[#96])
 (https://github.com/borkdude[@borkdude])
 
