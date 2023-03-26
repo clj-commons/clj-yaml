@@ -15,7 +15,7 @@ jobs:
 
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
     - name: Setup
       uses: ./.github/workflows/shared-setup
@@ -25,7 +25,7 @@ jobs:
     - name: Get Date
       id: get-date
       run: |
-        echo "::set-output name=date::$(/bin/date -u "+%Y%m%d")"
+        echo "date=$(/bin/date -u "+%Y%m%d")" >> $GITHUB_OUTPUT
       shell: bash
 
     - name: Cache NVD Database
@@ -35,5 +35,4 @@ jobs:
         key: nvd-cache-we-are-happy-to-share-across-branches-${{ steps.get-date.outputs.date }}
 
     - name: Run NVD Scanner
-      working-directory: ./nvd_check_helper_project
-      run: clojure -J-Dclojure.main.report=stderr -M -m nvd.task.check ./github_actions_config.json "$(cd ..; clojure -Spath)"
+      run: bb nvd-scan
