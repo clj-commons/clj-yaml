@@ -30,7 +30,7 @@
             [flatland.ordered.set :refer (ordered-set)])
   (:import (org.yaml.snakeyaml Yaml DumperOptions DumperOptions$FlowStyle LoaderOptions)
            (org.yaml.snakeyaml.constructor Constructor SafeConstructor BaseConstructor)
-           (org.yaml.snakeyaml.inspector TrustedTagInspector)
+           (org.yaml.snakeyaml.inspector TagInspector)
            (org.yaml.snakeyaml.representer Representer)
            (org.yaml.snakeyaml.error Mark)
            (clj_yaml MarkedConstructor UnknownTagsConstructor)
@@ -101,7 +101,9 @@
     (when (instance? Boolean allow-duplicate-keys)
       (.setAllowDuplicateKeys loader allow-duplicate-keys))
     (when unsafe
-      (.setTagInspector loader (TrustedTagInspector.)))
+      (.setTagInspector loader (reify TagInspector
+                                 (isGlobalTagAllowed [_this _tag]
+                                   true))))
     loader))
 
 (defn make-yaml
