@@ -404,7 +404,7 @@ sequence: !CustomSequence
             :sequence {:tag "!CustomSequence" :value ["a" "b" "z"]}}
            (parse-string yaml-with-unknown-tags :unknown-tag-fn identity)))
     (is (= {:base-12 12 :base-10 "10"}
-           (parse-string "{base-12: !Base12 10, base-10: !Base10 10} "
+           (parse-string "{base-12: !Base12 10, base-10: !Base10 10}"
                          :unknown-tag-fn (fn [{:keys [tag value]}]
                                            (if (= "!Base12" tag)
                                              (Integer/parseInt value 12) value)))))))
