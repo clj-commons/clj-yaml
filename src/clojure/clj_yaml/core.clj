@@ -89,7 +89,7 @@
 
   Returns internal SnakeYAML loader options.
   See [[parse-string]] for description of options."
-  ^LoaderOptions [& {:keys [max-aliases-for-collections allow-recursive-keys allow-duplicate-keys nesting-depth-limit]}]
+  ^LoaderOptions [& {:keys [max-aliases-for-collections allow-recursive-keys allow-duplicate-keys nesting-depth-limit code-point-limit]}]
   (let [loader (default-loader-options)]
     (when nesting-depth-limit
       (.setNestingDepthLimit loader nesting-depth-limit))
@@ -99,6 +99,8 @@
       (.setAllowRecursiveKeys loader allow-recursive-keys))
     (when (instance? Boolean allow-duplicate-keys)
       (.setAllowDuplicateKeys loader allow-duplicate-keys))
+    (when code-point-limit
+      (.setCodePointLimit loader code-point-limit))
     loader))
 
 (defn make-yaml
@@ -107,11 +109,12 @@
   Returns internal SnakeYAML encoder/decoder.
 
   See [[parse-string]] and [[generate-string]] for description of options."
-  ^Yaml [& {:keys [unknown-tag-fn dumper-options unsafe mark max-aliases-for-collections allow-recursive-keys allow-duplicate-keys nesting-depth-limit]}]
+  ^Yaml [& {:keys [unknown-tag-fn dumper-options unsafe mark max-aliases-for-collections allow-recursive-keys allow-duplicate-keys nesting-depth-limit code-point-limit]}]
   (let [loader (make-loader-options :max-aliases-for-collections max-aliases-for-collections
                                     :allow-recursive-keys allow-recursive-keys
                                     :allow-duplicate-keys allow-duplicate-keys
-                                    :nesting-depth-limit nesting-depth-limit)
+                                    :nesting-depth-limit nesting-depth-limit
+                                    :code-point-limit code-point-limit)
         ^BaseConstructor constructor
         (cond
           unsafe (Constructor. loader)
@@ -289,6 +292,9 @@
     - throws when value is exceeded.
   - `:nesting-depth-limit` the maximum number of nested YAML levels.
     - Default: `50`
+    - throws when value is exceeded.
+  - `:code-point-limit` the maximum number of code points (document size).
+    - Default: `3145728`
     - throws when value is exceeded.
   - `:allow-recursive-keys` - when `true` allows recursive keys for mappings. Only checks the case where the key is the direct value.
     - Default: `false`
