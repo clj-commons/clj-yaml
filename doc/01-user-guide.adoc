@@ -204,6 +204,20 @@ You can ask clj-yaml to return parsed YAML with extra positional data markers vi
 
 In reality, the `:start` `:end` and `:unmark` maps are internally a record and can be recognized via `marked?` and unwrapped via `unmark`.
 
+==== Document size limit [[size-limit]]
+
+SnakeYAML implementation (that clj-yaml uses for low-level encoding and decoding) imposes the default limit of 3 megabyte document size for security reasons (https://bitbucket.org/snakeyaml/snakeyaml/issues/547/restrict-the-size-of-incoming-data[issue]). If you hit this limitation, you need to explicitly increase the limit by setting the `:code-point-limit` option:
+
+[source,clojure]
+----
+(parse-string bigger-than-default-limit)
+;; Execution error (YAMLException) at org.yaml.snakeyaml.scanner.ScannerImpl/fetchMoreTokens (ScannerImpl.java:342).
+;; The incoming YAML document exceeds the limit: 3145728 code points.
+
+(parse-string bigger-than-default-limit :code-point-limit (* 10 1024 1024))
+;; outputs the long string
+----
+
 === Generating YAML
 
 ==== Dumper Options [[dumper-options]]
