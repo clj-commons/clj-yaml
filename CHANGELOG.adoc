@@ -19,6 +19,9 @@ Clj-yaml makes use of SnakeYAML, please also refer to the https://bitbucket.org/
 ** Added `:nesting-depth-limit` to `parse-string` and `parse-stream`
 (https://github.com/clj-commons/clj-yaml/issues/81[#81])
 (https://github.com/neeasade[@neeasade])
+** Added `:code-point-limit` option to accept bigger documents
+(https://github.com/clj-commons/clj-yaml/issues/94[#94])
+(https://github.com/pitalig[@pitalig])
 * Quality
 ** Stop using deprecated SnakeYAML Representer constructor
 (https://github.com/clj-commons/clj-yaml/issues/76[#76])
