@@ -428,10 +428,10 @@ sequence: !CustomSequence
 (def dangerous-yaml "!!javax.script.ScriptEngineManager [!!java.net.URLClassLoader [[!!java.net.URL [\"very-bad-badness-here\"]]]]")
 
 (deftest unsafe-deny-test
-  (is (thrown-with-msg? YAMLException #"(?m).*could not.*constructor.*ScriptEngineManager"
+  (is (thrown-with-msg? YAMLException #"(?m).*Global tag is not allowed: .*javax\.script\.ScriptEngineManager"
                         (parse-string dangerous-yaml))
       "by default, SnakeYaml stops creation of classes - malicious example")
-  (is (thrown-with-msg? YAMLException #"(?m).*could not.*constructor.*java\.lang\.Long"
+  (is (thrown-with-msg? YAMLException #"(?m).*Global tag is not allowed: .*java\.lang\.Long"
                         (parse-string "!!java.lang.Long 5"))
       "by default, SnakeYaml stops creation of classes - innocuous looking class example"))
 

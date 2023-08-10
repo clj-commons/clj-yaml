@@ -22,15 +22,17 @@ Clj-yaml makes use of SnakeYAML, please also refer to the https://bitbucket.org/
 ** Added `:code-point-limit` option to accept bigger documents
 (https://github.com/clj-commons/clj-yaml/issues/94[#94])
 (https://github.com/pitalig[@pitalig])
+* Dependencies
+** Bump `org.flatland/ordered` to `1.15.11`
+(https://github.com/clj-commons/clj-yaml/issues/98[#98])
+(https://github.com/borkdude[@borkdude])
+** Bump `org.yaml/snakeyaml` to `2.1`
+(https://github.com/clj-commons/clj-yaml/issues/86[#86])
+(https://github.com/lead[@lread])
 * Quality
 ** Stop using deprecated SnakeYAML Representer constructor
 (https://github.com/clj-commons/clj-yaml/issues/76[#76])
 (https://github.com/lead[@lread])
-
-** Bump `org.flatland/ordered` to `1.15.11`
-(https://github.com/clj-commons/clj-yaml/issues/98[#98])
-(https://github.com/borkdude[@borkdude])
-
 ** Add Eastwood linting as lint-eastwood bb task and to CI
 (https://github.com/clj-commons/clj-yaml/issues/77[#77])
 (https://github.com/lead[@lread])

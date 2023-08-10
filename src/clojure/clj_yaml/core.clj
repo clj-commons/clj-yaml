@@ -30,6 +30,7 @@
             [flatland.ordered.set :refer (ordered-set)])
   (:import (org.yaml.snakeyaml Yaml DumperOptions DumperOptions$FlowStyle LoaderOptions)
            (org.yaml.snakeyaml.constructor Constructor SafeConstructor BaseConstructor)
+           (org.yaml.snakeyaml.inspector TagInspector)
            (org.yaml.snakeyaml.representer Representer)
            (org.yaml.snakeyaml.error Mark)
            (clj_yaml MarkedConstructor UnknownTagsConstructor)
@@ -89,7 +90,7 @@
 
   Returns internal SnakeYAML loader options.
   See [[parse-string]] for description of options."
-  ^LoaderOptions [& {:keys [max-aliases-for-collections allow-recursive-keys allow-duplicate-keys nesting-depth-limit code-point-limit]}]
+  ^LoaderOptions [& {:keys [max-aliases-for-collections allow-recursive-keys allow-duplicate-keys nesting-depth-limit code-point-limit unsafe]}]
   (let [loader (default-loader-options)]
     (when nesting-depth-limit
       (.setNestingDepthLimit loader nesting-depth-limit))
@@ -101,6 +102,10 @@
       (.setAllowDuplicateKeys loader allow-duplicate-keys))
     (when code-point-limit
       (.setCodePointLimit loader code-point-limit))
+    (when unsafe
+      (.setTagInspector loader (reify TagInspector
+                                 (isGlobalTagAllowed [_this _tag]
+                                   true))))
     loader))
 
 (defn make-yaml
@@ -114,7 +119,8 @@
                                     :allow-recursive-keys allow-recursive-keys
                                     :allow-duplicate-keys allow-duplicate-keys
                                     :nesting-depth-limit nesting-depth-limit
-                                    :code-point-limit code-point-limit)
+                                    :code-point-limit code-point-limit
+                                    :unsafe unsafe)
         ^BaseConstructor constructor
         (cond
           unsafe (Constructor. loader)
