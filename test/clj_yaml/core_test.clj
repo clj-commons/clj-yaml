@@ -264,6 +264,17 @@ the-bin: !!binary 0101")
   (is (parse-string nested-depth-51 :nesting-depth-limit 51)
       "passes when we bump max to 51"))
 
+(def bigger-than-default-limit
+  (->> (repeat 400000 "- b: foo")
+       (cons "a: ")
+       (string/join "\n")))
+
+(deftest code-point-limit-works
+  (is (thrown-with-msg? YAMLException #"The incoming YAML document exceeds the limit: 3145728 code points" (parse-string bigger-than-default-limit))
+      "throws when default of 3145728 is exceeded")
+  (is (parse-string bigger-than-default-limit :code-point-limit (* 10 1024 1024))
+      "passes when we bump limit to 10mb"))
+
 (def recursive-yaml "
 ---
 &A
