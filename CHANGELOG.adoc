@@ -22,6 +22,9 @@ Clj-yaml makes use of SnakeYAML, please also refer to the https://bitbucket.org/
 ** Added `:code-point-limit` option to accept bigger documents
 (https://github.com/clj-commons/clj-yaml/issues/94[#94])
 (https://github.com/pitalig[@pitalig])
+** Added GraalVM native-image configuration (and tests)
+(https://github.com/clj-commons/clj-yaml/issues/104[#104])
+(https://github.com/lead[@lread])
 * Dependencies
 ** Bump `org.flatland/ordered` to `1.15.11`
 (https://github.com/clj-commons/clj-yaml/issues/98[#98])
