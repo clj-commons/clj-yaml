@@ -15,6 +15,8 @@ Clj-yaml makes use of SnakeYAML, please also refer to the https://bitbucket.org/
 //   (adjust these in publish.clj as you see fit)
 == Unreleased
 
+== v1.0.27 - 2023-08-11 [[v1.0.27]]
+
 * New Features
 ** Added `:nesting-depth-limit` to `parse-string` and `parse-stream`
 (https://github.com/clj-commons/clj-yaml/issues/81[#81])
@@ -39,6 +41,8 @@ Clj-yaml makes use of SnakeYAML, please also refer to the https://bitbucket.org/
 ** Add Eastwood linting as lint-eastwood bb task and to CI
 (https://github.com/clj-commons/clj-yaml/issues/77[#77])
 (https://github.com/lead[@lread])
+
+https://github.com/clj-commons/clj-yaml/compare/v1.0.26\...v1.0.27[commit log]
 
 == v1.0.26 [minor breaking] - 2022-10-04 [[v1.0.26]]
 
