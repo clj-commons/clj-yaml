@@ -28,6 +28,7 @@ When we merge your PR, we'll usually squash it, so that will clean up any rambli
 
 The current version of Babashka.
 The current version of Clojure.
+The current version of GraalVM (to run native image tests)
 JDK8+
 Some knowledge of Java if you are going to add/modify Java code (there's not much!).
 
@@ -94,6 +95,21 @@ $ bb test --var 'clj-yaml.core-test/emoji-can-be-parsed'
 $ bb test --clj-version 1.9
 ----
 (defaults to `1.8`, specify `:all` to test against all supported Clojure versions)
+
+=== GraalVM testing
+
+With your dev environment configured to a current version of GraalVM run:
+[source,shell]
+----
+$ bb test-native
+----
+
+There is currently no facility to run a subest of tests.
+
+We include a link:/resources/META-INF/native-image/clj-commons/clj-yaml/native-image.properties[native-image config] in our jar file for GraalVM to pick up.
+To ensure that this works, we natively compile our test sources against a locally built clj-yaml jar.
+
+Our `clj-yaml.native-test-runner` is currently hand-coded, if you add any test namespaces you'll need to adjust it.
 
 === Linting
 Our CI workflow lints sources with clj-kondo, and eastwood - and you can too!

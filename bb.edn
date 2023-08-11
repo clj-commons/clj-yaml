@@ -13,8 +13,14 @@
          ;; tasks
          clean
          {:doc "clean build work"
-          :task (when (fs/exists? "target")
-                  (fs/delete-tree "target"))}
+          :task (do
+                  (println "Deleting (d=deleted -=did not exist)")
+                  (run! (fn [d]
+                          (println (format "[%s] %s"
+                                           (if (fs/exists? d) "d" "-")
+                                           d))
+                          (fs/delete-tree d))
+                        ["target" ".cpcache"]))}
          download-deps
          {:doc "bring down Clojure deps"
           :task download-deps/-main}
@@ -28,6 +34,9 @@
                   (when (not (fs/exists? "target/classes"))
                     (run 'compile-java))
                   (apply test-clj/-main *command-line-args*))}
+         test-native
+         {:doc "Run tests natively compiled (requires GraalVM)"
+          :task test-native/-main}
          lint-kondo
          {:doc "[--rebuild] Lint source code with clj-kondo"
           :task lint/-main}

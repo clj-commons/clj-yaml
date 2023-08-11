@@ -46,7 +46,7 @@ jobs:
         os: [{name: 'windows', shell: 'pwsh'}, {name: 'ubuntu', shell: 'bash'}]
         jdk: ['8', '11', '17']
 
-    name: ${{matrix.os.name}} - jdk ${{ matrix.jdk }}
+    name: ${{matrix.os.name}} jdk ${{ matrix.jdk }}
 
     steps:
     - name: Checkout
@@ -63,3 +63,40 @@ jobs:
 
     - name: Run tests
       run: bb test --clj-version :all
+
+  test-native:
+    runs-on: ${{matrix.os.name}}-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - 'ubuntu'
+          - 'windows'
+        distribution:
+          - { name: 'graalvm', short-name: 'graal' }
+          - { name: 'graalvm-community', short-name: 'graalce' }
+        java-version:
+          - '17.0.8'
+          - '20.0.2'
+
+    name: ${{matrix.os}} ${{matrix.distribution.short-name}} ${{matrix.java-version}}
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Setup
+      uses: ./.github/workflows/shared-setup
+      with:
+        jdk: skip
+        shell: ${{ matrix.os.shell }}
+
+    - name: Setup GraalVM
+      uses: graalvm/setup-graalvm@v1
+      with:
+        java-version: ${{ matrix.java-version }}
+        distribution: ${{ matrix.distribution.name }}
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Run native tests
+      run: bb test-native

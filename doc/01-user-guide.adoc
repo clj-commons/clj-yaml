@@ -322,3 +322,9 @@ Clojure 1.11 allows these types of functions to instead be called with a map for
 ----
 
 TIP: If you are using a version of Clojure before v1.11, or you want to stay compatible with older versions of Clojure, you'll need to call these functions the old school way.
+
+=== With GraalVM native-image
+
+Clj-yaml includes a GraalVM native image configuration so that it can compile without any external config.
+We run the clj-yaml test suite natively compiled by the current versions of GraalVM.
+Older versions of GraalVM are not supported.
