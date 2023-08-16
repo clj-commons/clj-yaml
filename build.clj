@@ -42,7 +42,7 @@
                         :javac-opts javac-opts}
                  (> major 8)
                  ;; --release replaces -source and -target opts for > jdk8
-                 (update :javac-opts #(conj % "--release" "8")))))))
+                 (update :javac-opts #(conj % "--release" (if (<= 20 major) "11" "8"))))))))
 
 
 (defn compile-clj-for-native-test
