@@ -13,7 +13,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup
         uses: ./.github/workflows/shared-setup
@@ -28,7 +28,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup
         uses: ./.github/workflows/shared-setup
@@ -44,13 +44,13 @@ jobs:
       fail-fast: false
       matrix:
         os: [{name: 'windows', shell: 'pwsh'}, {name: 'ubuntu', shell: 'bash'}]
-        jdk: ['8', '11', '17']
+        jdk: ['8', '11', '17', '21']
 
     name: ${{matrix.os.name}} jdk ${{ matrix.jdk }}
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Setup
       uses: ./.github/workflows/shared-setup
@@ -74,14 +74,13 @@ jobs:
           - { name: 'graalvm', short-name: 'graal' }
           - { name: 'graalvm-community', short-name: 'graalce' }
         java-version:
-          - '17.0.8'
-          - '20.0.2'
+          - '21.0.2'
 
     name: ${{matrix.os.name}} ${{matrix.distribution.short-name}} ${{matrix.java-version}}
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Setup
       uses: ./.github/workflows/shared-setup
