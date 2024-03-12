@@ -1,5 +1,6 @@
 (ns test-native
   (:require [lread.status-line :as status]
+            [babashka.cli :as cli]
             [babashka.fs :as fs]
             [babashka.tasks :as t]
             [cheshire.core :as json]
@@ -83,8 +84,21 @@
               (units exponent)
               in-bytes))))
 
-(defn -main [& _args]
-  (let [native-image-xmx "6g"
+(defn -main [& args]
+  (let [valid-clj-version-opt-values ["1.11" "1.12"]
+        spec {:clj-version
+              {:ref "<version>"
+               :desc "The Clojure version to test against."
+               :coerce :string
+               :default-desc "1.11"
+               :default "1.11"
+               :validate
+               {:pred (set valid-clj-version-opt-values)
+                :ex-msg (fn [_m]
+                          (str "--clj-version must be one of: " valid-clj-version-opt-values))}}}
+        opts (cli/parse-opts args {:spec spec :restrict true})
+        clj-version (:clj-version opts)
+        native-image-xmx "6g"
         target-path "target"
         target-exe "clj-yaml-test"
         graal-native-image (find-graal-native-image)
@@ -98,8 +112,8 @@
     (t/clojure "-T:build jar")
     (status/line :head "Generating reflection config to support unsafe tests")
     (generate-reflection-config reflection-config)
-    (status/line :head "AOT Compiling test sources")
-    (t/clojure "-T:build compile-clj-for-native-test")
+    (status/line :head "AOT Compiling test sources against clojure %s" clj-version)
+    (t/clojure "-T:build compile-clj-for-native-test :clj-version-alias" (keyword clj-version))
     (let [classpath (get-classpath)]
       (run-native-image {:graal-native-image graal-native-image
                          :reflection-config reflection-config
