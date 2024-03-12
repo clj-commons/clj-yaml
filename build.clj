@@ -47,7 +47,7 @@
 
 (defn compile-clj-for-native-test
   "We compile our tests against our local jar."
-  [_]
+  [{:keys [clj-version-alias]}]
   (println "compile-clj to:" native-test-class-dir)
   (let [jars (->> (fs/glob "target" "*.jar") (mapv str))]
     (when (not= (count jars) 1)
@@ -55,7 +55,7 @@
                               (if (seq jars) jars "none"))
                       {})))
     (let [jar (first jars)
-          basis (b/create-basis {:aliases [:native-test :test]
+          basis (b/create-basis {:aliases [:native-test :test clj-version-alias]
                                  :extra {:deps {'clj-commons/clj-yaml {:local/root jar}}}})]
       (println "Using jar:" jar)
       ;; share the classpath for native-image to use in test-native bb task

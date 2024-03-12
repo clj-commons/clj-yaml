@@ -75,8 +75,9 @@ jobs:
           - { name: 'graalvm-community', short-name: 'graalce' }
         java-version:
           - '21.0.2'
+        clojure-version: [ '1.11', '1.12' ]
 
-    name: ${{matrix.os.name}} ${{matrix.distribution.short-name}} ${{matrix.java-version}}
+    name: ${{matrix.os.name}} ${{matrix.distribution.short-name}} jdk${{matrix.java-version}} clj${{ matrix.clojure-version }}
 
     steps:
     - name: Checkout
@@ -96,4 +97,4 @@ jobs:
         github-token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Run native tests
-      run: bb test-native
+      run: bb test-native --clj-version ${{ matrix.clojure-version }}

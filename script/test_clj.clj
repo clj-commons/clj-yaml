@@ -4,7 +4,7 @@
             [lread.status-line :as status]))
 
 (defn -main [& args]
-  (let [all-clojure-versions ["1.8" "1.9" "1.10" "1.11"]
+  (let [all-clojure-versions ["1.8" "1.9" "1.10" "1.11" "1.12"]
         valid-clj-version-opt-values (conj all-clojure-versions ":all")
         spec {:clj-version
               {:ref "<version>"
