@@ -49,22 +49,22 @@
                                 :target-path :target-exe :classpath :native-image-xmx
                                 :entry-class]}]
   (status/line :head "Graal native-image compile AOT")
-  (let [full-target-exe (fs/which target-exe)]
-    (when (fs/exists? full-target-exe)
-      (fs/delete full-target-exe)))
-  (let [native-image-cmd [graal-native-image
-                          (str "-H:Path=" target-path)
-                          (str "-H:Name=" target-exe)
-                          "--features=clj_easy.graal_build_time.InitClojureClasses"
-                          "-O1" ;; basic optimization for faster build
-                          (str "-H:ReflectionConfigurationFiles=" reflection-config) ;; to support unsafe yaml test
-                          "-H:+ReportExceptionStackTraces"
-                          "--verbose"
-                          "--no-fallback"
-                          "-cp" classpath
-                          (str "-J-Xmx" native-image-xmx)
-                          entry-class]]
-    (t/shell native-image-cmd)))
+  (let [full-path-target-exe (str (fs/file target-path target-exe))]
+    (when-let [exe (fs/which full-path-target-exe)]
+      (status/line :detail "Deleting existing %s" exe)
+      (fs/delete exe))
+    (let [native-image-cmd [graal-native-image
+                            "-o" full-path-target-exe
+                            "--features=clj_easy.graal_build_time.InitClojureClasses"
+                            "-O1" ;; basic optimization for faster build
+                            (str "-H:ReflectionConfigurationFiles=" reflection-config) ;; to support unsafe yaml test
+                            "-H:+ReportExceptionStackTraces"
+                            "--verbose"
+                            "--no-fallback"
+                            "-cp" classpath
+                            (str "-J-Xmx" native-image-xmx)
+                            entry-class]]
+      (t/shell native-image-cmd))))
 
 (defn humanize-bytes [bytes]
   (let [units ["bytes" "KB" "MB" "GB"]
