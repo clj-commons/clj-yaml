@@ -12,3 +12,4 @@ target
 .cpcache
 /.eastwood
 /fiddle
+/.vscode
