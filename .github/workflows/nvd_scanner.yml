@@ -45,12 +45,13 @@ jobs:
           ~/.gitlibs
         # because we are using a RELEASE version of nvd-clojure
         # we also include its version
-        restore-keys: |
+        key: |
           nvd-${{ hashFiles(
             'nvd_check_helper_project/nvd-clojure-version.txt',
             'nvd_check_helper_project/deps.edn',
             'nvd_check_helper_project/bb.edn',
             'bb.edn') }}
+        restore-keys: |
           nvd-
 
     - name: Download Clojure deps
