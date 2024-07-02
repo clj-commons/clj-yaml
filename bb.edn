@@ -5,10 +5,17 @@
         version-clj/version-clj {:mvn/version "2.0.2"}}
  :tasks {;; setup
          :requires ([babashka.fs :as fs]
+                    [babashka.http-client :as http]
+                    [clojure.edn :as edn]
                     [clojure.string :as string]
                     [lread.status-line :as status])
-         :enter (let [{:keys [name]} (current-task)] (status/line :head "TASK %s %s" name (string/join " " *command-line-args*)))
-         :leave (let [{:keys [name]} (current-task)] (status/line :detail "\nTASK %s done." name))
+
+         :enter (let [{:keys [name task-decoration] :as f} (current-task)]
+                  (when-not (= :none task-decoration)
+                    (status/line :head "TASK %s" name)))
+         :leave (let [{:keys [name task-decoration] :as f} (current-task)]
+                  (when-not (= :none task-decoration)
+                    (status/line :detail "\nTASK %s done." name)))
 
          ;; tasks
          clean
@@ -47,16 +54,24 @@
          lint
          {:doc "Run all lints"
           :depends [lint-kondo lint-eastwood]}
+         latest-release
+         {:doc "Return latest clojars release of given artifact"
+          :task-decoration :none
+          ;; we use RELEASE for nvd-clojure, so use its version as our cache key
+          :task (let [artifact (first *command-line-args*)]
+                  (-> (http/get (str "https://clojars.org/api/artifacts/" artifact)
+                                {:headers {"Accept" "application/edn"}})
+                      :body
+                      edn/read-string
+                      :latest_release
+                      println))}
          nvd-scan
          {:doc "Check for security vulnerabilities in dependencies"
-          :task (let [config (if (System/getenv "CI")
-                               "./github_actions_config.json" ;; to support CI caching
-                               "./local_config.json")]
-                  (status/line :detail "Using config: %s" config)
+          :task (let [cp (with-out-str (clojure "-Spath"))]
                   (clojure {:dir "./nvd_check_helper_project"}
                            "-J-Dclojure.main.report=stderr -M -m nvd.task.check"
-                           config
-                           (with-out-str (clojure "-Spath"))))}
+                           "./config.json"
+                           cp))}
          pubcheck
          {:doc "run only publish checks (without publishing)"
           :task publish/pubcheck}
