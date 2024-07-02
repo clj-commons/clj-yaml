@@ -29,10 +29,13 @@ jobs:
         cli: 'latest'
         bb: 'latest'
 
-    - name: Generate Cache Key
+    - name: Generate Cache Key File
+      # go with bash instead of bb, we have not downloaded our deps yet
       run: |
-        bb --version
-        bb latest-release nvd-clojure | tee nvd_check_helper_project/nvd-clojure-version.txt
+        curl --fail -s \
+          https://clojars.org/api/artifacts/nvd-clojure | \
+          jq ".latest_release" | \
+          tee nvd_check_helper_project/nvd-clojure-version.txt
 
     - name: Restore NVD DB & Clojure Deps Cache
       # nvd caches its db under ~/.m2/repository/org/owasp so that it can
