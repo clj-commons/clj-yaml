@@ -26,11 +26,11 @@ When we merge your PR, we'll usually squash it, so that will clean up any rambli
 
 === Developer Prerequisites
 
-The current version of Babashka.
-The current version of Clojure.
-The current version of GraalVM (to run native image tests)
-JDK8+
-Some knowledge of Java if you are going to add/modify Java code (there's not much!).
+* Java Development Kit, minimum version 8 (we currently validate against versions 8, 11, 17 and 21)
+* The current version of https://clojure.org/guides/install_clojure[Clojure] (if you are on Windows we recommend installing via https://github.com/casselc/clj-msi[clj-msi]).
+* The current version of https://github.com/babashka/babashka/blob/master/README.md#quickstart[Babashka].
+* The current version of https://www.graalvm.org/latest/docs/getting-started/[GraalVM] (if you want to run native image tests)
+* Some knowledge of Java if you are going to add/modify Java code (there's not much!).
 
 === Babashka Built-in
 
