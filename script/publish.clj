@@ -52,13 +52,15 @@
       :out
       string/trim
       seq))
+(defn- local-branch? []
+  (let [{:keys [exit]} (t/shell {:continue true :out :string :err :out}
+                                "git rev-parse --symbolic-full-name @{u}")]
+    (not (zero? exit))))
 
 (defn- unpushed-commits? []
   (let [{:keys [exit :out]} (t/shell {:continue true :out :string}
                                      "git cherry -v")]
-    (if (zero? exit)
-      (-> out string/trim seq)
-      (status/die 1 "Failed to check for unpushed commits, are you on an unpushed branch?"))))
+    (and (zero? exit) (-> out string/trim seq))))
 
 (defn- analyze-changelog
   "Certainly not fool proof, but should help for common mistakes"
@@ -87,7 +89,7 @@
      {:check "no uncommitted code"
       :result (if (uncommitted-code?) :fail :pass)}
      {:check "no unpushed commits"
-      :result (if (unpushed-commits?) :fail :pass)}
+      :result (if (or (local-branch?) (unpushed-commits?)) :fail :pass)}
      {:check "changelog has unreleased section"
       :result (if (:section-missing changelog-findings) :fail :pass)}
      {:check "changelog unreleased section attributes valid"
