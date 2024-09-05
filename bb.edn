@@ -2,7 +2,7 @@
  :deps {lread/status-line {:git/url "https://github.com/lread/status-line.git"
                            :sha "cf44c15f30ea3867227fa61ceb823e5e942c707f"}
         io.github.babashka/neil {:git/tag "v0.3.67" :git/sha "054ca51"}
-        version-clj/version-clj {:mvn/version "2.0.2"}}
+        version-clj/version-clj {:mvn/version "2.0.3"}}
  :tasks {;; setup
          :requires ([babashka.fs :as fs]
                     [clojure.string :as string]
