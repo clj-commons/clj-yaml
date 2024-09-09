@@ -223,15 +223,16 @@ SnakeYAML implementation (that clj-yaml uses for low-level encoding and decoding
 ==== Dumper Options [[dumper-options]]
 Different flow styles (`:auto`, `:block`, `:flow`) allow customization of how YAML is rendered.
 
-To demonstrate let's setup `some-data` to play with.
+To demonstrate, let's setup `some-data` to play with.
 
 [source,clojure]
 ----
 (def some-yaml "
 todo:
-  - name: Fix issue
-    responsible:
-      name: Rita
+  issues:
+    - name: Fix all the things
+      responsible:
+        name: Rita
 ")
 
 (def some-data (yaml/parse-string some-yaml))
@@ -247,31 +248,34 @@ results in a string of YAML, that when printed:
 [source,yaml]
 ----
 todo:
-- name: Fix issue
-  responsible:
-    name: Rita
+  issues:
+  - name: Fix all the things
+    responsible:
+      name: Rita
 ----
 
 The same but with the `:flow` style results in:
 [source,yaml]
 ----
-{todo: [{name: Fix issue, responsible: {name: Rita}}]}
+{todo: {issues: [{name: Fix all the things, responsible: {name: Rita}}]}}
 ----
 
 And finally the `:auto` style (the default) renders:
 [source,yaml]
 ----
 todo:
-- name: Fix issue
-  responsible: {name: Rita}
+  issues:
+  - name: Fix all the things
+    responsible: {name: Rita}
 ----
 
-Use the `:indent` and `:indicator-indent` options to adjust indentation:
+==== Controlling Indentation
+
+Use `:indent` to control block indentation, to override the default block indent of `2` with `4`:
 
 [source,clojure]
 ----
-(yaml/generate-string some-data :dumper-options {:indent 6
-                                                 :indicator-indent 3
+(yaml/generate-string some-data :dumper-options {:indent 4
                                                  :flow-style :block})
 ----
 
@@ -279,13 +283,85 @@ results in:
 [source,yaml]
 ----
 todo:
-   -  name: Fix issue
-      responsible:
+    issues:
+    -   name: Fix all the things
+        responsible:
             name: Rita
 ----
+Notice that each block is now indented by `4`.
 
-`:indent` must always be larger than `:indicator-indent`.
-If it is only 1 higher, the indicator will be on a separate line:
+Use `:indicator-indent` to change the indentation of the `-` indicator; by default, it is `0`; let's bump it up to `2`:
+
+[source,clojure]
+----
+(yaml/generate-string some-data :dumper-options {:indent 4
+                                                 :indicator-indent 2
+                                                 :flow-style :block})
+----
+
+results in:
+[source,yaml]
+----
+todo:
+    issues:
+      - name: Fix all the things
+        responsible:
+            name: Rita
+----
+Notice that the blocks are still indented by 4, but the `-` indicator is now indented by `2`.
+
+Indenting the `-` indicator within the block `:indent` can be limiting.
+Sometimes, you'll want to indent `-` blocks more than other blocks.
+Specifying `:indent-with-indicator true` makes block indentation for `-` indicators additive; the indicator is still indented by `:indicator-indent`, but its block is indented by `:indent` + `:indicator-indent`.
+
+[source,clojure]
+----
+(yaml/generate-string some-data :dumper-options {:indent 4
+                                                 :indicator-indent 2
+                                                 :indent-with-indicator true
+                                                 :flow-style :block})
+----
+
+results in:
+[source,yaml]
+----
+todo:
+    issues:
+      -   name: Fix all the things
+          responsible:
+              name: Rita
+----
+You'll notice that the `-` indicator is indented by `2`, but its block is now indented by `6` (`4` + `2`).
+
+A common usage of `indent-with-indicator true` is to indent arrays like so:
+
+[source,clojure]
+----
+(yaml/generate-string some-data :dumper-options {:indent 2
+                                                 :indicator-indent 2
+                                                 :indent-with-indicator true
+                                                 :flow-style :block})
+----
+results in:
+
+[source,yaml]
+----
+todo:
+  issues:
+    - name: Fix all the things
+      responsible:
+        name: Rita
+----
+We now have:
+
+* a block indentation of `2` by default
+* an `-` indicator indentation of `2`
+* a block indentation of `4` for `-` indicator content
+
+[TIP]
+====
+Unless you are using `:indent-with-indicator`, `:indicator-indent` must always be less than `:indent`.
+If `:ident-with-indicator` is 1 less than `:indent`, the `-` indicator will be on a separate line:
 
 [source,clojure]
 ----
@@ -297,11 +373,13 @@ results in:
 [source,yaml]
 ----
 todo:
- -
-  name: Fix issue
-  responsible:
-    name: Rita
+  issues:
+   -
+    name: Fix all the things
+    responsible:
+      name: Rita
 ----
+====
 
 [[keyword-args]]
 === Function Options as Keyword Args
