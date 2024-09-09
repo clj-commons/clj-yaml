@@ -16,8 +16,11 @@ Clj-yaml makes use of SnakeYAML, please also refer to the https://bitbucket.org/
 == Unreleased
 
 * Dependencies
-** Bump `org.flatland/ordered` to `1.15.12`
+** Bump `org.flatland/ordered` to version `1.15.12`
 (https://github.com/clj-commons/clj-yaml/issues/123[#123])
+(https://github.com/lread[@lread])
+** Bump `org.yaml/snakeyaml` to version `2.3`
+(https://github.com/clj-commons/clj-yaml/issues/134[#134])
 (https://github.com/lread[@lread])
 ** Add `:indent-with-indicator` dumper option to support indenting lists
 (https://github.com/clj-commons/clj-yaml/issues/136[#136])
