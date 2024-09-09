@@ -66,7 +66,7 @@
 
   Returns internal SnakeYAML dumper options.
   See [[generate-string]] for description of options."
-  ^DumperOptions [{:keys [flow-style indent indicator-indent]}]
+  ^DumperOptions [{:keys [flow-style indent indicator-indent indent-with-indicator]}]
   (let [dumper (default-dumper-options)]
     (when flow-style
       (.setDefaultFlowStyle dumper (flow-styles flow-style)))
@@ -74,6 +74,8 @@
       (.setIndent dumper indent))
     (when indicator-indent
       (.setIndicatorIndent dumper indicator-indent))
+    (when indent-with-indicator
+      (.setIndentWithIndicator dumper indent-with-indicator))
     dumper))
 
 (defn default-loader-options
@@ -258,8 +260,12 @@
       - default: `:auto`
     - `:indent` - spaces to block indent
       - default: `2`
-    - `:indicator-indent` - spaces to indent after indicator
-      - default: `0`"
+    - `:indicator-indent` - spaces to indent `-` indicator
+      - default: `0`
+    - `:indent-with-indicator` -
+      - `true` - indent blocks for `-` indicator by `:indent` + `:indicator-indent`
+      - `false` - indent blocks for `-` indicator by `:indent`
+      - default: `false`"
   [data & opts]
   (.dump ^Yaml (apply make-yaml opts)
          (encode data)))

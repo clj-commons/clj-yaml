@@ -372,20 +372,45 @@ lol: yolo")
            (parse-stream (->stream multi-doc-yaml) :load-all true))))
   )
 
-(def indented-yaml "todo:
-  -  name: Fix issue
-     responsible:
-          name: Rita
+(def indent-yaml "todo:
+  issues:
+  - name: Fix all the things
+    responsible: {name: Rita}
 ")
 
 (deftest indentation-test
   (testing "Can use indicator-indent and indent to achieve desired indentation"
-    (is (not= indented-yaml (generate-string (parse-string indented-yaml)
-                                             :dumper-options {:flow-style :block})))
-    (is (= indented-yaml
-           (generate-string (parse-string indented-yaml)
+    (is (= (str "todo:\n"
+                ;12
+                "  issues:\n"
+                "  - name: Fix all the things\n"
+                "    responsible:\n"
+                "      name: Rita\n")
+           (generate-string (parse-string indent-yaml)
+                            :dumper-options {:flow-style :block})))
+
+    (is (= (str "todo:\n"
+                ;12345
+                "     issues:\n"
+                ;;    12345
+                "       -  name: Fix all the things\n"
+                "          responsible:\n"
+                "               name: Rita\n")
+             (generate-string (parse-string indent-yaml)
+                              :dumper-options {:indent 5
+                                               :indicator-indent 2
+                                               :flow-style :block})))
+    (is (= (str "todo:\n"
+                ;12345
+                "     issues:\n"
+                ;     1234567
+                "       -    name: Fix all the things\n"
+                "            responsible:\n"
+                "                 name: Rita\n")
+           (generate-string (parse-string indent-yaml)
                             :dumper-options {:indent 5
                                              :indicator-indent 2
+                                             :indent-with-indicator true
                                              :flow-style :block})))))
 
 (def yaml-with-unknown-tags "---
