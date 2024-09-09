@@ -47,6 +47,9 @@
          lint
          {:doc "Run all lints"
           :depends [lint-kondo lint-eastwood]}
+         outdated
+         {:doc "report on outdated dependencies"
+          :task (clojure {:continue true} "-M:outdated")}
          nvd-scan
          {:doc "Check for security vulnerabilities in dependencies"
           :task (let [cp (with-out-str (clojure "-Spath"))]
