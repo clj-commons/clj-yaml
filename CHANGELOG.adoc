@@ -15,6 +15,8 @@ Clj-yaml makes use of SnakeYAML, please also refer to the https://bitbucket.org/
 //   (adjust these in publish.clj as you see fit)
 == Unreleased
 
+== v1.0.28 - 2024-09-10 [[v1.0.28]]
+
 * Dependencies
 ** Bump `org.flatland/ordered` to version `1.15.12`
 (https://github.com/clj-commons/clj-yaml/issues/123[#123])
@@ -25,6 +27,8 @@ Clj-yaml makes use of SnakeYAML, please also refer to the https://bitbucket.org/
 ** Add `:indent-with-indicator` dumper option to support indenting lists
 (https://github.com/clj-commons/clj-yaml/issues/136[#136])
 (https://github.com/lread[@lread])
+
+https://github.com/clj-commons/clj-yaml/compare/v1.0.27\...v1.0.28[commit log]
 
 == v1.0.27 - 2023-08-11 [[v1.0.27]]
 
