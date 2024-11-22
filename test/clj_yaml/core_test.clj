@@ -411,7 +411,20 @@ lol: yolo")
                             :dumper-options {:indent 5
                                              :indicator-indent 2
                                              :indent-with-indicator true
-                                             :flow-style :block})))))
+                                             :flow-style :block})))
+    (is (= (str "todo:\n"
+                ;12
+                "  issues:\n"
+                ;; 12
+                "    - name: Fix all the things\n"
+                "      responsible:\n"
+                ;;     12
+                "        name: Rita\n")
+           (generate-string (parse-string indent-yaml)
+             :dumper-options {:indent 2
+                              :indicator-indent 2
+                              :indent-with-indicator true
+                              :flow-style :block})))))
 
 (def yaml-with-unknown-tags "---
 scalar: !CustomScalar some-scalar

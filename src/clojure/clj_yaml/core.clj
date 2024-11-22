@@ -72,10 +72,10 @@
       (.setDefaultFlowStyle dumper (flow-styles flow-style)))
     (when indent
       (.setIndent dumper indent))
-    (when indicator-indent
-      (.setIndicatorIndent dumper indicator-indent))
     (when indent-with-indicator
       (.setIndentWithIndicator dumper indent-with-indicator))
+    (when indicator-indent
+      (.setIndicatorIndent dumper indicator-indent))
     dumper))
 
 (defn default-loader-options
