@@ -15,6 +15,11 @@ Clj-yaml makes use of SnakeYAML, please also refer to the https://bitbucket.org/
 //   (adjust these in publish.clj as you see fit)
 == Unreleased
 
+* Fixes
+** Set `indent-with-indicator` before `indicator-indent` in dumper options
+(https://github.com/clj-commons/clj-yaml/issues/31[#31])
+(https://github.com/noonian[@noonian])
+
 == v1.0.28 - 2024-09-10 [[v1.0.28]]
 
 * Dependencies
