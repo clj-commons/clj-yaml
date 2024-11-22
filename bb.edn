@@ -55,7 +55,7 @@
           :task (let [cp (with-out-str (clojure "-Spath"))]
                   (clojure {:dir "./nvd_check_helper_project"}
                            "-J-Dclojure.main.report=stderr -M -m nvd.task.check"
-                           "./config.json"
+                           "./nvd-clojure.edn"
                            cp))}
          pubcheck
          {:doc "run only publish checks (without publishing)"
