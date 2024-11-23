@@ -2,7 +2,7 @@
 :toclevels: 5
 :toc:
 // DO NOT EDIT: the lib-version parameter is automatically updated by bb publish
-:lib-version: 1.0.28
+:lib-version: 1.0.29
 
 == Audience
 You want to learn more about how to use the clj-yaml library from your app, library or script.
