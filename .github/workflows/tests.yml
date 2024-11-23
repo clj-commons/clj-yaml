@@ -44,7 +44,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [{name: 'windows', shell: 'pwsh'}, {name: 'ubuntu', shell: 'bash'}]
-        jdk: ['8', '11', '17', '21']
+        jdk: ['8', '11', '17', '21', '23']
 
     name: ${{matrix.os.name}} jdk ${{ matrix.jdk }}
 
@@ -74,7 +74,7 @@ jobs:
           - { name: 'graalvm', short-name: 'graal' }
           - { name: 'graalvm-community', short-name: 'graalce' }
         java-version:
-          - '22.0.2'
+          - '23.0.1'
         clojure-version: [ '1.12' ]
 
     name: ${{matrix.os.name}} ${{matrix.distribution.short-name}} jdk${{matrix.java-version}} clj${{ matrix.clojure-version }}
