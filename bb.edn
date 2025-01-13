@@ -49,7 +49,7 @@
           :depends [lint-kondo lint-eastwood]}
          outdated
          {:doc "report on outdated dependencies"
-          :task (clojure {:continue true} "-M:outdated")}
+          :task (clojure {:continue true} "-M:outdated --directory=.:nvd_check_helper_project")}
          nvd-scan
          {:doc "Check for security vulnerabilities in dependencies"
           :task (let [cp (with-out-str (clojure "-Spath"))]
