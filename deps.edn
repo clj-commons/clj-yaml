@@ -24,7 +24,7 @@
    :extra-deps {com.github.clj-easy/graal-build-time {:mvn/version "1.0.5"}}}
   :build
   {:extra-paths ["build"]
-   :deps {io.github.clojure/tools.build {:mvn/version "0.10.6"}
+   :deps {io.github.clojure/tools.build {:mvn/version "0.10.7"}
           slipset/deps-deploy {:mvn/version "0.2.2"}
           babashka/fs {:mvn/version "0.5.24"}}
    :ns-default build}
