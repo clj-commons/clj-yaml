@@ -85,13 +85,13 @@
               in-bytes))))
 
 (defn -main [& args]
-  (let [valid-clj-version-opt-values ["1.11" "1.12"]
+  (let [valid-clj-version-opt-values ["1.12"]
         spec {:clj-version
               {:ref "<version>"
                :desc "The Clojure version to test against."
                :coerce :string
-               :default-desc "1.11"
-               :default "1.11"
+               :default-desc "1.12"
+               :default "1.12"
                :validate
                {:pred (set valid-clj-version-opt-values)
                 :ex-msg (fn [_m]
