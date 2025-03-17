@@ -4,11 +4,11 @@
 Provides http://yaml.org[YAML] encoding and decoding for Clojure via the https://bitbucket.org/snakeyaml/snakeyaml[SnakeYAML] Java library.
 
 // Badges
-https://clojars.org/{project-coords}[image:https://img.shields.io/clojars/v/{project-coords}.svg[Clojars Project]] 
+https://clojars.org/{project-coords}[image:https://img.shields.io/clojars/v/{project-coords}.svg[Clojars Project]]
 https://cljdoc.org/d/{project-coords}[image:https://cljdoc.org/badge/{project-coords}[cljdoc badge]]
 https://github.com/{project-coords}/actions/workflows/tests.yml[image:https://github.com/{project-coords}/actions/workflows/tests.yml/badge.svg[CI tests]]
 https://github.com/{project-coords}/actions/workflows/nvd_scanner.yml[image:https://github.com/clj-commons/clj-yaml/actions/workflows/nvd_scanner.yml/badge.svg[nvd scanner]]
-https://babashka.org[image:https://raw.githubusercontent.com/babashka/babashka/master/logo/built-in-badge.svg[bb built-in]]
+https://book.babashka.org#badges[image:https://raw.githubusercontent.com/babashka/babashka/master/logo/built-in-badge.svg[bb built-in]]
 https://clojurians.slack.com/archives/C042XAQFCCU[image:https://img.shields.io/badge/slack-join_chat-brightgreen.svg[Slack chat]]
 
 (This is a maintained fork of https://github.com/CircleCI-Archived/clj-yaml[the circleci clj-yaml fork] which forked from https://github.com/lancepantz/clj-yaml[the original clj-yaml])
