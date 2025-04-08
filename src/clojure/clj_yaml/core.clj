@@ -183,6 +183,10 @@
   (decode [data opts]
     "Decode SnakeYAML -> Clojure"))
 
+;; We only implement methods in the YAMLCodec that are meaningul to clj-yaml
+;; We appreciate the warning form clj-kondo about missing protocol methods,
+;; but feel it is fine to ignore the lint warning in this case
+#_{:clj-kondo/ignore [:missing-protocol-method]}
 (extend-protocol YAMLCodec
   clj_yaml.MarkedConstructor$Marked
   (decode [data opts]
