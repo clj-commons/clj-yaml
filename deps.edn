@@ -24,9 +24,9 @@
    :extra-deps {com.github.clj-easy/graal-build-time {:mvn/version "1.0.5"}}}
   :build
   {:extra-paths ["build"]
-   :deps {io.github.clojure/tools.build {:mvn/version "0.10.9"}
+   :deps {io.github.clojure/tools.build {:mvn/version "0.10.10"}
           slipset/deps-deploy {:mvn/version "0.2.2"}
-          babashka/fs {:mvn/version "0.5.25"}}
+          babashka/fs {:mvn/version "0.5.26"}}
    :ns-default build}
   ;; for consistent linting we use a specific version of clj-kondo through the jvm
   :clj-kondo {:extra-deps {clj-kondo/clj-kondo {:mvn/version "2025.07.28"}}
