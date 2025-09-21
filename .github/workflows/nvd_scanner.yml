@@ -28,7 +28,7 @@ jobs:
 
     - name: Generate Cache Key File
       run: ./ci-versions.sh
-     working-directory: nvd-scan
+      working-directory: nvd-scan
 
     - name: Restore NVD DB & Clojure Deps Cache
       # nvd caches its db under ~/.m2/repository/org/owasp so that it can
