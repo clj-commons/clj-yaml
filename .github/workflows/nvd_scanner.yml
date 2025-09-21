@@ -49,7 +49,7 @@ jobs:
           nvd-${{ hashFiles(
             'nvd-scan/target/ci-versions.edn',
             'nvd-scan/*',
-            '!nvd-scan/.*', ) }}
+            '!nvd-scan/.*') }}
         restore-keys: |
           nvd-
 
@@ -78,4 +78,4 @@ jobs:
           nvd-${{ hashFiles(
             'nvd-scan/target/ci-versions.edn',
             'nvd-scan/*',
-            '!nvd-scan/.*', )}}-${{ github.run_id }}
+            '!nvd-scan/.*')}}-${{ github.run_id }}
