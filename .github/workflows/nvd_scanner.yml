@@ -30,6 +30,7 @@ jobs:
       run: |
         # We are using RELEASE for deps, grab current versions for CI cache key
         mkdir -p target
+        # Using bb, clojure will bring down deps before we've restored out deps cache - not entirely ideal
         bb deps-versions > target/ci-versions.edn
         cat target/ci-versions.edn
       working-directory: nvd-scan
