@@ -27,6 +27,8 @@ jobs:
         bb: 'latest'
 
     - name: Generate Cache Key File
+      env:
+        GH_TOKEN: ${{ github.token }}
       run: ./ci-versions.sh
       working-directory: nvd-scan
 
