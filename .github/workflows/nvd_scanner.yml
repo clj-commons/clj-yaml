@@ -51,10 +51,6 @@ jobs:
         restore-keys: |
           nvd-
 
-    - name: Download Clojure deps
-      run: clojure -X:deps prep :aliases '[:clj-watson]'
-      working-directory: nvd-scan
-
     - name: Run NVD Scanner
       env:
         CLJ_WATSON_NVD_API_KEY: ${{ secrets.CLJ_WATSON_NVD_API_KEY }}
