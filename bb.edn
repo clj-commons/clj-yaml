@@ -52,11 +52,7 @@
           :task (clojure {:continue true} "-M:outdated --directory=.:nvd_check_helper_project")}
          nvd-scan
          {:doc "Check for security vulnerabilities in dependencies"
-          :task (let [cp (with-out-str (clojure "-Spath"))]
-                  (clojure {:dir "./nvd_check_helper_project"}
-                           "-J-Dclojure.main.report=stderr -M -m nvd.task.check"
-                           "./nvd-clojure.edn"
-                           cp))}
+          :task (shell {:dir "./nvd-scan"} "bb nvd-scan")}
          pubcheck
          {:doc "run only publish checks (without publishing)"
           :task publish/pubcheck}
