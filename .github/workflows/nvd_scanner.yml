@@ -27,13 +27,8 @@ jobs:
         bb: 'latest'
 
     - name: Generate Cache Key File
-      run: |
-        # We are using RELEASE for deps, grab current versions for CI cache key
-        mkdir -p target
-        # Using bb, clojure will bring down deps before we've restored out deps cache - not entirely ideal
-        bb deps-versions > target/ci-versions.edn
-        cat target/ci-versions.edn
-      working-directory: nvd-scan
+      run: ./ci-versions.sh
+     working-directory: nvd-scan
 
     - name: Restore NVD DB & Clojure Deps Cache
       # nvd caches its db under ~/.m2/repository/org/owasp so that it can
@@ -48,7 +43,7 @@ jobs:
         # we also include its version
         key: |
           nvd-${{ hashFiles(
-            'nvd-scan/target/ci-versions.edn',
+            'nvd-scan/target/ci-versions.txt',
             'nvd-scan/*',
             '!nvd-scan/.*') }}
         restore-keys: |
@@ -77,6 +72,6 @@ jobs:
         # the next cache restore will find the best (and most current) match
         key: |
           nvd-${{ hashFiles(
-            'nvd-scan/target/ci-versions.edn',
+            'nvd-scan/target/ci-versions.txt',
             'nvd-scan/*',
             '!nvd-scan/.*')}}-${{ github.run_id }}

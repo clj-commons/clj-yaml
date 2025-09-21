@@ -18,8 +18,6 @@
                           (assoc acc lib coord)))
                       {}
                       ['io.github.clj-holmes/clj-watson 'org.owasp/dependency-check-core])))
-  deps-versions {:doc "find current versions of deps (used for ci cache)"
-                 :task (pr (get-deps))}
   nvd-scan {:doc "run vulnerability scan"
             :task (let [deps {:deps (get-deps)}]
                     (println "using latest:" deps)
