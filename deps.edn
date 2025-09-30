@@ -1,5 +1,5 @@
 {:paths ["src/clojure" "target/classes" "resources"]
- :deps {org.yaml/snakeyaml {:mvn/version "2.4"}
+ :deps {org.yaml/snakeyaml {:mvn/version "2.5"}
         org.flatland/ordered {:mvn/version "1.15.12"}}
  :deps/prep-lib {:alias :build
                  :fn compile-java
