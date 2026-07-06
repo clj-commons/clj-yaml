@@ -92,7 +92,7 @@ jobs:
     - name: Setup GraalVM
       uses: graalvm/setup-graalvm@v1
       with:
-        java-version: ${{ matrix.version }}
+        version: ${{ matrix.version }}
         distribution: ${{ matrix.distribution.name }}
         github-token: ${{ secrets.GITHUB_TOKEN }}
 
