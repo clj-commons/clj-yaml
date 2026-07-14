@@ -17,6 +17,11 @@ Clj-yaml is a Clojure wrapper over https://bitbucket.org/snakeyaml/snakeyaml/src
 - Dec 2013 - https://github.com/CircleCI-Archived/clj-yaml[circleci/clj-yaml] picks up the torch
 - Jan 2019 - clj-commons adopts clj-yaml where it can get the ongoing love and care that it needs
 
+== Interesting Alternatives
+
+- https://yamlstar.org/[YAMLStar] - A YAML 1.2 load/dump framework for all programming languages.
+YAMLStar is a pure Clojure parser, no dependencies on SnakeYAML or other external parsers.
+
 == Installation
 
 === Babashka
