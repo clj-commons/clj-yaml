@@ -1,6 +1,6 @@
 (ns test-native
-  (:require [lread.status-line :as status]
-            [babashka.cli :as cli]
+  (:require [helper.clojure-versions :as clojure-versions]
+            [lread.status-line :as status]
             [babashka.fs :as fs]
             [babashka.tasks :as t]
             [cheshire.core :as json]
@@ -84,20 +84,12 @@
               (units exponent)
               in-bytes))))
 
-(defn -main [& args]
-  (let [valid-clj-version-opt-values ["1.12" "1.13"]
-        spec {:clj-version
-              {:ref "<version>"
-               :desc "The Clojure version to test against."
-               :coerce :string
-               :default-desc "1.12"
-               :default "1.12"
-               :validate
-               {:pred (set valid-clj-version-opt-values)
-                :ex-msg (fn [_m]
-                          (str "--clj-version must be one of: " valid-clj-version-opt-values))}}}
-        opts (cli/parse-opts args {:spec spec :restrict true})
-        clj-version (:clj-version opts)
+(def cli-clojure-versions (mapv :version (clojure-versions/for-native)))
+
+(defn task
+  {:org.babashka/cli {:spec (clojure-versions/cli-opt cli-clojure-versions)}}
+  [{:keys [clojure-version]}]
+  (let [clojure-version (clojure-versions/lookup clojure-version)
         native-image-xmx "6g"
         target-path "target"
         target-exe "clj-yaml-test"
@@ -112,8 +104,8 @@
     (t/clojure "-T:build jar")
     (status/line :head "Generating reflection config to support unsafe tests")
     (generate-reflection-config reflection-config)
-    (status/line :head "AOT Compiling test sources against clojure %s" clj-version)
-    (t/clojure "-T:build compile-clj-for-native-test :clj-version-alias" (keyword clj-version))
+    (status/line :head "AOT Compiling test sources against clojure %s" (:mvn-version clojure-version))
+    (t/clojure "-T:build compile-clj-for-native-test :clj-version-alias" (:alias clojure-version))
     (let [classpath (get-classpath)]
       (run-native-image {:graal-native-image graal-native-image
                          :reflection-config reflection-config
@@ -128,7 +120,3 @@
       (status/line :head "Running tests natively")
       (t/shell full-target-exe)))
   nil)
-
-(when (= *file* (System/getProperty "babashka.file"))
-  (apply -main *command-line-args*))
-

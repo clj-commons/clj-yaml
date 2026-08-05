@@ -62,7 +62,7 @@ jobs:
       run: bb compile-java
 
     - name: Run tests
-      run: bb test --clj-version :all
+      run: bb test --clojure-version all
 
   test-native:
     runs-on: ${{matrix.os.name}}-latest
@@ -97,4 +97,4 @@ jobs:
         github-token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Run native tests
-      run: bb test-native --clj-version ${{ matrix.clojure-version }}
+      run: bb test-native --clojure-version ${{ matrix.clojure-version }}

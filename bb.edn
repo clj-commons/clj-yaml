@@ -1,75 +1,35 @@
-{:paths ["script" "build"]
+{:min-bb-version "1.13.219"
+ :paths ["script" "build"]
  :deps {lread/status-line {:git/url "https://github.com/lread/status-line.git"
                            :sha "eace48e2e0fcc65a3986d696fb0b910fa5790a1c"}
         io.github.babashka/neil {:git/tag "v0.3.70" :git/sha "2cdd7c6"}
-        version-clj/version-clj {:mvn/version "2.0.3"}}
+        version-clj/version-clj {:mvn/version "2.0.3"}
+        wevre/natural-compare {:mvn/version "0.0.10"}}
  :tasks {;; setup
          :requires ([babashka.fs :as fs]
                     [clojure.string :as string]
                     [lread.status-line :as status])
          :enter (let [{:keys [name]} (current-task)] (status/line :head "TASK %s %s" name (string/join " " *command-line-args*)))
          :leave (let [{:keys [name]} (current-task)] (status/line :detail "\nTASK %s done." name))
+         :cli helper.cli/base-opts
 
          ;; tasks
-         clean
-         {:doc "clean build work"
-          :task (do
-                  (println "Deleting (d=deleted -=did not exist)")
-                  (run! (fn [d]
-                          (println (format "[%s] %s"
-                                           (if (fs/exists? d) "d" "-")
-                                           d))
-                          (fs/delete-tree d))
-                        ["target" ".cpcache"]))}
-         download-deps
-         {:doc "bring down Clojure deps"
-          :task download-deps/-main}
-         compile-java
-         {:doc "compile java sources"
-          :task (clojure "-T:build compile-java")}
-         test
-         {:doc "Runs tests under Clojure [--clj-version] (recognizes cognitect test-runner args)"
-          :requires ([test-clj])
-          :task (do
-                  (when (not (fs/exists? "target/classes"))
-                    (run 'compile-java))
-                  (apply test-clj/-main *command-line-args*))}
-         test-native
-         {:doc "Run tests natively compiled (requires GraalVM)"
-          :task test-native/-main}
-         lint-kondo
-         {:doc "[--rebuild] Lint source code with clj-kondo"
-          :task lint/-main}
-         lint-eastwood
-         {:doc "Lint source code with Eastwood"
-          :depends [compile-java]
-          :task (clojure "-M:test:eastwood")}
-         lint
-         {:doc "Run all lints"
-          :depends [lint-kondo lint-eastwood]}
-         outdated
-         {:doc "report on outdated dependencies"
-          :task (clojure {:continue true} "-M:outdated --directory=.:nvd_check_helper_project")}
-         nvd-scan
-         {:doc "Check for security vulnerabilities in dependencies"
-          :task (shell {:dir "./nvd-scan"} "bb nvd-scan")}
-         pubcheck
-         {:doc "run only publish checks (without publishing)"
-          :task publish/pubcheck}
-         publish
-         {:doc "Publish a release (for maintainers)"
-          :task publish/-main}
-         neil ;; let's not rely on a random version of neil
-         {:doc "Pinned version of babashka/neil (used in scripting)"
-          :task babashka.neil/-main}
+         clean         {:exec-fn clean/task         :doc "delete all build work"}
+         download-deps {:exec-fn download-deps/task :doc "bring down Clojure deps"}
+         compile-java  {:exec-fn compile-java/task  :doc "compile Java sources" }
+         test          {:exec-fn test-clj/task      :doc "run tests under Clojure"}
+         test-native   {:exec-fn test-native/task   :doc "run tests natively compiled (requires GraalVM)"}
+         lint-kondo    {:exec-fn lint-kondo/task    :doc "lint source code with clj-kondo" }
+         lint-eastwood {:exec-fn lint-eastwood/task :doc "lint source code with Eastwood"}
+         lint          {:exec-fn lint/task          :doc "run all lints"}
+         outdated      {:exec-fn outdated/task      :doc "report on outdated dependencies"}
+         nvd-scan      {:exec-fn nvd-scan/task      :doc "check for security vulnerabilities in dependencies"}
+         pubcheck      {:exec-fn publish/pubcheck   :doc "run only publish checks (without publishing)"}
+         publish       {:exec-fn publish/publish    :doc "publish a release (for maintainers)"}
+         ;; let's not rely on a random version of neil
+         neil          {:task babashka.neil/-main   :doc "Pinned version of babashka/neil (used in scripting)"}
 
          ;; hidden tasks, no need for folks to be trying these ci invoked tasks
-         -ci-clojars-deploy
-         {:doc "triggered on ci by release tag"
-          :task ci-publish/clojars-deploy}
-         -ci-github-create-release
-         {:doc "triggered on ci by release tag"
-          :task ci-publish/github-create-release}
-         -ci-cljdoc-request-build
-         {:doc "ask cljdoc to build docs for new release"
-          :task ci-publish/cljdoc-request-build}}}
+         -ci-clojars-deploy        {:exec-fn ci-publish/clojars-deploy        :doc "triggered on ci by release tag" }
+         -ci-github-create-release {:exec-fn ci-publish/github-create-release :doc "triggered on ci by release tag" }
+         -ci-cljdoc-request-build  {:exec-fn ci-publish/cljdoc-request-build  :doc "ask cljdoc to build docs for new release" }}}
