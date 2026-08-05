@@ -1,46 +1,31 @@
 (ns test-clj
-  (:require [babashka.cli :as cli]
-            [babashka.tasks :as t]
+  (:require [compile-java]
+            [helper.clojure-versions :as clojure-versions]
+            [helper.jdk :as jdk]
+            [helper.shell :as shell]
             [lread.status-line :as status]))
 
-(defn -main [& args]
-  (let [all-clojure-versions ["1.8" "1.9" "1.10" "1.11" "1.12" "1.13"]
-        valid-clj-version-opt-values (conj all-clojure-versions ":all")
-        spec {:clj-version
-              {:ref "<version>"
-               :desc "The Clojure version to test against."
-               :coerce :string
-               :default-desc "1.8"
-               ;; don't specify :default, we want to know if the user passed this option in
-               :validate
-               {:pred (set valid-clj-version-opt-values)
-                :ex-msg (fn [_m]
-                          (str "--clj-version must be one of: " valid-clj-version-opt-values))}}}
-        opts (cli/parse-opts args {:spec spec})
-        clj-version (:clj-version opts)
-        runner-args (if-not clj-version
-                      args
-                      (loop [args args
-                             out-args []]
-                        (if-let [a (first args)]
-                          (if (re-matches #"(--|:)clj-version" a)
-                            (recur (drop 2 args) out-args)
-                            (recur (rest args) (conj out-args a)))
-                          out-args)))
-        clj-version (or clj-version "1.8")]
+(def cli-clojure-versions (conj (mapv :version (clojure-versions/all)) "all"))
 
-    (if (:help opts)
-      (do
-        (status/line :head "bb task option help")
-        (println (cli/format-opts {:spec spec}))
-        (status/line :head "test-runner option help")
-        (t/clojure "-M:test --test-help"))
-      (let [clj-versions (if (= ":all" clj-version)
-                           all-clojure-versions
-                           [clj-version])]
-        (doseq [v clj-versions]
-          (status/line :head "Testing against Clojure version %s" v)
-          (apply t/clojure (format "-M:%s:test" v) runner-args))))))
-
-(when (= *file* (System/getProperty "babashka.file"))
-  (apply -main *command-line-args*))
+(defn task
+  {:org.babashka/cli {:spec (merge (clojure-versions/cli-opt cli-clojure-versions)
+                                   {:namepace {:alias :n :coerce :symbol :desc "namespace(s) to test"}
+                                    :var {:coerce :symbol :desc "var(s) to test"}})}}
+  [{:keys [clojure-version] :as opts}]
+  (compile-java/task {})
+  (let [env-jdk-version (jdk/version)
+        clojure-versions (if (= "all" clojure-version)
+                           (clojure-versions/all)
+                           [(clojure-versions/lookup clojure-version)])
+        test-runner-args (reduce (fn [acc [k v]]
+                                   (conj acc (str "--" (name k)) v))
+                                 []
+                                 (dissoc opts :clojure-version))]
+    (doseq [v clojure-versions]
+      (if (and (= "all" clojure-version)
+               (< (:major env-jdk-version) (:min-jdk-major v)))
+        (status/line :warn "Skipping testing clojure version %s\nIt requires min JDK %s, found JDK %s"
+                     (:mvn-version v) (:min-jdk-major v) (:version env-jdk-version))
+        (do
+          (status/line :head "Testing against Clojure version %s" (:mvn-version v))
+          (apply shell/clojure (format "-M:%s:test" (:alias v)) test-runner-args))))))

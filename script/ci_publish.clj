@@ -38,12 +38,12 @@
 ;; Task entry points
 ;;
 
-(defn clojars-deploy []
+(defn clojars-deploy [_opts]
   (assert-on-ci)
   (analyze-ci-tag) ;; fail on unexpected version tag
   (t/shell "clojure -T:build deploy"))
 
-(defn github-create-release []
+(defn github-create-release [_opts]
   (assert-on-ci)
   (let [{:keys [tag]} (analyze-ci-tag)]
     (t/shell "gh release create"
@@ -51,7 +51,7 @@
              "--title" tag
              "--notes" (format "[Changelog](%s#%s)" changelog-url tag))))
 
-(defn cljdoc-request-build []
+(defn cljdoc-request-build [_opts]
   (assert-on-ci)
   (let [{:keys [version]} (analyze-ci-tag)
         lib (build-shared/lib-artifact-name)]

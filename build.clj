@@ -1,6 +1,7 @@
 (ns build
   (:require [babashka.fs :as fs]
             [build-shared]
+            [clojure.edn :as edn]
             [clojure.java.shell :as shell]
             [clojure.tools.build.api :as b]))
 
@@ -97,3 +98,18 @@
            :pom-file (b/pom-path {:lib lib :class-dir class-dir})}
           opts))
   opts)
+
+(defn download-deps
+  "Download all deps for all aliases"
+  [_]
+  (let [aliases (->> "deps.edn"
+                     slurp
+                     edn/read-string
+                     :aliases
+                     keys)]
+    ;; one at a time because aliases with :replace-deps will... well... you know.
+    (println "Bring down default deps")
+    (b/create-basis {})
+    (doseq [a (sort aliases)]
+      (println "Bring down deps for alias" a)
+      (b/create-basis {:aliases [a]}))))

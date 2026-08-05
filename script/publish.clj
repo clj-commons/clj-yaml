@@ -171,7 +171,8 @@
 
 ;; task entry points
 
-(defn pubcheck []
+(defn pubcheck
+  [_opts]
   (status/line :head "Performing publish checks")
   (let [check-results (release-checks)
         passed? (every? #(= :pass (:result %)) check-results)]
@@ -187,8 +188,9 @@
     (when (not passed?)
       (status/die 1 "Release checks failed"))))
 
-(defn -main [& _args]
-  (pubcheck)
+(defn publish
+  [_opts]
+  (pubcheck {})
   (status/line :head "Calculating versions")
   (bump-version!)
   (let [last-release-tag (last-release-tag)
@@ -212,10 +214,6 @@
     (status/line :detail "- Publish a release jar to clojars")
     (status/line :detail "- Create a GitHub release")
     (status/line :detail "- Inform cljdoc of release")))
-
-;; default action when executing file directly
-(when (= *file* (System/getProperty "babashka.file"))
-  (apply -main *command-line-args*))
 
 (comment
 
