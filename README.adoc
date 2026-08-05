@@ -1,7 +1,7 @@
 = `clj-commons/clj-yaml`
 :project-coords: clj-commons/clj-yaml
 
-Provides http://yaml.org[YAML] encoding and decoding for Clojure via the https://bitbucket.org/snakeyaml/snakeyaml[SnakeYAML] Java library.
+Provides http://yaml.org[YAML] encoding and decoding for Clojure via the https://codeberg.org/snakeyaml/snakeyaml[SnakeYAML] Java library.
 
 // Badges
 https://clojars.org/{project-coords}[image:https://img.shields.io/clojars/v/{project-coords}.svg[Clojars Project]]

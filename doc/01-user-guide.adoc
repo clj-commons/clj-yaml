@@ -9,7 +9,7 @@ You want to learn more about how to use the clj-yaml library from your app, libr
 
 == Introduction
 
-Clj-yaml is a Clojure wrapper over https://bitbucket.org/snakeyaml/snakeyaml/src/master/[SnakeYAML].
+Clj-yaml is a Clojure wrapper over https://codeberg.org/snakeyaml/snakeyaml[SnakeYAML].
 
 === History
 
@@ -211,7 +211,7 @@ In reality, the `:start` `:end` and `:unmark` maps are internally a record and c
 
 ==== Document size limit [[size-limit]]
 
-SnakeYAML implementation (that clj-yaml uses for low-level encoding and decoding) imposes the default limit of 3 megabyte document size for security reasons (https://bitbucket.org/snakeyaml/snakeyaml/issues/547/restrict-the-size-of-incoming-data[issue]). If you hit this limitation, you need to explicitly increase the limit by setting the `:code-point-limit` option:
+SnakeYAML implementation (that clj-yaml uses for low-level encoding and decoding) imposes the default limit of 3 megabyte document size for security reasons (https://codeberg.org/snakeyaml/snakeyaml/issues/547[issue]). If you hit this limitation, you need to explicitly increase the limit by setting the `:code-point-limit` option:
 
 [source,clojure]
 ----
