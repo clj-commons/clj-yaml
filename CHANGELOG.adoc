@@ -5,7 +5,7 @@ A release with known breaking changes is marked with:
 * [breaking] you probably need to change your code
 * [minor breaking] you likely don't need to change your code
 
-Clj-yaml makes use of SnakeYAML, please also refer to the https://bitbucket.org/snakeyaml/snakeyaml/wiki/Changes[SnakeYAML changelog].
+Clj-yaml makes use of SnakeYAML, please also refer to the https://codeberg.org/snakeyaml/snakeyaml/wiki/Changes[SnakeYAML changelog].
 
 // DO NOT EDIT: the "Unreleased" section header is automatically updated by bb publish
 // bb publish will fail on any of:
