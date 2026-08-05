@@ -222,12 +222,11 @@ the-bin: !!binary 0101")
     (is (= (keys first) '(:part_no :descrip :price :quantity)))
     (is (= (keys second) '(:part_no :descrip :price :quantity :owners)))))
 
-
 (deftest nulls-are-fine
   (testing "nil does not blow up"
     (let [res (parse-string "- f:")]
       (is (= [{:f nil}] res))
-      (is (str res)))))
+      (is (= "[#ordered/map ([:f nil])]" (pr-str (vec res)))))))
 
 (deftest emoji-can-be-parsed
   (let [yaml "{emoji: 💣}"]
