@@ -77,7 +77,7 @@ jobs:
           - '25.3.4.1'
         clojure-version: [ '1.12', '1.13' ]
 
-    name: ${{matrix.os.name}} ${{matrix.distribution.short-name}} jdk${{matrix.version}} clj${{ matrix.clojure-version }}
+    name: ${{matrix.os.name}} ${{matrix.distribution.short-name}}${{matrix.version}} clj${{ matrix.clojure-version }}
 
     steps:
     - name: Checkout
