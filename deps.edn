@@ -7,7 +7,7 @@
  :aliases
  {;; we use babashka/neil for project attributes
   ;; publish workflow references these values (and automatically bumps patch)
-  :neil {:project {:version "1.0.29"
+  :neil {:project {:version "1.0.30"
                    :name clj-commons/clj-yaml}}
   ;;
   ;; Clojure versions we support (discovered by scripts by their clojure- prefix)

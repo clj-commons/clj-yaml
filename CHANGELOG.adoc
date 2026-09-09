@@ -15,9 +15,13 @@ Clj-yaml makes use of SnakeYAML, please also refer to the https://codeberg.org/s
 //   (adjust these in publish.clj as you see fit)
 == Unreleased
 
+== v1.0.30 - 2026-09-09 [[v1.0.30]]
+
 * Bump `org.yaml/snakeyaml` to version `2.7`
 (https://github.com/clj-commons/clj-yaml/issues/182[#182])
 (https://github.com/lread[@lread])
+
+https://github.com/clj-commons/clj-yaml/compare/v1.0.29\...v1.0.30[commit log]
 
 == v1.0.29 - 2024-11-23 [[v1.0.29]]
 
