@@ -1,6 +1,7 @@
 (ns outdated
-  (:require [helper.shell :as shell]))
+  (:require [antq.core :as antq]
+            [lread.status-line :as status]))
 
 (defn task [_opts]
-  (shell/clojure {:continue true}
-                 "-M:outdated --directory=.:nvd_check_helper_project"))
+  (status/line :head "Checking Clojure deps & Github Actions")
+  (antq/-main))

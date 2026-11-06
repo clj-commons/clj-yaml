@@ -44,9 +44,4 @@
   :eastwood {:extra-deps {jonase/eastwood {:mvn/version "1.4.3"}}
              :main-opts ["-m" "eastwood.lint" {:source-paths ["src/clojure"]
                                                :test-paths ["test"]
-                                               :add-linters [:performance]}]}
-  :outdated {:extra-deps {com.github.liquidz/antq {:mvn/version  "2.11.1276"}
-                          org.clojure/clojure {:mvn/version "1.12.5"}
-                          org.slf4j/slf4j-simple {:mvn/version "2.0.19"} ;; to rid ourselves of logger warnings
-                          }
-             :main-opts ["-m" "antq.core"]}}}
+                                               :add-linters [:performance]}]}}}
